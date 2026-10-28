@@ -50,8 +50,8 @@ Plus one detail page per feature. Each diagram shows at most ~9 elements; anythi
 | --- | --- | --- | --- |
 | #16 | Java parser with tree-sitter: package, types, methods, annotations, imports, calls | `feature/backend-java-parser` | ✅ |
 | #17 | Spring endpoints from `@*Mapping` annotations | `feature/backend-java-parser` | ✅ |
-| #18 | TypeScript parser: classes, functions, imports, calls, Angular decorators | `feature/backend-typescript-parser` | ⬜ |
-| #19 | HTTP calls in the frontend (`HttpClient`, `fetch`, `axios`) | `feature/backend-typescript-parser` | ⬜ |
+| #18 | TypeScript parser: classes, functions, imports, calls, Angular decorators | `feature/backend-typescript-parser` | ✅ |
+| #19 | HTTP calls in the frontend (`HttpClient`, `fetch`, `axios`) | `feature/backend-typescript-parser` | ✅ |
 
 ## Sprint 4 · Level 1 · Overview
 
