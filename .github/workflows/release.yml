@@ -1,0 +1,37 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    name: Publish the Windows executable
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: requirements*.txt
+      - name: Install dependencies
+        run: python -m pip install -r requirements-dev.txt -r requirements-build.txt
+      - name: Run tests
+        run: python -m pytest
+      - name: Build
+        run: python packaging/build.py
+      - name: Smoke test the executable on this repository
+        shell: pwsh
+        run: |
+          ./dist/repo-xray.exe . --export smoke.zip
+          if (-not (Test-Path smoke.zip)) { throw "The executable did not write the zip" }
+      - name: Create the GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/repo-xray.exe
+          body_path: .github/release-notes.md
+          fail_on_unmatched_files: true
