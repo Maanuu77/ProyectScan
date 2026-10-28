@@ -1,9 +1,11 @@
+import json
+from dataclasses import replace
 from pathlib import Path
 from textwrap import dedent
 
 import pytest
 
-from analyzer import analyze_file, analyze_project, analyze_source, module_name
+from analyzer import analysis_to_dict, analyze_file, analyze_project, analyze_source, module_name
 from config import Config
 from scanner import scan
 
@@ -244,3 +246,19 @@ def test_project_analysis_continues_after_a_broken_file(tmp_path):
     assert [m.path for m in modules] == ["a_broken.py", "b_ok.py"]
     assert modules[0].error and not modules[1].error
     assert modules[1].symbols[0].name == "fine"
+
+
+def test_analysis_round_trips_through_json(tmp_path):
+    write(tmp_path, "app.py", b"import os\n\ndef run():\n    os.getcwd()\n")
+    write(tmp_path, "big.py", b"x = 1\n" * 50)
+    scan_result = scan(tmp_path, replace(Config(), max_file_bytes=100))
+
+    data = json.loads(json.dumps(analysis_to_dict(scan_result, analyze_project(scan_result))))
+
+    assert data["schema_version"] == 1
+    assert data["skipped_large"] == ["big.py"]
+    (module,) = data["modules"]
+    assert module["name"] == "app"
+    assert module["symbols"][0]["qualname"] == "app.run"
+    assert module["imports"][0]["module"] == "os"
+    assert module["calls"][0] == {"caller": "app.run", "callee": "os.getcwd", "lineno": 4}
