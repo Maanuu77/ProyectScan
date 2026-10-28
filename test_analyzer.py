@@ -3,7 +3,9 @@ from textwrap import dedent
 
 import pytest
 
-from analyzer import analyze_source, module_name
+from analyzer import analyze_file, analyze_project, analyze_source, module_name
+from config import Config
+from scanner import scan
 
 
 def analyze(code: str, path: str = "pkg/mod.py"):
@@ -195,3 +197,50 @@ def test_calls_inside_lambdas_and_comprehensions_belong_to_the_function():
         ("pkg.mod.build", "normalize"),
         ("pkg.mod.build", "convert"),
     ]
+
+
+def write(root: Path, relative: str, content: bytes) -> Path:
+    path = root / relative
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(content)
+    return Path(relative)
+
+
+def test_syntax_error_is_reported_not_raised(tmp_path):
+    relative = write(tmp_path, "broken.py", b"def oops(:\n    pass\n")
+
+    info = analyze_file(tmp_path, relative)
+
+    assert info.name == "broken"
+    assert info.error.startswith("SyntaxError")
+    assert "line 1" in info.error
+    assert info.symbols == []
+
+
+def test_invalid_bytes_are_reported_not_raised(tmp_path):
+    relative = write(tmp_path, "binary.py", b"x = 1\x00\xff\xfe\n")
+
+    info = analyze_file(tmp_path, relative)
+
+    assert info.error is not None
+
+
+def test_encoding_declaration_is_respected(tmp_path):
+    source = '# -*- coding: latin-1 -*-\ndef café():\n    """Olé."""\n'.encode("latin-1")
+    relative = write(tmp_path, "legacy.py", source)
+
+    info = analyze_file(tmp_path, relative)
+
+    assert info.error is None
+    assert info.symbols[0].docstring == "Olé."
+
+
+def test_project_analysis_continues_after_a_broken_file(tmp_path):
+    write(tmp_path, "a_broken.py", b"class :\n")
+    write(tmp_path, "b_ok.py", b"def fine():\n    pass\n")
+
+    modules = analyze_project(scan(tmp_path, Config()))
+
+    assert [m.path for m in modules] == ["a_broken.py", "b_ok.py"]
+    assert modules[0].error and not modules[1].error
+    assert modules[1].symbols[0].name == "fine"
