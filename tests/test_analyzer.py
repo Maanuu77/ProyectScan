@@ -5,9 +5,9 @@ from textwrap import dedent
 
 import pytest
 
-from analyzer import analysis_to_dict, analyze_file, analyze_project, analyze_source, module_name
-from config import Config
-from scanner import scan
+from repo_xray.analyzer import analysis_to_dict, analyze_file, analyze_project, analyze_source, module_name
+from repo_xray.config import Config
+from repo_xray.scanner import scan
 
 
 def analyze(code: str, path: str = "pkg/mod.py"):

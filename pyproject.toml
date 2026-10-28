@@ -1,10 +1,16 @@
 [project]
 name = "repo-xray"
 version = "0.1.0"
-description = "Interactive dependency graph of a Python project, explained by a local LLM"
+description = "Architecture documentation generated from source code: overview, features and flows"
 requires-python = ">=3.11"
 
+[project.scripts]
+repo-xray = "repo_xray.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["repo_xray*"]
+
 [tool.pytest.ini_options]
-testpaths = ["."]
-python_files = ["test_*.py"]
+testpaths = ["tests"]
+pythonpath = ["."]
 addopts = "-q"

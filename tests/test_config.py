@@ -1,6 +1,6 @@
 import pytest
 
-from config import DEFAULT_IGNORED_DIRS, Config, load_config
+from repo_xray.config import DEFAULT_IGNORED_DIRS, Config, load_config
 
 
 def test_defaults_when_no_config_file(tmp_path):

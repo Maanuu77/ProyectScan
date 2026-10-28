@@ -1,6 +1,6 @@
 import json
 
-from main import main
+from repo_xray.cli import main
 
 
 def make_project(root):
