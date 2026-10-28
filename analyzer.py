@@ -1,4 +1,4 @@
-"""Extract modules, classes and functions from Python source with `ast`.
+"""Extract modules, classes, functions, imports and calls from Python source with `ast`.
 
 The analysed project is parsed, never imported or executed (see ADR-0002).
 """
@@ -35,6 +35,13 @@ class Import:
 
 
 @dataclass
+class Call:
+    caller: str  # qualname of the scope that makes the call
+    callee: str  # the called expression as written, e.g. `self.repo.save`
+    lineno: int
+
+
+@dataclass
 class ModuleInfo:
     path: str  # relative to the project root, with forward slashes
     name: str  # dotted module name
@@ -43,6 +50,7 @@ class ModuleInfo:
     docstring: str | None = None
     symbols: list[Symbol] = field(default_factory=list)
     imports: list[Import] = field(default_factory=list)
+    calls: list[Call] = field(default_factory=list)
 
 
 def module_name(relative_path: Path) -> str:
@@ -86,7 +94,7 @@ class _Collector(ast.NodeVisitor):
     def visit_ClassDef(self, node: ast.ClassDef) -> None:
         symbol = self._add_symbol(node, "class")
         symbol.bases = [ast.unparse(base) for base in node.bases]
-        self._visit_scope(node, symbol)
+        self._visit_scope(node, symbol, outer=[*node.decorator_list, *node.bases, *node.keywords])
 
     def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
         self._visit_function(node, is_async=False)
@@ -98,7 +106,16 @@ class _Collector(ast.NodeVisitor):
         kind = "method" if self.scopes[-1][0] == "class" else "function"
         symbol = self._add_symbol(node, kind)
         symbol.is_async = is_async
-        self._visit_scope(node, symbol)
+        outer = [*node.decorator_list, node.args]
+        if node.returns:
+            outer.append(node.returns)
+        self._visit_scope(node, symbol, outer)
+
+    def visit_Call(self, node: ast.Call) -> None:
+        callee = _dotted_name(node.func)
+        if callee:
+            self.info.calls.append(Call(caller=self.scopes[-1][1], callee=callee, lineno=node.lineno))
+        self.generic_visit(node)
 
     def visit_Import(self, node: ast.Import) -> None:
         for alias in node.names:
@@ -150,7 +167,23 @@ class _Collector(ast.NodeVisitor):
         self.info.symbols.append(symbol)
         return symbol
 
-    def _visit_scope(self, node: ast.AST, symbol: Symbol) -> None:
+    def _visit_scope(self, node: ast.ClassDef | ast.FunctionDef | ast.AsyncFunctionDef,
+                     symbol: Symbol, outer: list[ast.AST]) -> None:
+        # Decorators, bases and default values run in the enclosing scope,
+        # so calls inside them belong to the parent, not to this symbol.
+        for child in outer:
+            self.visit(child)
         self.scopes.append((symbol.kind, symbol.qualname))
-        self.generic_visit(node)
+        for statement in node.body:
+            self.visit(statement)
         self.scopes.pop()
+
+
+def _dotted_name(node: ast.expr) -> str | None:
+    """`foo` -> "foo", `self.repo.save` -> "self.repo.save"; None for `get()()` and similar."""
+    if isinstance(node, ast.Name):
+        return node.id
+    if isinstance(node, ast.Attribute):
+        base = _dotted_name(node.value)
+        return f"{base}.{node.attr}" if base else None
+    return None
