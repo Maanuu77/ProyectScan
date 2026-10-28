@@ -143,8 +143,10 @@ class _Collector:
     def _visit_body(self, node: Node, symbol: Symbol) -> None:
         self.scopes.append(symbol)
         body = node.child_by_field_name("body")
-        if body is not None:
+        if body is not None and body.type in ("statement_block", "class_body", "interface_body", "enum_body"):
             self.visit_children(body)
+        elif body is not None:
+            self.visit(body)  # an arrow function whose body is a single expression
         self.scopes.pop()
 
     # Imports and calls
