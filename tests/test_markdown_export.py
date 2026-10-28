@@ -74,3 +74,13 @@ def test_feature_page_lists_endpoints_connections_and_files(tmp_path):
     assert "- **Called from:** [Checkout](web-checkout.md) (web) · 1 call" in page
     assert "- **Depends on:** [Catalog](api-catalog.md) (api)" in page
     assert f"- `api/{JAVA}/order/domain/Order.java`" in page
+
+
+def test_summary_starts_with_the_project_description(tmp_path):
+    full_stack(tmp_path)
+    write(tmp_path, {"README.md": "# Shop\n\nBuy and sell second-hand books near you.\n"})
+
+    index = build_documents(analyse(tmp_path))[f"{FOLDER}/README.md"]
+
+    assert index.startswith(f"# {tmp_path.name} architecture\n\n> Buy and sell second-hand books near you.\n\n"
+                            f"{tmp_path.name} is made of")
