@@ -1,6 +1,6 @@
 # ADR-0009: The local AI is optional
 
-- Status: accepted, refines ADR-0003
+- Status: superseded by ADR-0011
 - Date: 2026-10-28
 
 ## Context
