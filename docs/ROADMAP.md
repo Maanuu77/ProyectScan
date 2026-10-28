@@ -95,7 +95,7 @@ Plus one detail page per feature. Each diagram shows at most ~9 elements; anythi
 | --- | --- | --- | --- |
 | #36 | Markdown pages: index with the three levels and one page per feature | `feature/backend-markdown-export` | ✅ |
 | #37 | PNG copies of every diagram | `feature/backend-png-export` | ✅ |
-| #38 | Zip export with a short "how to use these files" note | `feature/backend-zip-export` | ⬜ |
+| #38 | Zip export with a short "how to use these files" note | `feature/backend-zip-export` | ✅ |
 
 ## Sprint 9 · Desktop app
 

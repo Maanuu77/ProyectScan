@@ -1,4 +1,5 @@
 import json
+import zipfile
 
 from repo_xray.cli import main
 
@@ -58,3 +59,29 @@ def test_invalid_config_fails_cleanly(tmp_path, capsys):
 
     assert exit_code == 2
     assert "invalid configuration" in capsys.readouterr().err
+
+
+def test_summary_lists_apps_services_features_and_flows(tmp_path, capsys):
+    make_project(tmp_path)
+
+    main([str(tmp_path)])
+
+    out = capsys.readouterr().out
+    assert "Apps" in out and "Features" in out and "Flows" in out
+
+
+def test_exports_a_zip_with_the_documentation(tmp_path, capsys):
+    project = tmp_path / "project"
+    project.mkdir()
+    make_project(project)
+    destination = tmp_path / "out" / "docs.zip"
+
+    exit_code = main([str(project), "--export", str(destination), "--no-png"])
+
+    assert exit_code == 0
+    with zipfile.ZipFile(destination) as archive:
+        names = archive.namelist()
+    assert "HOW-TO-USE.md" in names and "README-snippet.md" in names
+    assert "architecture/README.md" in names
+    assert not any(name.startswith("architecture/png/") for name in names)
+    assert "Documentation written to" in capsys.readouterr().out
