@@ -74,3 +74,14 @@ def test_project_name_comes_from_a_root_manifest(tmp_path):
     })
 
     assert detect(tmp_path).name == "repo-xray"
+
+
+def test_description_from_readme_then_manifest(tmp_path):
+    write(tmp_path, {
+        "package.json": '{"name": "shop", "description": "Online shop for second-hand books"}',
+        "src/index.ts": "export const x = 1;\n",
+    })
+    assert detect(tmp_path).description == "Online shop for second-hand books"
+
+    write(tmp_path, {"README.md": "# Shop\n\nBuy and sell second-hand books near you.\n"})
+    assert detect(tmp_path).description == "Buy and sell second-hand books near you."

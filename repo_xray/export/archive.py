@@ -3,7 +3,7 @@
 import zipfile
 from pathlib import Path
 
-from repo_xray.export.markdown import FOLDER, Bundle, build_documents
+from repo_xray.export.markdown import Bundle, build_documents, summary
 from repo_xray.export.png import add_png_copies
 from repo_xray.pipeline import Analysis
 
@@ -101,11 +101,9 @@ def build_bundle(analysis: Analysis, png: bool = True) -> Bundle:
     if png:
         add_png_copies(bundle)
     name = analysis.stack.name
-    index = str(bundle[f"{FOLDER}/README.md"])
-    summary = index.split("\n\n")[1] if index.count("\n\n") > 1 else ""
     spanish = analysis.language == "es"
     bundle["HOW-TO-USE.md"] = (HOW_TO_USE_ES if spanish else HOW_TO_USE).format(name=name)
-    bundle["README-snippet.md"] = (SNIPPET_ES if spanish else SNIPPET).format(name=name, summary=summary)
+    bundle["README-snippet.md"] = (SNIPPET_ES if spanish else SNIPPET).format(name=name, summary=summary(analysis))
     return bundle
 
 

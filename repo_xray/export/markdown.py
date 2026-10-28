@@ -31,6 +31,11 @@ def build_documents(analysis: Analysis) -> Bundle:
     return _Writer(analysis).write()
 
 
+def summary(analysis: Analysis) -> str:
+    """The opening paragraphs: what the project is about, then what it is made of."""
+    return _Writer(analysis).summary()
+
+
 def feature_page(feature_key: str) -> str:
     """Path of a feature's page inside the bundle."""
     return f"{FOLDER}/features/{_slug(feature_key)}.md"
@@ -59,7 +64,7 @@ class _Writer:
 
     def _index(self) -> str:
         stack, tr = self.a.stack, self._text
-        lines = [f"# {tr('page.title', name=stack.name)}", "", self._summary(), ""]
+        lines = [f"# {tr('page.title', name=stack.name)}", "", self.summary(), ""]
         lines += [f"## {tr('page.made_of')}", "", _picture("images/overview", tr("page.alt_overview", name=stack.name)), ""]
         lines += [f"## {tr('page.does')}", "", _picture("images/features", tr("page.alt_features", name=stack.name)), ""]
         for app in self._apps_with_features():
@@ -145,7 +150,11 @@ class _Writer:
             lines.append(item("page.services", feature.services))
         return lines
 
-    def _summary(self) -> str:
+    def summary(self) -> str:
+        description = self.a.stack.description
+        return f"> {description}\n\n{self._structure()}" if description else self._structure()
+
+    def _structure(self) -> str:
         stack, tr, lang = self.a.stack, self._text, self.lang
         apps = []
         for a in stack.apps:

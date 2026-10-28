@@ -31,7 +31,7 @@ TEXTS: dict[str, dict[str, str]] = {
     # Service categories and what apps do with them
     "category.database": {"en": "Database", "es": "Base de datos"},
     "category.auth": {"en": "Authentication", "es": "Autenticación"},
-    "category.storage": {"en": "File storage", "es": "Almacenamiento de archivos"},
+    "category.storage": {"en": "File storage", "es": "Almacenamiento"},
     "category.cache": {"en": "Cache", "es": "Caché"},
     "category.messaging": {"en": "Messaging", "es": "Mensajería"},
     "category.search": {"en": "Search", "es": "Búsqueda"},

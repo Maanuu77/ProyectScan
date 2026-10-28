@@ -91,7 +91,7 @@ The local AI was dropped ([ADR-0011](adr/0011-no-ai.md)); #32-#35 and #42 are ca
 | ~~#34~~ | ~~AI summary and flow titles~~ | — | cancelled |
 | ~~#35~~ | ~~AI cache and overrides~~ | — | cancelled |
 | #47 | Document labels in English and Spanish, language detected from the code | `feature/backend-languages` | ✅ |
-| #48 | Project description from manifests and the project README | `feature/backend-project-description` | ⬜ |
+| #48 | Project description from manifests and the project README | `feature/backend-project-description` | ✅ |
 | #49 | Screen names from route titles | `feature/backend-feature-texts` | ⬜ |
 | #50 | Generated descriptions for undocumented features | `feature/backend-feature-texts` | ⬜ |
 | #51 | User texts in `xray.toml`: language, project description, feature names and descriptions | `feature/backend-user-texts` | ⬜ |

@@ -60,7 +60,7 @@ def analyse(root: Path, progress: Progress | None = None) -> Analysis:
     report("Tracing request flows", 0.93)
     flows = build_flows(stack, files, graph, links, features)
     report("Done", 1.0)
-    language = i18n.detect_language(_prose(files))
+    language = i18n.detect_language([stack.description, *_prose(files)])
     return Analysis(scan_result.root, scan_result, files, stack, graph, links, features, flows, pick_flows(flows),
                     language)
 

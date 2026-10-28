@@ -16,7 +16,7 @@ from pathlib import Path, PurePosixPath
 
 import yaml
 
-from repo_xray.analysis import catalog
+from repo_xray.analysis import catalog, readme
 from repo_xray.analysis.catalog import Tech
 from repo_xray.analysis.paths import is_inside
 from repo_xray.model import SourceFile
@@ -56,6 +56,7 @@ class Service:
 @dataclass
 class Stack:
     name: str
+    description: str | None = None  # what the project says about itself
     apps: list[App] = field(default_factory=list)
     services: list[Service] = field(default_factory=list)
     ci: list[str] = field(default_factory=list)
@@ -77,6 +78,7 @@ class _Detector:
 
     def run(self) -> Stack:
         self.stack.name = self._declared_project_name() or self.stack.name
+        self.stack.description = readme.first_paragraph(self.root) or self._declared_description()
         self._find_apps()
         self._services_from_imports()
         self._services_from_compose()
@@ -181,6 +183,26 @@ class _Detector:
                 continue
             if isinstance(name, str) and name.strip():
                 return name.strip()
+        return None
+
+    def _declared_description(self) -> str | None:
+        for manifest in ("package.json", "pyproject.toml", "pom.xml"):
+            text = self._read(manifest) if manifest in self.manifests else None
+            if not text:
+                continue
+            try:
+                if manifest == "package.json":
+                    description = json.loads(text).get("description")
+                elif manifest == "pyproject.toml":
+                    description = tomllib.loads(text).get("project", {}).get("description")
+                else:
+                    match = re.search(r"<description>([^<]+)</description>",
+                                      re.sub(r"<parent>.*?</parent>", "", text, flags=re.S))
+                    description = match.group(1) if match else None
+            except (json.JSONDecodeError, tomllib.TOMLDecodeError):
+                continue
+            if isinstance(description, str) and description.strip():
+                return " ".join(description.split())
         return None
 
     # Services
