@@ -54,9 +54,11 @@ def describe_features(feature_map: FeatureMap, files: list[SourceFile], stack: S
 
 def apply_user_texts(feature_map: FeatureMap, stack: Stack, config: Config) -> None:
     """The user's words from xray.toml replace whatever was found or generated."""
+    stack.found_description = stack.description
     if config.description:
         stack.description = config.description
     for feature in feature_map.features:
+        feature.found_name, feature.found_description = feature.name, feature.description
         text = config.features.get(feature.key)
         if text is None:
             continue

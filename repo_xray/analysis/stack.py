@@ -58,6 +58,7 @@ class Service:
 class Stack:
     name: str
     description: str | None = None  # what the project says about itself
+    found_description: str | None = None  # before the user's text replaced it
     apps: list[App] = field(default_factory=list)
     services: list[Service] = field(default_factory=list)
     ci: list[str] = field(default_factory=list)
