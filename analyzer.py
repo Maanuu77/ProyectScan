@@ -51,6 +51,7 @@ class ModuleInfo:
     symbols: list[Symbol] = field(default_factory=list)
     imports: list[Import] = field(default_factory=list)
     calls: list[Call] = field(default_factory=list)
+    error: str | None = None  # set when the file could not be parsed
 
 
 def module_name(relative_path: Path) -> str:
@@ -77,7 +78,21 @@ def analyze_source(source: str | bytes, relative_path: Path) -> ModuleInfo:
 
 
 def analyze_file(root: Path, relative_path: Path) -> ModuleInfo:
-    return analyze_source((root / relative_path).read_bytes(), relative_path)
+    """Analyse one file. A broken file is reported in `error` instead of
+    raising, so one bad file never stops the analysis of a whole project."""
+    try:
+        return analyze_source((root / relative_path).read_bytes(), relative_path)
+    except SyntaxError as exc:
+        error = f"SyntaxError: {exc.msg} (line {exc.lineno})"
+    except (ValueError, RecursionError, OSError) as exc:
+        error = f"{type(exc).__name__}: {exc}"
+    return ModuleInfo(
+        path=relative_path.as_posix(),
+        name=module_name(relative_path),
+        is_package=relative_path.name == "__init__.py",
+        line_count=0,
+        error=error,
+    )
 
 
 def analyze_project(scan_result: ScanResult) -> list[ModuleInfo]:
