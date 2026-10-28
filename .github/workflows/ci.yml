@@ -54,7 +54,9 @@ jobs:
       - name: Smoke test the executable on this repository
         shell: pwsh
         run: |
-          ./dist/repo-xray.exe . --export smoke.zip
+          # A windowed program: PowerShell does not wait for it to finish unless asked to.
+          $app = Start-Process ./dist/repo-xray.exe -ArgumentList '.', '--export', 'smoke.zip' -Wait -PassThru -NoNewWindow
+          if ($app.ExitCode -ne 0) { throw "The executable exited with code $($app.ExitCode)" }
           if (-not (Test-Path smoke.zip)) { throw "The executable did not write the zip" }
       - uses: actions/upload-artifact@v4
         with:
