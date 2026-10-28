@@ -75,3 +75,39 @@ def test_rejects_a_file_as_root(tmp_path):
 
     with pytest.raises(NotADirectoryError):
         scan(tmp_path / "main.py", Config())
+
+
+def test_finds_java_and_typescript_but_not_generated_files(tmp_path):
+    make_files(
+        tmp_path,
+        "backend/src/main/java/App.java",
+        "frontend/src/app/api.ts",
+        "frontend/src/app/view.tsx",
+        "frontend/src/types.d.ts",
+        "frontend/public/vendor.min.js",
+        "frontend/src/main.js",
+    )
+
+    result = scan(tmp_path, Config())
+
+    assert as_posix(result.files) == [
+        "backend/src/main/java/App.java",
+        "frontend/src/app/api.ts",
+        "frontend/src/app/view.tsx",
+        "frontend/src/main.js",
+    ]
+
+
+def test_skips_build_output_and_reports(tmp_path):
+    make_files(
+        tmp_path,
+        "backend/src/App.java",
+        "backend/target/classes/Gen.java",
+        "frontend/coverage/app/api.ts",
+        "frontend/.angular/cache/x.js",
+        "frontend/test-results/x.ts",
+    )
+
+    result = scan(tmp_path, Config())
+
+    assert as_posix(result.files) == ["backend/src/App.java"]
