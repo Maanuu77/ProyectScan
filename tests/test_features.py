@@ -1,10 +1,7 @@
 from repo_xray.analysis.calls import build_call_graph
 from repo_xray.analysis.features import detect_features
 from repo_xray.analysis.linking import link_http_calls
-from tests.conftest import analyse, write
-
-JAVA = "src/main/java/shop"
-
+from tests.conftest import JAVA, analyse, hexagonal_backend, write
 
 def features_of(root):
     stack, files = analyse(root)
@@ -13,42 +10,6 @@ def features_of(root):
 
 def by_key(feature_map):
     return {f.key: f for f in feature_map.features}
-
-
-def hexagonal_backend(root):
-    write(root, {
-        "api/pom.xml": "<project><dependencies><dependency><artifactId>spring-boot-starter-web</artifactId>"
-                       "</dependency></dependencies></project>",
-        f"api/{JAVA}/order/infrastructure/web/OrderController.java": """\
-            package shop.order.infrastructure.web;
-            import shop.order.application.PlaceOrder;
-            @RestController
-            @Tag(name = "Orders", description = "Checkout and order history")
-            class OrderController {
-                private final PlaceOrder placeOrder;
-                @PostMapping("/api/orders") Object create() { return placeOrder.place(); }
-            }
-        """,
-        f"api/{JAVA}/order/application/PlaceOrder.java": "package shop.order.application;\npublic interface PlaceOrder { Object place(); }\n",
-        f"api/{JAVA}/order/application/OrderService.java": """\
-            package shop.order.application;
-            import shop.catalog.application.FindProduct;
-            class OrderService implements PlaceOrder {
-                private final FindProduct products;
-                public Object place() { return products.find(); }
-            }
-        """,
-        f"api/{JAVA}/order/domain/Order.java": "package shop.order.domain;\nrecord Order(String id) {}\n",
-        f"api/{JAVA}/catalog/infrastructure/web/ProductController.java": """\
-            package shop.catalog.infrastructure.web;
-            /** Browse the product catalogue. */
-            @RestController
-            class ProductController { @GetMapping("/api/products") Object all() { return null; } }
-        """,
-        f"api/{JAVA}/catalog/application/FindProduct.java": "package shop.catalog.application;\npublic interface FindProduct { Object find(); }\n",
-        f"api/{JAVA}/catalog/domain/Product.java": "package shop.catalog.domain;\nrecord Product(String id) {}\n",
-        f"api/{JAVA}/shared/infrastructure/SecurityConfig.java": "package shop.shared.infrastructure;\nclass SecurityConfig {}\n",
-    })
 
 
 def test_vertical_slices_become_features(tmp_path):

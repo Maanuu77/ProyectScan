@@ -76,8 +76,8 @@ Plus one detail page per feature. Each diagram shows at most ~9 elements; anythi
 | # | Issue | Branch | Status |
 | --- | --- | --- | --- |
 | #28 | Link frontend HTTP calls to backend endpoints by route | `feature/backend-http-linking` | ✅ |
-| #29 | Build flows: UI → frontend service → endpoint → use case → repository → storage | `feature/backend-flows` | 🚧 |
-| #30 | Pick the most representative flows | `feature/backend-flows` | ⬜ |
+| #29 | Build flows: UI → frontend service → endpoint → use case → repository → storage | `feature/backend-flows` | ✅ |
+| #30 | Pick the most representative flows | `feature/backend-flows` | ✅ |
 | #31 | Flow diagram renderer (swimlanes) | `feature/frontend-flow-diagram` | ⬜ |
 
 ## Sprint 7 · Local AI
