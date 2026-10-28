@@ -78,8 +78,6 @@ TEXTS: dict[str, dict[str, str]] = {
     "chip.uses": {"en": "USES", "es": "USA"},
     "more_features": {"en": "+ {n} more features", "es": "+ {n} funcionalidades más"},
     "features.description": {"en": "Features of {name}.", "es": "Funcionalidades de {name}."},
-    "fallback.screens": {"en": "Screens: {names}", "es": "Pantallas: {names}"},
-    "fallback.layers": {"en": "{files} across {layers}", "es": "{files} en {layers}"},
     # Level 3
     "flow.kicker": {"en": "WHAT HAPPENS WHEN…", "es": "QUÉ PASA CUANDO…"},
     "flow.title": {"en": "What happens when: {title}", "es": "Qué pasa cuando: {title}"},
