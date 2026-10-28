@@ -50,6 +50,8 @@ class Feature:
     endpoints: list[Endpoint] = field(default_factory=list)
     http_calls: int = 0
     description: str | None = None
+    description_source: str = "code"  # "code", "generated" (by repo-xray) or "user" (xray.toml)
+    screens: list[str] = field(default_factory=list)  # titles of the screens it shows, for frontends
     calls: dict[str, int] = field(default_factory=dict)  # backend feature key -> HTTP calls made to it
     services: list[str] = field(default_factory=list)  # external services it reaches, e.g. "Firebase Auth"
     depends_on: dict[str, int] = field(default_factory=dict)  # same-app feature key -> calls into it
