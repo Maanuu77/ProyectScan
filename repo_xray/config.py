@@ -11,6 +11,9 @@ DEFAULT_IGNORED_DIRS = frozenset({
     ".venv", "venv", "env",
     "__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache", ".tox", ".nox",
     "node_modules", "build", "dist", "site-packages",
+    # Build output and generated reports of Java and JavaScript tooling.
+    "target", "out", "bin", "obj", "coverage", "test-results", "playwright-report",
+    ".angular", ".next", ".nuxt", ".gradle", ".mvn",
 })
 
 
