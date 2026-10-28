@@ -95,7 +95,7 @@ The local AI was dropped ([ADR-0011](adr/0011-no-ai.md)); #32-#35 and #42 are ca
 | #49 | Screen names from route titles | `feature/backend-feature-texts` | ✅ |
 | #50 | Generated descriptions for undocumented features | `feature/backend-feature-texts` | ✅ |
 | #51 | User texts in `xray.toml`: language, project description, feature names and descriptions | `feature/backend-user-texts` | ✅ |
-| #52 | Edit texts and language from the app | `feature/frontend-edit-texts` | ⬜ |
+| #52 | Edit texts and language from the app | `feature/frontend-edit-texts` | ✅ |
 
 ## Sprint 8 · Export
 
