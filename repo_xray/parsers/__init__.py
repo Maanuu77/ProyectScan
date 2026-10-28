@@ -4,12 +4,13 @@ from collections.abc import Callable
 from pathlib import Path
 
 from repo_xray.model import SourceFile
-from repo_xray.parsers import python
+from repo_xray.parsers import java, python
 
 Parser = Callable[[bytes, Path], SourceFile]
 
 PARSERS: dict[str, tuple[str, Parser]] = {
     ".py": ("python", python.parse),
+    ".java": ("java", java.parse),
 }
 
 SUPPORTED_EXTENSIONS = frozenset(PARSERS)
