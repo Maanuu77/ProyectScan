@@ -3,14 +3,14 @@
 from dataclasses import asdict
 
 from repo_xray.model import SourceFile
-from repo_xray.parsers import parse_file
+from repo_xray.parsers import language_of, parse_file
 from repo_xray.scanner import ScanResult
 
 SCHEMA_VERSION = 2
 
 
 def analyze_project(scan_result: ScanResult) -> list[SourceFile]:
-    return [parse_file(scan_result.root, path) for path in scan_result.files]
+    return [parse_file(scan_result.root, path) for path in scan_result.files if language_of(path)]
 
 
 def analysis_to_dict(scan_result: ScanResult, files: list[SourceFile]) -> dict:
