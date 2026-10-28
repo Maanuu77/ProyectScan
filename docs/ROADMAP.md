@@ -1,6 +1,6 @@
 # Roadmap · repo-xray
 
-repo-xray is a desktop app that scans a software project and generates clear, good-looking architecture documentation: SVG diagrams plus Markdown pages, delivered as a zip that the user can drop into their repository. It understands Python, Java and TypeScript, explains the project in three levels and can use a local LLM (Ollama) for the wording. Everything runs offline and free.
+repo-xray is a desktop app that scans a software project and generates clear, good-looking architecture documentation: SVG diagrams plus Markdown pages, delivered as a zip that the user can drop into their repository. It understands Python, Java and TypeScript, explains the project in three levels, in English or Spanish, with texts the user can edit. Everything runs offline and free, with no AI (see [ADR-0011](adr/0011-no-ai.md)).
 
 The direction changed after sprint 1 (see [ADR-0005](adr/0005-architecture-docs-in-three-levels.md)). Issues #1-#11 keep their numbers; the old pending issues #12-#32 were replaced by the backlog below.
 
@@ -80,14 +80,22 @@ Plus one detail page per feature. Each diagram shows at most ~9 elements; anythi
 | #30 | Pick the most representative flows | `feature/backend-flows` | ✅ |
 | #31 | Flow diagram renderer (swimlanes) | `feature/frontend-flow-diagram` | ✅ |
 
-## Sprint 7 · Local AI
+## Sprint 7 · Better texts without AI
+
+The local AI was dropped ([ADR-0011](adr/0011-no-ai.md)); #32-#35 and #42 are cancelled and replaced by #47-#52.
 
 | # | Issue | Branch | Status |
 | --- | --- | --- | --- |
-| #32 | Ollama client: detection, model check, timeout | `feature/backend-ollama-client` | ⬜ |
-| #33 | Feature names and one-line descriptions, with validation against real names | `feature/backend-ai-descriptions` | ⬜ |
-| #34 | Architecture summary paragraph and flow titles | `feature/backend-ai-descriptions` | ⬜ |
-| #35 | Cache by content hash and user overrides in `xray.toml` | `feature/backend-ai-descriptions` | ⬜ |
+| ~~#32~~ | ~~Ollama client~~ | — | cancelled |
+| ~~#33~~ | ~~AI feature names and descriptions~~ | — | cancelled |
+| ~~#34~~ | ~~AI summary and flow titles~~ | — | cancelled |
+| ~~#35~~ | ~~AI cache and overrides~~ | — | cancelled |
+| #47 | Document labels in English and Spanish, language detected from the code | `feature/backend-languages` | ⬜ |
+| #48 | Project description from manifests and the project README | `feature/backend-project-description` | ⬜ |
+| #49 | Screen names from route titles | `feature/backend-feature-texts` | ⬜ |
+| #50 | Generated descriptions for undocumented features | `feature/backend-feature-texts` | ⬜ |
+| #51 | User texts in `xray.toml`: language, project description, feature names and descriptions | `feature/backend-user-texts` | ⬜ |
+| #52 | Edit texts and language from the app | `feature/frontend-edit-texts` | ⬜ |
 
 ## Sprint 8 · Export
 
@@ -104,7 +112,7 @@ Plus one detail page per feature. Each diagram shows at most ~9 elements; anythi
 | #39 | Main window: choose a folder, analyse in the background with progress | `feature/frontend-desktop-app` | ✅ |
 | #40 | Preview of the diagrams and pages, light and dark | `feature/frontend-desktop-app` | ✅ |
 | #41 | Export the zip from the app | `feature/frontend-desktop-app` | ✅ |
-| #42 | AI setup assistant: detect Ollama, guide its installation, download the model with progress | `feature/frontend-ai-setup` | ⬜ |
+| ~~#42~~ | ~~AI setup assistant~~ | — | cancelled |
 
 ## Sprint 10 · Packaging and release
 
