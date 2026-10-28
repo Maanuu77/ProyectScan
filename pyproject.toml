@@ -1,0 +1,10 @@
+[project]
+name = "repo-xray"
+version = "0.1.0"
+description = "Interactive dependency graph of a Python project, explained by a local LLM"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+testpaths = ["."]
+python_files = ["test_*.py"]
+addopts = "-q"
