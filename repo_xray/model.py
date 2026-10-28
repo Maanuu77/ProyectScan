@@ -61,6 +61,16 @@ class HttpCall:
 
 
 @dataclass
+class Route:
+    """A screen declared in a frontend router, e.g. `{ path: 'login', title: 'Log in', component: LoginPage }`."""
+
+    path: str
+    title: str | None
+    target: str  # resolved module of a lazy import, or the component's name
+    lineno: int
+
+
+@dataclass
 class SourceFile:
     path: str  # relative to the project root, with forward slashes
     language: str  # "python", "java" or "typescript"
@@ -74,4 +84,5 @@ class SourceFile:
     calls: list[Call] = field(default_factory=list)
     endpoints: list[Endpoint] = field(default_factory=list)
     http_calls: list[HttpCall] = field(default_factory=list)
+    routes: list[Route] = field(default_factory=list)
     error: str | None = None  # set when the file could not be parsed

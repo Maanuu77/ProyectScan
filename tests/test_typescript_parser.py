@@ -148,3 +148,22 @@ def test_arrow_functions_with_an_expression_body_record_their_calls():
 
     assert [(c.caller, c.callee) for c in info.calls] == [("src/app/orders/orders-api.load", "fetch")]
     assert [h.url for h in info.http_calls] == ["/api/items"]
+
+
+def test_angular_and_react_routes():
+    info = parse_ts("""
+        export const routes: Routes = [
+          { path: '', pathMatch: 'full', redirectTo: 'map' },
+          { path: 'map', title: 'Map · Shop', loadComponent: () => import('./map/map-page').then((m) => m.MapPage) },
+          { path: 'admin', loadChildren: () => import('../admin/admin.routes').then((m) => m.ROUTES) },
+          { path: 'orders', component: OrdersPage, data: { title: 'Orders' } },
+        ];
+        const router = createBrowserRouter([{ path: '/cart', element: <CartPage /> }]);
+    """, "src/app/app.routes.tsx")
+
+    assert [(r.path, r.title, r.target) for r in info.routes] == [
+        ("map", "Map · Shop", "src/app/map/map-page"),
+        ("admin", None, "src/admin/admin.routes"),
+        ("orders", "Orders", "OrdersPage"),
+        ("/cart", None, "CartPage"),
+    ]
