@@ -32,3 +32,18 @@ xray-output/
 .env
 *.pem
 serviceAccount*.json
+
+# Instructions and notes for AI coding assistants
+CLAUDE.md
+CLAUDE.local.md
+.claude/
+AGENTS.md
+GEMINI.md
+.gemini/
+.cursor/
+.cursorrules
+.windsurfrules
+.github/copilot-instructions.md
+.continue/
+.aider*
+*.prompt.md
