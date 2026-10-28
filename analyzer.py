@@ -25,6 +25,16 @@ class Symbol:
 
 
 @dataclass
+class Import:
+    module: str  # absolute dotted module; relative imports are resolved
+    name: str | None  # the imported name in `from module import name`
+    alias: str | None
+    level: int  # number of leading dots, 0 for absolute imports
+    lineno: int
+    scope: str  # qualname of the scope where the import happens
+
+
+@dataclass
 class ModuleInfo:
     path: str  # relative to the project root, with forward slashes
     name: str  # dotted module name
@@ -32,6 +42,7 @@ class ModuleInfo:
     line_count: int
     docstring: str | None = None
     symbols: list[Symbol] = field(default_factory=list)
+    imports: list[Import] = field(default_factory=list)
 
 
 def module_name(relative_path: Path) -> str:
@@ -88,6 +99,41 @@ class _Collector(ast.NodeVisitor):
         symbol = self._add_symbol(node, kind)
         symbol.is_async = is_async
         self._visit_scope(node, symbol)
+
+    def visit_Import(self, node: ast.Import) -> None:
+        for alias in node.names:
+            self._add_import(node, alias.name, None, alias.asname, level=0)
+
+    def visit_ImportFrom(self, node: ast.ImportFrom) -> None:
+        module = self._absolute_module(node.module, node.level)
+        for alias in node.names:
+            self._add_import(node, module, alias.name, alias.asname, node.level)
+
+    def _add_import(self, node: ast.stmt, module: str, name: str | None, alias: str | None, level: int) -> None:
+        self.info.imports.append(Import(
+            module=module,
+            name=name,
+            alias=alias,
+            level=level,
+            lineno=node.lineno,
+            scope=self.scopes[-1][1],
+        ))
+
+    def _absolute_module(self, module: str | None, level: int) -> str:
+        """Turn `from ..utils import x` into `pkg.utils` based on this module's package."""
+        if level == 0:
+            return module or ""
+        package = self.info.name.split(".")
+        if not self.info.is_package:
+            package.pop()
+        levels_up = level - 1
+        if levels_up > len(package):
+            # Points outside the analysed folder: keep it as written.
+            return "." * level + (module or "")
+        base = package[: len(package) - levels_up]
+        if module:
+            base.append(module)
+        return ".".join(base)
 
     def _add_symbol(self, node: ast.ClassDef | ast.FunctionDef | ast.AsyncFunctionDef, kind: str) -> Symbol:
         parent = self.scopes[-1][1]
