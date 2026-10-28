@@ -1,17 +1,13 @@
-import json
-from dataclasses import replace
 from pathlib import Path
 from textwrap import dedent
 
 import pytest
 
-from repo_xray.analyzer import analysis_to_dict, analyze_file, analyze_project, analyze_source, module_name
-from repo_xray.config import Config
-from repo_xray.scanner import scan
+from repo_xray.parsers.python import module_name, parse
 
 
 def analyze(code: str, path: str = "pkg/mod.py"):
-    return analyze_source(dedent(code), Path(path))
+    return parse(dedent(code), Path(path))
 
 
 def symbols_by_qualname(info):
@@ -199,66 +195,3 @@ def test_calls_inside_lambdas_and_comprehensions_belong_to_the_function():
         ("pkg.mod.build", "normalize"),
         ("pkg.mod.build", "convert"),
     ]
-
-
-def write(root: Path, relative: str, content: bytes) -> Path:
-    path = root / relative
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_bytes(content)
-    return Path(relative)
-
-
-def test_syntax_error_is_reported_not_raised(tmp_path):
-    relative = write(tmp_path, "broken.py", b"def oops(:\n    pass\n")
-
-    info = analyze_file(tmp_path, relative)
-
-    assert info.name == "broken"
-    assert info.error.startswith("SyntaxError")
-    assert "line 1" in info.error
-    assert info.symbols == []
-
-
-def test_invalid_bytes_are_reported_not_raised(tmp_path):
-    relative = write(tmp_path, "binary.py", b"x = 1\x00\xff\xfe\n")
-
-    info = analyze_file(tmp_path, relative)
-
-    assert info.error is not None
-
-
-def test_encoding_declaration_is_respected(tmp_path):
-    source = '# -*- coding: latin-1 -*-\ndef café():\n    """Olé."""\n'.encode("latin-1")
-    relative = write(tmp_path, "legacy.py", source)
-
-    info = analyze_file(tmp_path, relative)
-
-    assert info.error is None
-    assert info.symbols[0].docstring == "Olé."
-
-
-def test_project_analysis_continues_after_a_broken_file(tmp_path):
-    write(tmp_path, "a_broken.py", b"class :\n")
-    write(tmp_path, "b_ok.py", b"def fine():\n    pass\n")
-
-    modules = analyze_project(scan(tmp_path, Config()))
-
-    assert [m.path for m in modules] == ["a_broken.py", "b_ok.py"]
-    assert modules[0].error and not modules[1].error
-    assert modules[1].symbols[0].name == "fine"
-
-
-def test_analysis_round_trips_through_json(tmp_path):
-    write(tmp_path, "app.py", b"import os\n\ndef run():\n    os.getcwd()\n")
-    write(tmp_path, "big.py", b"x = 1\n" * 50)
-    scan_result = scan(tmp_path, replace(Config(), max_file_bytes=100))
-
-    data = json.loads(json.dumps(analysis_to_dict(scan_result, analyze_project(scan_result))))
-
-    assert data["schema_version"] == 1
-    assert data["skipped_large"] == ["big.py"]
-    (module,) = data["modules"]
-    assert module["name"] == "app"
-    assert module["symbols"][0]["qualname"] == "app.run"
-    assert module["imports"][0]["module"] == "os"
-    assert module["calls"][0] == {"caller": "app.run", "callee": "os.getcwd", "lineno": 4}
