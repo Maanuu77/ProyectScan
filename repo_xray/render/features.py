@@ -7,9 +7,6 @@ colour and frontend cards repeat it in their "Calls" chips, so the link
 between both sides reads without a web of crossing lines.
 """
 
-import posixpath
-import re
-
 from repo_xray import i18n
 from repo_xray.analysis.features import Feature, FeatureMap
 from repo_xray.analysis.stack import App, Stack
@@ -24,7 +21,6 @@ MAX_CARDS = 9
 WIDTH = PAD * 2 + COLUMNS * CARD_WIDTH + (COLUMNS - 1) * CARD_GAP
 CLIENT_KINDS = ("web", "mobile", "desktop")
 DRAWN_LAYERS = ("entry", "application", "domain", "data", "integration")
-PAGE_SUFFIXES = re.compile(r"[-_.]?(page|component|view|screen|container)$", re.IGNORECASE)
 
 
 def render_features(stack: Stack, feature_map: FeatureMap, theme: t.Theme, lang: str = i18n.DEFAULT) -> str:
@@ -111,7 +107,7 @@ class _FeatureRenderer:
         th = self.theme
         inner = CARD_WIDTH - 36
         colour = self.colour.get(feature.key)
-        description = feature.description or self._fallback_description(feature)
+        description = feature.description or ""
         lines = wrap_text(description, inner, t.BODY, max_lines=2)
         chips = self._chips(feature)
 
@@ -198,18 +194,6 @@ class _FeatureRenderer:
         if feature.endpoints:
             return i18n.count(self.lang, len(feature.endpoints), "endpoint")
         return i18n.count(self.lang, len(feature.files), "file")
-
-    def _fallback_description(self, feature: Feature) -> str:
-        screens = []
-        for path in feature.files:
-            stem = posixpath.basename(path).split(".")[0]
-            if PAGE_SUFFIXES.search(stem):
-                screens.append(PAGE_SUFFIXES.sub("", stem).replace("-", " ").replace("_", " "))
-        if screens:
-            return i18n.text(self.lang, "fallback.screens", names=", ".join(dict.fromkeys(screens)))
-        files = i18n.count(self.lang, len(feature.files), "file")
-        layers = [i18n.text(self.lang, f"layer.{layer}").lower() for layer in DRAWN_LAYERS if feature.layers.get(layer)]
-        return i18n.text(self.lang, "fallback.layers", files=files, layers=", ".join(layers)) if layers else files
 
     # Header and legend
 

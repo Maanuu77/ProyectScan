@@ -24,7 +24,8 @@ def shop() -> tuple[Stack, FeatureMap]:
                     depends_on={"api/catalog": 2}),
             Feature("api/catalog", "Catalog", "api", "api/catalog", files=["d"], layers={"domain": 1}),
             Feature("web/checkout", "Checkout", "web", "web/checkout", files=["web/checkout/checkout-page.ts"],
-                    layers={"entry": 1}, calls={"api/order": 3, "api/catalog": 1}, services=["Firebase Auth"]),
+                    layers={"entry": 1}, calls={"api/order": 3, "api/catalog": 1}, services=["Firebase Auth"],
+                    description="Screen: Checkout. Calls Orders and Catalog."),
         ],
         shared=[SharedPart("web", "core", 4), SharedPart("web", "(root)", 2)],
     )
@@ -38,7 +39,7 @@ def test_sections_cards_and_chips(theme):
     labels = texts(svg)
     assert labels.index("web") < labels.index("api")  # frontends first
     for expected in ["Orders", "Checkout and order history", "Catalog", "Checkout", "CALLS", "USES",
-                     "Firebase Auth", "Screens: checkout", "Shared code:  core (4)", "Data access"]:
+                     "Firebase Auth", "Screen: Checkout. Calls Orders and Catalog.", "Shared code:  core (4)", "Data access"]:
         assert expected in labels, expected
 
 

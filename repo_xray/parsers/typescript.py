@@ -10,8 +10,8 @@ from pathlib import Path
 import tree_sitter_typescript
 from tree_sitter import Language, Node, Parser
 
-from repo_xray.model import Call, HttpCall, Import, SourceFile, Symbol
-from repo_xray.parsers.treesitter import doc_comment, end_line, line, string_value, text
+from repo_xray.model import Call, HttpCall, Import, Route, SourceFile, Symbol
+from repo_xray.parsers.treesitter import descendants, doc_comment, end_line, line, string_value, text
 
 _TYPESCRIPT = Parser(Language(tree_sitter_typescript.language_typescript()))
 _TSX = Parser(Language(tree_sitter_typescript.language_tsx()))
@@ -184,6 +184,41 @@ class _Collector:
             self._detect_http_call(callee, node)
         self.visit_children(node)
 
+    def visit_object(self, node: Node) -> None:
+        """Router entries: Angular `{ path, title, component | loadComponent }`, React `{ path, element }`."""
+        pairs = {}
+        for pair in node.named_children:
+            if pair.type == "pair":
+                pairs[text(pair.child_by_field_name("key")).strip("'\"")] = pair.child_by_field_name("value")
+        path = string_value(pairs["path"]) if "path" in pairs else None
+        target = self._route_target(pairs)
+        if path is not None and target:
+            title = string_value(pairs["title"]) if "title" in pairs else None
+            data = pairs.get("data")
+            if title is None and data is not None and data.type == "object":
+                title = next((string_value(p.child_by_field_name("value")) for p in data.named_children
+                              if p.type == "pair" and text(p.child_by_field_name("key")) == "title"), None)
+            self.info.routes.append(Route(path=path, title=title, target=target, lineno=line(node)))
+        self.visit_children(node)
+
+    def _route_target(self, pairs: dict[str, Node]) -> str | None:
+        for key in ("loadComponent", "loadChildren", "lazy"):
+            if key in pairs:
+                for call in descendants(pairs[key], "call_expression"):
+                    if text(call.child_by_field_name("function")) == "import":
+                        arguments = call.child_by_field_name("arguments").named_children
+                        source = string_value(arguments[0]) if arguments else None
+                        if source:
+                            return self._resolve_module(source)
+        if "component" in pairs:
+            return text(pairs["component"])
+        if "element" in pairs:
+            element = pairs["element"]
+            for jsx in [element, *descendants(element, "jsx_self_closing_element", "jsx_opening_element")]:
+                if jsx.type in ("jsx_self_closing_element", "jsx_opening_element"):
+                    return text(jsx.child_by_field_name("name"))
+        return None
+
     def visit_new(self, node: Node) -> None:
         constructor = _dotted(node.child_by_field_name("constructor"))
         if constructor:
@@ -213,6 +248,7 @@ _HANDLERS = {
     "import_statement": _Collector.visit_import,
     "call_expression": _Collector.visit_call,
     "new_expression": _Collector.visit_new,
+    "object": _Collector.visit_object,
 }
 
 
