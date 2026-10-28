@@ -67,8 +67,8 @@ Plus one detail page per feature. Each diagram shows at most ~9 elements; anythi
 | # | Issue | Branch | Status |
 | --- | --- | --- | --- |
 | #24 | Classify files into layers (entry, application, domain, infrastructure, shared, tests) | `feature/backend-layers` | ✅ |
-| #25 | Detect features from feature folders, or by clustering names in layer-first projects | `feature/backend-features` | ⬜ |
-| #26 | Match frontend features to backend features | `feature/backend-features` | ⬜ |
+| #25 | Detect features from feature folders, or by clustering names in layer-first projects | `feature/backend-features` | ✅ |
+| #26 | Match frontend features to backend features | `feature/backend-features` | ✅ |
 | #27 | Feature map diagram renderer | `feature/frontend-feature-diagram` | ⬜ |
 
 ## Sprint 6 · Level 3 · Flows
