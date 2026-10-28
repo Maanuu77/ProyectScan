@@ -144,3 +144,54 @@ def test_import_scope_is_recorded():
         ("os", "pkg.mod", 2),
         ("json", "pkg.mod.lazy", 5),
     ]
+
+
+def calls_as_tuples(info):
+    return [(c.caller, c.callee) for c in info.calls]
+
+
+def test_calls_record_caller_and_dotted_callee():
+    info = analyze("""
+        setup()
+
+        class Service:
+            def run(self):
+                self.repo.save(os.path.join("a", "b"))
+                get_handler()()
+    """)
+
+    assert calls_as_tuples(info) == [
+        ("pkg.mod", "setup"),
+        ("pkg.mod.Service.run", "self.repo.save"),
+        ("pkg.mod.Service.run", "os.path.join"),
+        ("pkg.mod.Service.run", "get_handler"),
+    ]
+
+
+def test_decorators_and_defaults_belong_to_the_enclosing_scope():
+    info = analyze("""
+        class Api(make_base()):
+            @route("/items")
+            def items(self, limit=default_limit()):
+                return query(limit)
+    """)
+
+    assert calls_as_tuples(info) == [
+        ("pkg.mod", "make_base"),
+        ("pkg.mod.Api", "route"),
+        ("pkg.mod.Api", "default_limit"),
+        ("pkg.mod.Api.items", "query"),
+    ]
+
+
+def test_calls_inside_lambdas_and_comprehensions_belong_to_the_function():
+    info = analyze("""
+        def build(items):
+            key = lambda item: normalize(item)
+            return [convert(i) for i in items]
+    """)
+
+    assert calls_as_tuples(info) == [
+        ("pkg.mod.build", "normalize"),
+        ("pkg.mod.build", "convert"),
+    ]
