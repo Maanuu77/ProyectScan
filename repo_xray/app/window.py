@@ -4,11 +4,13 @@ from pathlib import Path
 
 from PySide6.QtCore import QSettings, QStandardPaths, Qt, QUrl, Signal
 from PySide6.QtGui import QDesktopServices
-from PySide6.QtWidgets import (QButtonGroup, QFileDialog, QFrame, QHBoxLayout, QLabel, QListWidget,
+from PySide6.QtWidgets import (QButtonGroup, QComboBox, QDialog, QFileDialog, QFrame, QHBoxLayout, QLabel, QListWidget,
                                QListWidgetItem, QMainWindow, QMessageBox, QProgressBar, QPushButton,
                                QStackedWidget, QVBoxLayout, QWidget)
 
 from repo_xray.app.preview import DiagramView, PageView
+from repo_xray.app.texts_dialog import TextsDialog
+from repo_xray.config import save_texts
 from repo_xray.app.workers import Task, analysis_task, export_task
 from repo_xray.export.markdown import FOLDER, Bundle, feature_page
 from repo_xray.pipeline import Analysis
@@ -144,9 +146,14 @@ class ProgressPage(QWidget):
         self.message.setText(message)
 
 
+LANGUAGE_NAMES = {"en": "English", "es": "Español"}
+
+
 class ResultsPage(QWidget):
     export_requested = Signal()
     restart_requested = Signal()
+    language_changed = Signal(object)  # "en", "es", or None to detect it from the code
+    edit_requested = Signal()
 
     def __init__(self, theme: Theme):
         super().__init__()
@@ -174,6 +181,14 @@ class ResultsPage(QWidget):
             group.addButton(button)
             top.addWidget(button)
         (self.dark if theme.name == "dark" else self.light).setChecked(True)
+        top.addSpacing(12)
+        self.language = QComboBox()
+        self.language.setToolTip("Language of the documents")
+        self.language.activated.connect(lambda index: self.language_changed.emit(self.language.itemData(index)))
+        top.addWidget(self.language)
+        self.edit = QPushButton("Edit texts…")
+        self.edit.clicked.connect(self.edit_requested)
+        top.addWidget(self.edit)
         top.addSpacing(12)
         self.restart = QPushButton("New analysis")
         self.restart.clicked.connect(self.restart_requested)
@@ -206,8 +221,10 @@ class ResultsPage(QWidget):
         layout.addLayout(body, 1)
         self.dark.toggled.connect(self._show_current)  # connected last: the list must exist
 
-    def show_results(self, analysis: Analysis, bundle: Bundle) -> None:
+    def show_results(self, analysis: Analysis, bundle: Bundle, keep_selection: bool = False) -> None:
+        selected = self.documents.currentRow()
         self.bundle = bundle
+        self._show_language(analysis)
         stack = analysis.stack
         self.title.setText(stack.name)
         apps = ", ".join(f"{a.name} ({KIND_NAMES.get(a.kind, 'app')})" for a in stack.apps) or "no apps found"
@@ -224,7 +241,15 @@ class ResultsPage(QWidget):
         self._entry("Architecture overview", ("page", f"{FOLDER}/README.md"))
         for feature in analysis.features.features:
             self._entry(f"{feature.name}  ·  {feature.app}", ("page", feature_page(feature.key)))
-        self.documents.setCurrentRow(1)
+        self.documents.setCurrentRow(selected if keep_selection and 0 < selected < self.documents.count() else 1)
+
+    def _show_language(self, analysis: Analysis) -> None:
+        self.language.clear()
+        detected = LANGUAGE_NAMES.get(analysis.detected_language, analysis.detected_language)
+        self.language.addItem(f"Language: auto ({detected})", None)
+        for code, name in LANGUAGE_NAMES.items():
+            self.language.addItem(f"Language: {name}", code)
+        self.language.setCurrentIndex(self.language.findData(analysis.config.language))
 
     def _section(self, title: str) -> None:
         item = QListWidgetItem(title)
@@ -256,9 +281,11 @@ class ResultsPage(QWidget):
         self.views.setCurrentWidget(self.diagram)
 
     def set_export_status(self, text: str | None) -> None:
+        """Show what is running, and keep the user from starting something else meanwhile."""
         self.export_status.setVisible(bool(text))
         self.export_status.setText(text or "")
-        self.export.setEnabled(text is None)
+        for control in (self.export, self.edit, self.language):
+            control.setEnabled(text is None)
 
 
 class MainWindow(QMainWindow):
@@ -282,25 +309,53 @@ class MainWindow(QMainWindow):
         self.start.folder_chosen.connect(self.analyse)
         self.results.export_requested.connect(self.choose_export)
         self.results.restart_requested.connect(self.show_start)
+        self.results.language_changed.connect(self.change_language)
+        self.results.edit_requested.connect(self.edit_texts)
 
     def show_start(self) -> None:
         self.start.refresh_recent()
         self.pages.setCurrentWidget(self.start)
 
-    def analyse(self, folder: Path) -> None:
-        self.progress.start(folder)
-        self.pages.setCurrentWidget(self.progress)
+    def analyse(self, folder: Path, quiet: bool = False) -> None:
+        """Analyse `folder`; `quiet` keeps the results on screen while they are refreshed."""
+        if quiet:
+            self.results.set_export_status("Updating the documents…")
+        else:
+            self.progress.start(folder)
+            self.pages.setCurrentWidget(self.progress)
         self.task = analysis_task(folder)
         self.task.progress.connect(lambda message, fraction: self.progress.update(fraction, message))
-        self.task.finished.connect(lambda result: self._analysed(folder, *result))
+        self.task.finished.connect(lambda result: self._analysed(folder, *result, quiet=quiet))
         self.task.failed.connect(self._analysis_failed)
         self.task.start()
 
-    def _analysed(self, folder: Path, analysis: Analysis, bundle: Bundle) -> None:
+    def _analysed(self, folder: Path, analysis: Analysis, bundle: Bundle, quiet: bool = False) -> None:
         self.analysis = analysis
         self._remember(folder)
-        self.results.show_results(analysis, bundle)
+        self.results.set_export_status(None)
+        self.results.show_results(analysis, bundle, keep_selection=quiet)
         self.pages.setCurrentWidget(self.results)
+
+    def change_language(self, language: str | None) -> None:
+        if self.analysis is None or language == self.analysis.config.language:
+            return
+        config = self.analysis.config
+        self._save_and_refresh(language, config.description, config.features)
+
+    def edit_texts(self) -> None:
+        if self.analysis is None:
+            return
+        dialog = TextsDialog(self.analysis, self)
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            self._save_and_refresh(self.analysis.config.language, dialog.project_description(), dialog.feature_texts())
+
+    def _save_and_refresh(self, language, description, features) -> None:
+        try:
+            save_texts(self.analysis.root, language, description, features)
+        except OSError as exc:
+            QMessageBox.warning(self, "Could not save", f"xray.toml could not be written in the project.\n\n{exc}")
+            return
+        self.analyse(self.analysis.root, quiet=True)
 
     def _analysis_failed(self, error: str) -> None:
         QMessageBox.warning(self, "The analysis failed", f"repo-xray could not analyse this folder.\n\n{error}")
