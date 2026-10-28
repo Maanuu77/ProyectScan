@@ -111,3 +111,32 @@ def test_skips_build_output_and_reports(tmp_path):
     result = scan(tmp_path, Config())
 
     assert as_posix(result.files) == ["backend/src/App.java"]
+
+
+def test_collects_manifests_including_ci_workflows(tmp_path):
+    make_files(
+        tmp_path,
+        "backend/pom.xml",
+        "backend/Dockerfile",
+        "backend/src/main/resources/application.yml",
+        "backend/src/main/resources/application-prod.properties",
+        "frontend/package.json",
+        "frontend/node_modules/lib/package.json",
+        "deploy/cloudrun/deploy.sh",
+        ".github/workflows/ci.yml",
+        "firebase.json",
+        "README.md",
+    )
+
+    result = scan(tmp_path, Config())
+
+    assert as_posix(result.manifests) == [
+        ".github/workflows/ci.yml",
+        "backend/Dockerfile",
+        "backend/pom.xml",
+        "backend/src/main/resources/application-prod.properties",
+        "backend/src/main/resources/application.yml",
+        "deploy/cloudrun/deploy.sh",
+        "firebase.json",
+        "frontend/package.json",
+    ]
