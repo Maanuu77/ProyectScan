@@ -6,6 +6,7 @@ from PySide6.QtCore import QSettings, QThread, Qt
 from repo_xray.app.preview import DiagramView, PageView
 from repo_xray.app.window import MAX_RECENT, MainWindow
 from repo_xray.app.workers import Task
+from repo_xray.config import FeatureText
 from repo_xray.render.theme import LIGHT
 from tests.conftest import hexagonal_backend
 
@@ -155,3 +156,51 @@ def test_diagram_view_fits_the_width(qtbot):
     assert pixmap.width() / ratio <= view.viewport().width()
     assert round(pixmap.width() / pixmap.height()) == 2
     assert view._label.alignment() & Qt.AlignmentFlag.AlignHCenter
+
+
+def test_texts_dialog_shows_found_texts_as_hints(qtbot, window, project):
+    from repo_xray.app.texts_dialog import DESCRIPTION, NAME, TextsDialog
+
+    analysed(qtbot, window, project)
+    dialog = TextsDialog(window.analysis, window)
+    qtbot.addWidget(dialog)
+
+    keys = [dialog.table.item(row, 0).data(Qt.ItemDataRole.UserRole) for row in range(dialog.table.rowCount())]
+    row = keys.index("api/order")
+    assert dialog.table.cellWidget(row, NAME).text() == ""
+    assert dialog.table.cellWidget(row, NAME).placeholderText() == "Orders"
+    assert dialog.table.cellWidget(row, DESCRIPTION).placeholderText() == "Checkout and order history"
+    assert dialog.feature_texts() == {}  # nothing typed, nothing saved
+
+    dialog.table.cellWidget(row, NAME).setText("  Purchases ")
+    dialog.description.setText("A small shop")
+    assert dialog.feature_texts() == {"api/order": FeatureText(name="Purchases")}
+    assert dialog.project_description() == "A small shop"
+
+
+def test_saving_texts_refreshes_the_documents_in_place(qtbot, window, project):
+    analysed(qtbot, window, project)
+    window.results.documents.setCurrentRow(2)
+
+    window._save_and_refresh("es", "Una tienda pequeña", {"api/order": FeatureText(name="Compras")})
+    assert window.pages.currentWidget() is window.results  # no progress screen for a refresh
+    assert not window.results.edit.isEnabled()
+    with qtbot.waitSignal(window.task.finished, timeout=TIMEOUT):
+        pass
+
+    assert window.analysis.language == "es"
+    assert window.analysis.stack.description == "Una tienda pequeña"
+    assert "Compras" in [f.name for f in window.analysis.features.features]
+    assert window.results.documents.currentRow() == 2  # the reader stays where they were
+    assert window.results.language.currentData() == "es"
+    assert window.results.edit.isEnabled()
+    assert 'name = "Compras"' in (project / "xray.toml").read_text(encoding="utf-8")
+
+
+def test_language_selector_offers_auto_and_both_languages(qtbot, window, project):
+    analysed(qtbot, window, project)
+
+    items = [window.results.language.itemText(i) for i in range(window.results.language.count())]
+
+    assert items == ["Language: auto (English)", "Language: English", "Language: Español"]
+    assert window.results.language.currentData() is None
