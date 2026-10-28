@@ -1,10 +1,14 @@
-"""Find the Python files of a project, skipping VCS folders, virtualenvs and caches."""
+"""Find the source files of a project, skipping VCS folders, virtualenvs, caches and build output."""
 
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
 
 from repo_xray.config import Config
+
+SOURCE_EXTENSIONS = frozenset({".py", ".java", ".ts", ".tsx", ".js", ".jsx", ".mjs"})
+# Generated or bundled files that would only add noise.
+SKIPPED_SUFFIXES = (".d.ts", ".min.js")
 
 
 @dataclass
@@ -15,7 +19,7 @@ class ScanResult:
 
 
 def scan(root: Path, config: Config) -> ScanResult:
-    """Return the `.py` files under `root`, as sorted paths relative to it."""
+    """Return the source files under `root`, as sorted paths relative to it."""
     root = root.resolve()
     if not root.is_dir():
         raise NotADirectoryError(f"Not a directory: {root}")
@@ -27,7 +31,7 @@ def scan(root: Path, config: Config) -> ScanResult:
         dirnames[:] = [d for d in dirnames if not _is_ignored_dir(current / d, config)]
 
         for name in filenames:
-            if not name.endswith(".py"):
+            if not _is_source_file(name):
                 continue
             path = current / name
             relative = path.relative_to(root)
@@ -39,6 +43,11 @@ def scan(root: Path, config: Config) -> ScanResult:
     result.files.sort(key=Path.as_posix)
     result.skipped_large.sort(key=Path.as_posix)
     return result
+
+
+def _is_source_file(name: str) -> bool:
+    lowered = name.lower()
+    return Path(lowered).suffix in SOURCE_EXTENSIONS and not lowered.endswith(SKIPPED_SUFFIXES)
 
 
 def _is_ignored_dir(path: Path, config: Config) -> bool:

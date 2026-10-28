@@ -41,7 +41,7 @@ def test_writes_json(tmp_path, capsys):
 
     assert exit_code == 0
     data = json.loads(output.read_text(encoding="utf-8"))
-    assert [m["name"] for m in data["modules"]] == ["broken", "pkg", "pkg.repo", "pkg.service"]
+    assert [f["name"] for f in data["files"]] == ["broken", "pkg", "pkg.repo", "pkg.service"]
 
 
 def test_missing_folder_fails_cleanly(tmp_path, capsys):

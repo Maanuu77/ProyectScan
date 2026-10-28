@@ -1,57 +1,12 @@
-"""Extract modules, classes, functions, imports and calls from Python source with `ast`.
+"""Python parser: modules, classes, functions, imports and calls with `ast`.
 
 The analysed project is parsed, never imported or executed (see ADR-0002).
 """
 
 import ast
-from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
-from repo_xray.scanner import ScanResult
-
-
-@dataclass
-class Symbol:
-    kind: str  # "class", "function" or "method"
-    name: str
-    qualname: str  # dotted, starting with the module name
-    parent: str  # qualname of the enclosing module, class or function
-    lineno: int
-    end_lineno: int
-    docstring: str | None
-    decorators: list[str] = field(default_factory=list)
-    bases: list[str] = field(default_factory=list)  # classes only
-    is_async: bool = False
-
-
-@dataclass
-class Import:
-    module: str  # absolute dotted module; relative imports are resolved
-    name: str | None  # the imported name in `from module import name`
-    alias: str | None
-    level: int  # number of leading dots, 0 for absolute imports
-    lineno: int
-    scope: str  # qualname of the scope where the import happens
-
-
-@dataclass
-class Call:
-    caller: str  # qualname of the scope that makes the call
-    callee: str  # the called expression as written, e.g. `self.repo.save`
-    lineno: int
-
-
-@dataclass
-class ModuleInfo:
-    path: str  # relative to the project root, with forward slashes
-    name: str  # dotted module name
-    is_package: bool
-    line_count: int
-    docstring: str | None = None
-    symbols: list[Symbol] = field(default_factory=list)
-    imports: list[Import] = field(default_factory=list)
-    calls: list[Call] = field(default_factory=list)
-    error: str | None = None  # set when the file could not be parsed
+from repo_xray.model import Call, Import, SourceFile, Symbol
 
 
 def module_name(relative_path: Path) -> str:
@@ -62,60 +17,28 @@ def module_name(relative_path: Path) -> str:
     return ".".join(parts)
 
 
-def analyze_source(source: str | bytes, relative_path: Path) -> ModuleInfo:
-    """Analyse one module's source code."""
+def parse(source: bytes | str, relative_path: Path) -> SourceFile:
+    """Parse one module. Raises SyntaxError or ValueError on invalid source."""
     tree = ast.parse(source, filename=relative_path.as_posix())
-    line_count = len(source.splitlines())
-    info = ModuleInfo(
+    name = module_name(relative_path)
+    is_package = relative_path.name == "__init__.py"
+    info = SourceFile(
         path=relative_path.as_posix(),
-        name=module_name(relative_path),
-        is_package=relative_path.name == "__init__.py",
-        line_count=line_count,
+        language="python",
+        name=name,
+        package=name if is_package else name.rpartition(".")[0],
+        line_count=len(source.splitlines()),
+        is_package=is_package,
         docstring=ast.get_docstring(tree),
     )
     _Collector(info).visit(tree)
     return info
 
 
-def analyze_file(root: Path, relative_path: Path) -> ModuleInfo:
-    """Analyse one file. A broken file is reported in `error` instead of
-    raising, so one bad file never stops the analysis of a whole project."""
-    try:
-        return analyze_source((root / relative_path).read_bytes(), relative_path)
-    except SyntaxError as exc:
-        error = f"SyntaxError: {exc.msg} (line {exc.lineno})"
-    except (ValueError, RecursionError, OSError) as exc:
-        error = f"{type(exc).__name__}: {exc}"
-    return ModuleInfo(
-        path=relative_path.as_posix(),
-        name=module_name(relative_path),
-        is_package=relative_path.name == "__init__.py",
-        line_count=0,
-        error=error,
-    )
-
-
-def analyze_project(scan_result: ScanResult) -> list[ModuleInfo]:
-    return [analyze_file(scan_result.root, path) for path in scan_result.files]
-
-
-SCHEMA_VERSION = 1
-
-
-def analysis_to_dict(scan_result: ScanResult, modules: list[ModuleInfo]) -> dict:
-    """JSON-ready form of an analysis, so analysing and displaying can be debugged apart."""
-    return {
-        "schema_version": SCHEMA_VERSION,
-        "root": scan_result.root.as_posix(),
-        "skipped_large": [p.as_posix() for p in scan_result.skipped_large],
-        "modules": [asdict(module) for module in modules],
-    }
-
-
 class _Collector(ast.NodeVisitor):
     """Walks a module keeping a stack of enclosing scopes."""
 
-    def __init__(self, info: ModuleInfo):
+    def __init__(self, info: SourceFile):
         self.info = info
         self.scopes: list[tuple[str, str]] = [("module", info.name)]  # (kind, qualname)
 

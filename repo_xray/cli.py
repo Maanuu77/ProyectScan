@@ -6,7 +6,8 @@ import sys
 from collections import Counter
 from pathlib import Path
 
-from repo_xray.analyzer import ModuleInfo, analysis_to_dict, analyze_project
+from repo_xray.model import SourceFile
+from repo_xray.project import analysis_to_dict, analyze_project
 from repo_xray.config import load_config
 from repo_xray.scanner import ScanResult, scan
 
@@ -21,17 +22,17 @@ def parse_args(argv: list[str] | None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
-def summarize(scan_result: ScanResult, modules: list[ModuleInfo]) -> str:
-    kinds = Counter(symbol.kind for module in modules for symbol in module.symbols)
-    broken = [module for module in modules if module.error]
+def summarize(scan_result: ScanResult, files: list[SourceFile]) -> str:
+    kinds = Counter(symbol.kind for file in files for symbol in file.symbols)
+    broken = [file for file in files if file.error]
     rows = [
-        ("Files", len(modules)),
-        ("Lines", sum(module.line_count for module in modules)),
+        ("Files", len(files)),
+        ("Lines", sum(file.line_count for file in files)),
         ("Classes", kinds["class"]),
         ("Functions", kinds["function"]),
         ("Methods", kinds["method"]),
-        ("Imports", sum(len(module.imports) for module in modules)),
-        ("Calls", sum(len(module.calls) for module in modules)),
+        ("Imports", sum(len(file.imports) for file in files)),
+        ("Calls", sum(len(file.calls) for file in files)),
     ]
 
     lines = [f"repo-xray - {scan_result.root}", ""]
@@ -39,7 +40,7 @@ def summarize(scan_result: ScanResult, modules: list[ModuleInfo]) -> str:
 
     if broken:
         lines += ["", f"Could not parse {len(broken)} file(s):"]
-        lines += [f"  {module.path}: {module.error}" for module in broken]
+        lines += [f"  {file.path}: {file.error}" for file in broken]
     if scan_result.skipped_large:
         lines += ["", f"Skipped {len(scan_result.skipped_large)} file(s) over the size limit:"]
         lines += [f"  {path.as_posix()}" for path in scan_result.skipped_large]
@@ -59,11 +60,11 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     scan_result = scan(root, config)
-    modules = analyze_project(scan_result)
-    print(summarize(scan_result, modules))
+    files = analyze_project(scan_result)
+    print(summarize(scan_result, files))
 
     if args.json:
-        data = analysis_to_dict(scan_result, modules)
+        data = analysis_to_dict(scan_result, files)
         args.json.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
         print(f"\nAnalysis written to {args.json}")
     return 0

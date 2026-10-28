@@ -41,8 +41,8 @@ Plus one detail page per feature. Each diagram shows at most ~9 elements; anythi
 | --- | --- | --- | --- |
 | #12 | Rewrite roadmap and record the new direction in ADRs | `docs/replan` | ✅ |
 | #13 | Move to a `repo_xray` package with a `tests` folder | `refactor/package-layout` | ✅ |
-| #14 | Language-neutral model: files, symbols, imports, calls, endpoints, HTTP calls | `refactor/language-model` | ⬜ |
-| #15 | Scanner: all supported languages, skip generated folders (`target`, `coverage`, `.angular`…) | `refactor/language-model` | ⬜ |
+| #14 | Language-neutral model: files, symbols, imports, calls, endpoints, HTTP calls | `refactor/language-model` | ✅ |
+| #15 | Scanner: all supported languages, skip generated folders (`target`, `coverage`, `.angular`…) | `refactor/language-model` | ✅ |
 
 ## Sprint 3 · Java and TypeScript
 
