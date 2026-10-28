@@ -18,6 +18,7 @@ class Symbol:
     docstring: str | None  # docstring, Javadoc or JSDoc
     decorators: list[str] = field(default_factory=list)  # decorators or annotations, as written
     bases: list[str] = field(default_factory=list)  # superclasses and implemented interfaces
+    fields: dict[str, str] = field(default_factory=dict)  # attribute name -> declared type, for types
     is_async: bool = False
 
 
