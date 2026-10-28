@@ -13,7 +13,7 @@ from repo_xray.analysis.paths import is_inside, is_test_path
 from repo_xray.analysis.stack import App, Service, Stack
 from repo_xray.model import SourceFile
 from repo_xray.render import theme as t
-from repo_xray.render.svg import Svg, fit_text, text_width
+from repo_xray.render.svg import Svg, fit_text, text_width, wrap_text
 
 PAD = 40
 APP_WIDTH = 270
@@ -156,7 +156,7 @@ class _OverviewRenderer:
             gaps.append(max(MIN_COLUMN_GAP, widest + 44))
 
         lanes = self._lane_edges(layout)
-        header_bottom = PAD + 66
+        header_bottom = PAD + 66 + 20 * len(self._description_lines(self._estimated_width(layout, gaps)))
         has_users = bool(layout.columns)
         content_top = header_bottom + (USERS_SPACE if has_users else 24) + (len(lanes) * LANE_STEP if lanes else 0)
         heights = [sum(layout.boxes[k].height for k in column) + ROW_GAP * (len(column) - 1)
@@ -182,6 +182,10 @@ class _OverviewRenderer:
         height = content_top + content_height + 88
         return width, height, content_top
 
+    def _estimated_width(self, layout: _Layout, gaps: list[float]) -> float:
+        columns = sum(max(layout.boxes[k].width for k in column) for column in layout.columns)
+        return max(PAD * 2 + columns + sum(gaps), MIN_WIDTH)
+
     def _lane_edges(self, layout: _Layout) -> list[_Edge]:
         return [e for e in layout.edges if layout.boxes[e.target].column - layout.boxes[e.source].column > 1]
 
@@ -203,6 +207,13 @@ class _OverviewRenderer:
             facts.append(i18n.count(lang, len(self.stack.services), "service"))
         facts.append(i18n.count(lang, lines, "lines_of_code", _compact(lines)))
         svg.text(PAD, PAD + 50, i18n.text(lang, "overview") + "  ·  " + "  ·  ".join(facts), t.BODY, th.text_muted)
+        for index, line in enumerate(self._description_lines(width)):
+            svg.text(PAD, PAD + 78 + index * 20, line, t.BODY, th.text)
+
+    def _description_lines(self, width: float) -> list[str]:
+        if not self.stack.description:
+            return []
+        return wrap_text(self.stack.description, max(width - PAD * 2, 400), t.BODY, max_lines=2)
 
     def _draw_users(self, svg: Svg, layout: _Layout, clients: list[str]) -> None:
         th = self.theme
@@ -317,8 +328,10 @@ class _OverviewRenderer:
         chips_bottom = chip_y + 24 if app.technologies else y + 62
 
         stats_y = chips_bottom + 24
-        if svg is not None:
-            svg.text(x + 16, stats_y, fit_text(self._app_stats(app), inner, t.SMALL), t.SMALL, th.text_muted)
+        for index, line in enumerate(self._stats_lines(app, inner)):
+            if svg is not None:
+                svg.text(x + 16, stats_y, fit_text(line, inner, t.SMALL), t.SMALL, th.text_muted)
+            stats_y += 18 if index == 0 and len(self._stats_lines(app, inner)) > 1 else 0
 
         if not app.deployments:
             return stats_y + 18 - y
@@ -330,11 +343,15 @@ class _OverviewRenderer:
                      t.SMALL, th.text_muted)
         return separator + 38 - y
 
-    def _app_stats(self, app: App) -> str:
+    def _stats_lines(self, app: App, width: float) -> list[str]:
+        """Files, lines and endpoints on one line, or two when the language makes them longer."""
         parts = [i18n.count(self.lang, app.files, "file"), i18n.count(self.lang, app.lines, "lines", _compact(app.lines))]
         if self.endpoints[app.name]:
             parts.append(i18n.count(self.lang, self.endpoints[app.name], "endpoint"))
-        return "  ·  ".join(parts)
+        line = "  ·  ".join(parts)
+        if text_width(line, t.SMALL) <= width or len(parts) < 3:
+            return [line]
+        return ["  ·  ".join(parts[:2]), parts[2]]
 
     def _draw_service(self, svg: Svg, service: Service, box: _Box) -> None:
         th = self.theme
