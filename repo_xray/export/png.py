@@ -4,8 +4,9 @@ Qt renders them (ADR-0006), so no extra native library such as Cairo is needed.
 """
 
 from PySide6.QtCore import QBuffer, QByteArray, QIODevice
-from PySide6.QtGui import QColor, QGuiApplication, QImage, QPainter
+from PySide6.QtGui import QColor, QImage, QPainter
 from PySide6.QtSvg import QSvgRenderer
+from PySide6.QtWidgets import QApplication
 
 from repo_xray.export.markdown import FOLDER, Bundle
 
@@ -45,6 +46,7 @@ def add_png_copies(bundle: Bundle) -> None:
 
 
 def _ensure_application() -> None:
-    # Qt needs an application object to load fonts; the desktop app already has one.
-    if QGuiApplication.instance() is None:
-        _ensure_application.app = QGuiApplication([])
+    # Qt needs an application object to load fonts; the desktop app already has one. A full
+    # QApplication (not a QGuiApplication) keeps widgets possible later in the same process.
+    if QApplication.instance() is None:
+        _ensure_application.app = QApplication([])

@@ -31,6 +31,11 @@ def build_documents(analysis: Analysis) -> Bundle:
     return _Writer(analysis).write()
 
 
+def feature_page(feature_key: str) -> str:
+    """Path of a feature's page inside the bundle."""
+    return f"{FOLDER}/features/{_slug(feature_key)}.md"
+
+
 class _Writer:
     def __init__(self, analysis: Analysis):
         self.a = analysis
@@ -45,7 +50,7 @@ class _Writer:
             self._diagram(f"flow-{flow.key}", lambda theme, flow=flow: render_flow(flow, stack, theme))
         self.bundle[f"{FOLDER}/README.md"] = self._index()
         for feature in self.a.features.features:
-            self.bundle[f"{FOLDER}/features/{self.slugs[feature.key]}.md"] = self._feature_page(feature)
+            self.bundle[feature_page(feature.key)] = self._feature_page(feature)
         self.bundle[f"{FOLDER}/analysis.json"] = self._analysis_json()
         return self.bundle
 

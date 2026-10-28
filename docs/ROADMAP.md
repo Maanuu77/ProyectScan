@@ -101,9 +101,9 @@ Plus one detail page per feature. Each diagram shows at most ~9 elements; anythi
 
 | # | Issue | Branch | Status |
 | --- | --- | --- | --- |
-| #39 | Main window: choose a folder, analyse in the background with progress | `feature/frontend-desktop-app` | ⬜ |
-| #40 | Preview of the diagrams and pages, light and dark | `feature/frontend-desktop-app` | ⬜ |
-| #41 | Export the zip from the app | `feature/frontend-desktop-app` | ⬜ |
+| #39 | Main window: choose a folder, analyse in the background with progress | `feature/frontend-desktop-app` | ✅ |
+| #40 | Preview of the diagrams and pages, light and dark | `feature/frontend-desktop-app` | ✅ |
+| #41 | Export the zip from the app | `feature/frontend-desktop-app` | ✅ |
 | #42 | AI setup assistant: detect Ollama, guide its installation, download the model with progress | `feature/frontend-ai-setup` | ⬜ |
 
 ## Sprint 10 · Packaging and release

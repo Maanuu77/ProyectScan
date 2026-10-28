@@ -14,3 +14,4 @@ include = ["repo_xray*"]
 testpaths = ["tests"]
 pythonpath = ["."]
 addopts = "-q"
+qt_api = "pyside6"
