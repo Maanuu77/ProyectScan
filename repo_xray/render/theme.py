@@ -169,3 +169,20 @@ def icon(svg: Svg, kind: str, x: float, y: float, size: float, color: str) -> No
     else:  # library, platform, external and anything unknown
         svg.path(d("M 12 2.5 L 21 7.2 L 21 16.8 L 12 21.5 L 3 16.8 L 3 7.2 Z"), **stroke)
         svg.path(d("M 3 7.2 L 12 12 L 21 7.2 M 12 12 L 12 21.5"), **stroke)
+
+
+# Layers reuse accents that already read as their meaning.
+LAYER_ACCENTS = {
+    "entry": "web",
+    "application": "api",
+    "domain": "database",
+    "data": "desktop",
+    "integration": "neutral",
+}
+
+# Distinct colours for features, in the order they are assigned; hues that layers
+# do not use come first.
+FEATURE_PALETTE = {
+    "light": ["#0969da", "#bc4c00", "#bf3989", "#1b7c83", "#cf222e", "#1a7f37", "#9a6700", "#8250df"],
+    "dark": ["#4493f8", "#f0883e", "#db61a2", "#39c5cf", "#f85149", "#3fb950", "#d29922", "#ab7df8"],
+}
