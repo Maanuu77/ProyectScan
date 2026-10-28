@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <title>repo-xray</title>
+  <rect x="8" y="8" width="240" height="240" rx="56" fill="#0d1117"/>
+  <rect x="8" y="8" width="240" height="240" rx="56" fill="none" stroke="#3d444d" stroke-width="4"/>
+  <path d="M 104 84 L 132 84 Q 140 84 140 92 L 140 112" fill="none" stroke="#656c76" stroke-width="6" stroke-linecap="round"/>
+  <path d="M 132 132 L 160 132 Q 168 132 168 140 L 168 160" fill="none" stroke="#656c76" stroke-width="6" stroke-linecap="round"/>
+  <rect x="48" y="62" width="100" height="40" rx="20" fill="#ab7df8"/>
+  <rect x="78" y="110" width="100" height="40" rx="20" fill="#3fb950"/>
+  <rect x="108" y="158" width="100" height="40" rx="20" fill="#4493f8"/>
+</svg>
