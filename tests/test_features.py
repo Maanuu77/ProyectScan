@@ -100,3 +100,13 @@ def test_small_projects_are_a_single_feature(tmp_path):
     (feature,) = features_of(tmp_path).features
 
     assert (feature.key, feature.name, len(feature.files)) == ("tool/tool", "Tool", 1)
+
+
+def test_container_is_found_when_it_holds_every_file(tmp_path):
+    write(tmp_path, {
+        "web/package.json": '{"dependencies": {"@angular/core": "^19.0.0"}}',
+        "web/src/app/features/orders/orders-page.ts": "@Component({ selector: 'x' })\nexport class OrdersPage {}\n",
+        "web/src/app/features/home/home-page.ts": "@Component({ selector: 'y' })\nexport class HomePage {}\n",
+    })
+
+    assert set(by_key(features_of(tmp_path))) == {"web/orders", "web/home"}
