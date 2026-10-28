@@ -1,6 +1,6 @@
 # ADR-0003: Local LLM through Ollama
 
-- Status: accepted
+- Status: superseded by ADR-0011
 - Date: 2026-10-28
 
 ## Context
