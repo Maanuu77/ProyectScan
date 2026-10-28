@@ -126,3 +126,7 @@ El porqué de cada decisión está recogido en [Architecture Decision Records](d
 ```
 
 El código está en el paquete `repo_xray`: `parsers/` (un módulo por lenguaje), `analysis/` (stack, capas, funcionalidades, llamadas, enlaces, flujos, textos), `render/` (los tres diagramas), `export/` (Markdown, PNG y zip) y `app/` (la aplicación de escritorio). El plan y su historia están en [docs/ROADMAP.md](docs/ROADMAP.md) y los cambios de cada versión en [CHANGELOG.md](CHANGELOG.md).
+
+## Licencia
+
+[MIT](LICENSE) © 2026 Manuel Martínez
