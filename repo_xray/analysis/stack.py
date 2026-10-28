@@ -99,7 +99,8 @@ class _Detector:
             if path.name.lower() in PROJECT_MANIFESTS:
                 candidates.setdefault(str(path.parent), []).append(manifest)
 
-        for folder in sorted(candidates, key=lambda f: (f.count("/"), f)):
+        # The root goes last: a workspace manifest there is only an app when nothing deeper is.
+        for folder in sorted(candidates, key=lambda f: (f == ".", f.count("/"), f)):
             techs, versions = [], {}
             for manifest in candidates[folder]:
                 found, found_versions = self._read_dependencies(manifest)
