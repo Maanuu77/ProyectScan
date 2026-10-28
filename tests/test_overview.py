@@ -37,7 +37,7 @@ def test_description_summarises_the_stack(shop):
 
     description = ElementTree.fromstring(render_overview(stack, files, LIGHT)).find(f"{SVG}desc").text
 
-    assert description.startswith(f"{stack.name} is made of api (api, Spring Boot 3.4, Java 21)")
+    assert description.startswith(f"{stack.name} is made of api (API, Spring Boot 3.4, Java 21)")
     assert "PostgreSQL" in description
 
 
@@ -62,7 +62,7 @@ def test_single_app_without_services_is_centred(tmp_path):
 
     root = ElementTree.fromstring(svg)
     assert root.attrib["width"] == "640"
-    assert "Architecture overview  ·  1 app  ·  1 lines of code" in texts(svg)
+    assert "Architecture overview  ·  1 app  ·  1 line of code" in texts(svg)
     card = root.findall(f"{SVG}rect")[1]  # [0] is the background
     left = float(card.attrib["x"])
     right = 640 - left - float(card.attrib["width"])
@@ -88,3 +88,14 @@ def test_long_names_never_overflow_their_card():
         weight = int(element.attrib.get("font-weight", 400))
         end = x if element.attrib.get("text-anchor") == "end" else x + text_width(element.text, size, weight)
         assert end <= width, element.text
+
+
+def test_labels_follow_the_language(shop):
+    stack, files = analyse(shop)
+
+    labels = texts(render_overview(stack, files, LIGHT, lang="es"))
+
+    for expected in ["Usuarios", "APLICACIÓN WEB", "Base de datos", "lee y escribe", "inicia sesión",
+                     "verifica usuarios", "Generado con repo-xray"]:
+        assert expected in labels, expected
+    assert any(label.startswith("Visión general de la arquitectura  ·  2 aplicaciones") for label in labels)

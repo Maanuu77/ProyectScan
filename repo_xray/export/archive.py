@@ -7,6 +7,50 @@ from repo_xray.export.markdown import FOLDER, Bundle, build_documents
 from repo_xray.export.png import add_png_copies
 from repo_xray.pipeline import Analysis
 
+HOW_TO_USE_ES = """\
+# Cómo usar estos archivos
+
+Este zip lo ha generado repo-xray a partir del código fuente de **{name}**.
+
+## Primeros pasos
+
+1. Copia la carpeta `architecture` en tu repositorio, dentro de una carpeta `docs`:
+   `docs/architecture/`.
+2. Abre `README-snippet.md`, copia su contenido y pégalo en el `README.md` de tu proyecto,
+   donde quieras que aparezca la arquitectura.
+3. Haz commit y push. GitHub mostrará los diagramas en modo claro u oscuro,
+   según el tema de cada lector.
+
+## Qué hay dentro
+
+| Ruta | Qué es |
+| --- | --- |
+| `architecture/README.md` | La página principal: resumen, visión general, funcionalidades y flujos clave |
+| `architecture/features/` | Una página por funcionalidad, con sus endpoints, conexiones y flujos |
+| `architecture/images/` | Todos los diagramas en SVG, en versión clara y oscura |
+| `architecture/png/` | Los mismos diagramas en PNG, para presentaciones, publicaciones o documentos |
+| `architecture/analysis.json` | El análisis en bruto, por si quieres construir otra cosa con él |
+
+## Mantenerlo al día
+
+Los documentos describen el código tal y como estaba al generarlos. Vuelve a pasar
+repo-xray después de cambios grandes y sustituye la carpeta `architecture`.
+"""
+
+SNIPPET_ES = """\
+## Arquitectura
+
+{summary}
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/architecture/images/overview-dark.svg">
+  <img alt="Visión general de la arquitectura de {name}" src="docs/architecture/images/overview-light.svg">
+</picture>
+
+Más detalle, funcionalidad a funcionalidad y petición a petición, en
+[docs/architecture](docs/architecture/README.md).
+"""
+
 HOW_TO_USE = """\
 # How to use these files
 
@@ -59,8 +103,9 @@ def build_bundle(analysis: Analysis, png: bool = True) -> Bundle:
     name = analysis.stack.name
     index = str(bundle[f"{FOLDER}/README.md"])
     summary = index.split("\n\n")[1] if index.count("\n\n") > 1 else ""
-    bundle["HOW-TO-USE.md"] = HOW_TO_USE.format(name=name)
-    bundle["README-snippet.md"] = SNIPPET.format(name=name, summary=summary)
+    spanish = analysis.language == "es"
+    bundle["HOW-TO-USE.md"] = (HOW_TO_USE_ES if spanish else HOW_TO_USE).format(name=name)
+    bundle["README-snippet.md"] = (SNIPPET_ES if spanish else SNIPPET).format(name=name, summary=summary)
     return bundle
 
 

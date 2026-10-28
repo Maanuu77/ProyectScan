@@ -10,8 +10,8 @@ between both sides reads without a web of crossing lines.
 import posixpath
 import re
 
+from repo_xray import i18n
 from repo_xray.analysis.features import Feature, FeatureMap
-from repo_xray.analysis.layers import LAYERS
 from repo_xray.analysis.stack import App, Stack
 from repo_xray.render import theme as t
 from repo_xray.render.svg import Svg, fit_text, text_width, wrap_text
@@ -23,20 +23,20 @@ CARD_GAP = 20
 MAX_CARDS = 9
 WIDTH = PAD * 2 + COLUMNS * CARD_WIDTH + (COLUMNS - 1) * CARD_GAP
 CLIENT_KINDS = ("web", "mobile", "desktop")
-KIND_NAMES = {"web": "Web app", "api": "API", "mobile": "Mobile app", "desktop": "Desktop app", "library": "Application"}
 DRAWN_LAYERS = ("entry", "application", "domain", "data", "integration")
 PAGE_SUFFIXES = re.compile(r"[-_.]?(page|component|view|screen|container)$", re.IGNORECASE)
 
 
-def render_features(stack: Stack, feature_map: FeatureMap, theme: t.Theme) -> str:
-    return _FeatureRenderer(stack, feature_map, theme).render()
+def render_features(stack: Stack, feature_map: FeatureMap, theme: t.Theme, lang: str = i18n.DEFAULT) -> str:
+    return _FeatureRenderer(stack, feature_map, theme, lang).render()
 
 
 class _FeatureRenderer:
-    def __init__(self, stack: Stack, feature_map: FeatureMap, theme: t.Theme):
+    def __init__(self, stack: Stack, feature_map: FeatureMap, theme: t.Theme, lang: str):
         self.stack = stack
         self.map = feature_map
         self.theme = theme
+        self.lang = lang
         palette = t.FEATURE_PALETTE[theme.name]
         apps = [a for a in stack.apps if feature_map.of_app(a.name)]
         self.apps = sorted(apps, key=lambda a: a.kind not in CLIENT_KINDS)
@@ -78,7 +78,7 @@ class _FeatureRenderer:
         t.icon(svg, app.kind, PAD + 7, y + 7, 18, accent.strong)
         svg.text(PAD + 44, y + 22, app.name, t.HEADING, th.text, weight=700)
         total = len(self.map.of_app(app.name))
-        detail = f"{KIND_NAMES.get(app.kind, 'App')}  ·  {total} feature{'s' if total != 1 else ''}"
+        detail = f"{i18n.text(self.lang, f'kind_title.{app.kind}')}  ·  {i18n.count(self.lang, total, 'feature')}"
         svg.text(PAD + 44 + text_width(app.name, t.HEADING, 700) + 12, y + 22, detail, t.BODY, th.text_muted)
         y += 56
 
@@ -100,7 +100,7 @@ class _FeatureRenderer:
             parts = sorted(shared, key=lambda s: -s.files)
             names = "  ·  ".join(f"{s.name} ({s.files})" for s in parts if not s.name.startswith("("))
             if names:
-                svg.text(PAD, y + 26, fit_text("Shared code:  " + names, WIDTH - PAD * 2, t.SMALL),
+                svg.text(PAD, y + 26, fit_text(i18n.text(self.lang, "shared_code") + "  " + names, WIDTH - PAD * 2, t.SMALL),
                          t.SMALL, th.text_subtle)
         return y + 46
 
@@ -157,13 +157,13 @@ class _FeatureRenderer:
         """(text, dot colour, row label) for what the feature uses."""
         if feature.calls:
             targets = sorted(feature.calls, key=lambda k: -feature.calls[k])
-            chips = [(self.names[k], self.colour.get(k), "CALLS") for k in targets]
+            chips = [(self.names[k], self.colour.get(k), i18n.text(self.lang, "chip.calls")) for k in targets]
         elif feature.depends_on:
             targets = sorted(feature.depends_on, key=lambda k: -feature.depends_on[k])
-            chips = [(self.names[k], self.colour.get(k), "USES") for k in targets]
+            chips = [(self.names[k], self.colour.get(k), i18n.text(self.lang, "chip.uses")) for k in targets]
         else:
             chips = []
-        label = chips[0][2] if chips else "USES"
+        label = chips[0][2] if chips else i18n.text(self.lang, "chip.uses")
         chips += [(service, None, label) for service in feature.services]
         return chips
 
@@ -189,27 +189,27 @@ class _FeatureRenderer:
         hidden = sorted(self.map.of_app(app.name), key=lambda f: -len(f.files))[MAX_CARDS - 1:]
         svg.rect(x, y, CARD_WIDTH, height, 12, fill=th.surface_muted, stroke=th.border, stroke_width=1,
                  stroke_dasharray="4 4")
-        svg.text(x + 18, y + 32, f"+ {len(hidden)} more features", 16, th.text_muted, weight=700)
+        svg.text(x + 18, y + 32, i18n.text(self.lang, "more_features", n=len(hidden)), 16, th.text_muted, weight=700)
         names = ", ".join(f.name for f in hidden)
         for index, line in enumerate(wrap_text(names, CARD_WIDTH - 36, t.BODY, max_lines=3)):
             svg.text(x + 18, y + 56 + index * 19, line, t.BODY, th.text_subtle)
 
     def _stat(self, feature: Feature) -> str:
         if feature.endpoints:
-            return f"{len(feature.endpoints)} endpoint{'s' if len(feature.endpoints) != 1 else ''}"
-        return f"{len(feature.files)} file{'s' if len(feature.files) != 1 else ''}"
+            return i18n.count(self.lang, len(feature.endpoints), "endpoint")
+        return i18n.count(self.lang, len(feature.files), "file")
 
-    @staticmethod
-    def _fallback_description(feature: Feature) -> str:
+    def _fallback_description(self, feature: Feature) -> str:
         screens = []
         for path in feature.files:
             stem = posixpath.basename(path).split(".")[0]
             if PAGE_SUFFIXES.search(stem):
                 screens.append(PAGE_SUFFIXES.sub("", stem).replace("-", " ").replace("_", " "))
         if screens:
-            return "Screens: " + ", ".join(dict.fromkeys(screens))
-        layers = [LAYERS[layer].lower() for layer in DRAWN_LAYERS if feature.layers.get(layer)]
-        return f"{len(feature.files)} files across " + ", ".join(layers) if layers else f"{len(feature.files)} files"
+            return i18n.text(self.lang, "fallback.screens", names=", ".join(dict.fromkeys(screens)))
+        files = i18n.count(self.lang, len(feature.files), "file")
+        layers = [i18n.text(self.lang, f"layer.{layer}").lower() for layer in DRAWN_LAYERS if feature.layers.get(layer)]
+        return i18n.text(self.lang, "fallback.layers", files=files, layers=", ".join(layers)) if layers else files
 
     # Header and legend
 
@@ -217,9 +217,9 @@ class _FeatureRenderer:
         th = self.theme
         svg.text(PAD, PAD + 24, self.stack.name, t.TITLE, th.text, weight=700)
         total = len(self.map.features)
-        subtitle = f"Features  ·  What does it do?  ·  {total} feature{'s' if total != 1 else ''}"
+        subtitle = f"{i18n.text(self.lang, 'features.subtitle')}  ·  {i18n.count(self.lang, total, 'feature')}"
         if len(self.apps) > 1:
-            subtitle += f" in {len(self.apps)} apps"
+            subtitle += " " + i18n.text(self.lang, "in_apps", n=len(self.apps))
         svg.text(PAD, PAD + 50, subtitle, t.BODY, th.text_muted)
 
     def _legend(self, svg: Svg, y: float) -> None:
@@ -228,13 +228,14 @@ class _FeatureRenderer:
         x = PAD
         for layer in DRAWN_LAYERS:
             svg.rect(x, y - 9, 14, 6, 3, fill=th.accent(t.LAYER_ACCENTS[layer]).strong, fill_opacity=0.55)
-            svg.text(x + 20, y, LAYERS[layer], t.SMALL, th.text_muted)
-            x += 20 + text_width(LAYERS[layer], t.SMALL) + 22
-        svg.text(WIDTH - PAD, y, "Generated with repo-xray", t.SMALL, th.text_subtle, anchor="end")
+            label = i18n.text(self.lang, f"layer.{layer}")
+            svg.text(x + 20, y, label, t.SMALL, th.text_muted)
+            x += 20 + text_width(label, t.SMALL) + 22
+        svg.text(WIDTH - PAD, y, i18n.text(self.lang, "generated"), t.SMALL, th.text_subtle, anchor="end")
 
     def _description(self) -> str:
         parts = []
         for app in self.apps:
             names = ", ".join(f.name for f in self.map.of_app(app.name))
             parts.append(f"{app.name}: {names}")
-        return f"Features of {self.stack.name}. " + "; ".join(parts) + "."
+        return i18n.text(self.lang, "features.description", name=self.stack.name) + " " + "; ".join(parts) + "."

@@ -8,6 +8,7 @@ along a lane above the cards so it never crosses one.
 
 from dataclasses import dataclass, field
 
+from repo_xray import i18n
 from repo_xray.analysis.paths import is_inside, is_test_path
 from repo_xray.analysis.stack import App, Service, Stack
 from repo_xray.model import SourceFile
@@ -24,16 +25,8 @@ LANE_STEP = 14
 MIN_WIDTH = 640
 
 CLIENT_KINDS = ("web", "mobile", "desktop")
-KIND_LABELS = {"web": "WEB APP", "api": "API", "mobile": "MOBILE APP", "desktop": "DESKTOP APP",
-               "library": "APPLICATION"}
-CATEGORY_LABELS = {"database": "Database", "auth": "Authentication", "storage": "File storage",
-                   "cache": "Cache", "messaging": "Messaging", "search": "Search",
-                   "platform": "Platform", "external": "External API"}
-CATEGORY_ORDER = list(CATEGORY_LABELS)
-SERVICE_VERBS = {"database": "reads & writes", "auth": "verifies users", "storage": "stores files",
-                 "cache": "caches", "messaging": "publishes events", "search": "indexes",
-                 "platform": "uses", "external": "calls"}
-CLIENT_VERBS = {**SERVICE_VERBS, "auth": "signs in", "storage": "uploads files"}
+CATEGORY_ORDER = ["database", "auth", "storage", "cache", "messaging", "search", "platform", "external"]
+CLIENT_VERBS = ("auth", "storage")  # what a frontend does with these differs from a backend
 
 
 @dataclass
@@ -76,14 +69,15 @@ class _Layout:
     edges: list[_Edge] = field(default_factory=list)
 
 
-def render_overview(stack: Stack, files: list[SourceFile], theme: t.Theme) -> str:
-    return _OverviewRenderer(stack, files, theme).render()
+def render_overview(stack: Stack, files: list[SourceFile], theme: t.Theme, lang: str = i18n.DEFAULT) -> str:
+    return _OverviewRenderer(stack, files, theme, lang).render()
 
 
 class _OverviewRenderer:
-    def __init__(self, stack: Stack, files: list[SourceFile], theme: t.Theme):
+    def __init__(self, stack: Stack, files: list[SourceFile], theme: t.Theme, lang: str):
         self.stack = stack
         self.theme = theme
+        self.lang = lang
         self.apps = {app.name: app for app in stack.apps}
         self.services = {service.name: service for service in stack.services}
         self.http_calls = {app.name: _count(files, app, "http_calls") for app in stack.apps}
@@ -96,7 +90,7 @@ class _OverviewRenderer:
         self._edges(layout)
         width, height, content_top = self._place(layout)
         svg = Svg(width, height, self.theme.background,
-                  title=f"{self.stack.name} architecture overview",
+                  title=f"{self.stack.name}: {i18n.text(self.lang, 'overview')}",
                   description=self._description())
         self._draw_header(svg, width)
         clients = layout.columns[0] if layout.columns else []
@@ -136,13 +130,18 @@ class _OverviewRenderer:
             for api in apis:
                 calls = self.http_calls[client.name]
                 if calls or len(apis) == 1:
-                    label = f"REST · {calls} calls" if calls else "HTTP"
+                    label = f"REST · {i18n.count(self.lang, calls, 'call')}" if calls else "HTTP"
                     layout.edges.append(_Edge(client.name, api.name, label))
         for service in self.stack.services:
             for user in service.used_by:
                 if user in self.apps:
-                    verbs = CLIENT_VERBS if self.apps[user].kind in CLIENT_KINDS else SERVICE_VERBS
-                    layout.edges.append(_Edge(user, service.name, verbs.get(service.category, "uses")))
+                    layout.edges.append(_Edge(user, service.name, self._verb(service, self.apps[user])))
+
+    def _verb(self, service: Service, user: App) -> str:
+        category = service.category if f"verb.{service.category}" in i18n.TEXTS else "platform"
+        if user.kind in CLIENT_KINDS and category in CLIENT_VERBS:
+            return i18n.text(self.lang, f"verb.client.{category}")
+        return i18n.text(self.lang, f"verb.{category}")
 
     def _place(self, layout: _Layout) -> tuple[float, float, float]:
         for key, box in layout.boxes.items():
@@ -198,11 +197,12 @@ class _OverviewRenderer:
         th = self.theme
         svg.text(PAD, PAD + 24, self.stack.name, t.TITLE, th.text, weight=700)
         lines = sum(a.lines for a in self.stack.apps)
-        facts = [_plural(len(self.stack.apps), "app")]
+        lang = self.lang
+        facts = [i18n.count(lang, len(self.stack.apps), "app")]
         if self.stack.services:
-            facts.append(_plural(len(self.stack.services), "service"))
-        facts.append(f"{_compact(lines)} lines of code")
-        svg.text(PAD, PAD + 50, "Architecture overview  ·  " + "  ·  ".join(facts), t.BODY, th.text_muted)
+            facts.append(i18n.count(lang, len(self.stack.services), "service"))
+        facts.append(i18n.count(lang, lines, "lines_of_code", _compact(lines)))
+        svg.text(PAD, PAD + 50, i18n.text(lang, "overview") + "  ·  " + "  ·  ".join(facts), t.BODY, th.text_muted)
 
     def _draw_users(self, svg: Svg, layout: _Layout, clients: list[str]) -> None:
         th = self.theme
@@ -211,7 +211,7 @@ class _OverviewRenderer:
         radius = 22
         svg.circle(cx, top + radius, radius, fill=th.surface_muted, stroke=th.border, stroke_width=1)
         t.icon(svg, "users", cx - 11, top + radius - 11, 22, th.text_muted)
-        svg.text(cx + radius + 10, top + radius + 5, "Users", t.BODY, th.text_muted, weight=600)
+        svg.text(cx + radius + 10, top + radius + 5, i18n.text(self.lang, "users"), t.BODY, th.text_muted, weight=600)
 
         start = top + radius * 2 + 6
         if len(clients) == 1:
@@ -300,7 +300,7 @@ class _OverviewRenderer:
             svg.rect(x, y, w, box.height, 12, fill=th.surface, stroke=th.border, stroke_width=1)
             svg.rect(x + 16, y + 16, 40, 40, 10, fill=accent.soft)
             t.icon(svg, app.kind, x + 25, y + 25, 22, accent.strong)
-            svg.text(x + 68, y + 31, KIND_LABELS.get(app.kind, "APP"), t.LABEL, accent.strong, weight=700,
+            svg.text(x + 68, y + 31, i18n.text(self.lang, f"kind.{app.kind}"), t.LABEL, accent.strong, weight=700,
                      letter_spacing=0.8)
             svg.text(x + 68, y + 51, fit_text(app.name, w - 84, t.HEADING, 700), t.HEADING, th.text, weight=700)
 
@@ -331,9 +331,9 @@ class _OverviewRenderer:
         return separator + 38 - y
 
     def _app_stats(self, app: App) -> str:
-        parts = [_plural(app.files, "file"), f"{_compact(app.lines)} lines"]
+        parts = [i18n.count(self.lang, app.files, "file"), i18n.count(self.lang, app.lines, "lines", _compact(app.lines))]
         if self.endpoints[app.name]:
-            parts.append(_plural(self.endpoints[app.name], "endpoint"))
+            parts.append(i18n.count(self.lang, self.endpoints[app.name], "endpoint"))
         return "  ·  ".join(parts)
 
     def _draw_service(self, svg: Svg, service: Service, box: _Box) -> None:
@@ -344,7 +344,8 @@ class _OverviewRenderer:
         svg.rect(x + 14, y + 15, 40, 40, 10, fill=accent.soft)
         t.icon(svg, service.category, x + 23, y + 24, 22, accent.strong)
         svg.text(x + 66, y + 32, fit_text(service.name, w - 80, 15, 700), 15, th.text, weight=700)
-        category = CATEGORY_LABELS.get(service.category, "Service")
+        key = f"category.{service.category}"
+        category = i18n.text(self.lang, key if key in i18n.TEXTS else "category.other")
         svg.text(x + 66, y + 51, fit_text(category, w - 80, t.SMALL), t.SMALL, th.text_muted)
         if service.details:
             details = "  ·  ".join(service.details)
@@ -356,13 +357,14 @@ class _OverviewRenderer:
         svg.line(PAD, y - 26, width - PAD, y - 26, stroke=th.border, stroke_width=1)
         if self.stack.ci:
             svg.text(PAD, y, "CI  ·  " + ", ".join(self.stack.ci), t.SMALL, th.text_muted)
-        svg.text(width - PAD, y, "Generated with repo-xray", t.SMALL, th.text_subtle, anchor="end")
+        svg.text(width - PAD, y, i18n.text(self.lang, "generated"), t.SMALL, th.text_subtle, anchor="end")
 
     def _description(self) -> str:
-        apps = ", ".join(f"{a.name} ({KIND_LABELS.get(a.kind, 'app').lower()}, {', '.join(a.technologies[:2])})"
+        lang = self.lang
+        apps = ", ".join(f"{a.name} ({i18n.text(lang, f'kind_name.{a.kind}')}, {', '.join(a.technologies[:2])})"
                          for a in self.stack.apps)
-        services = ", ".join(s.name for s in self.stack.services) or "no external services"
-        return f"{self.stack.name} is made of {apps}. It uses {services}."
+        services = ", ".join(s.name for s in self.stack.services) or i18n.text(lang, "no_services")
+        return i18n.text(lang, "overview.description", name=self.stack.name, apps=apps, services=services)
 
 
 def _arrow_head(svg: Svg, x: float, y: float, dx: float, dy: float, color: str) -> None:
@@ -385,10 +387,6 @@ def _deployment_text(deployments: list[str]) -> str:
         return "Docker"
     text = " · ".join(targets)
     return f"{text}  (Docker)" if "Docker" in deployments else text
-
-
-def _plural(count: int, word: str) -> str:
-    return f"{count} {word}" + ("" if count == 1 else "s")
 
 
 def _compact(number: int) -> str:

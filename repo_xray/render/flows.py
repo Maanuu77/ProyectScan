@@ -6,6 +6,7 @@ staircase from the screen to the database. The step that crosses from
 the frontend to the backend is labelled with the real HTTP route.
 """
 
+from repo_xray import i18n
 from repo_xray.analysis.flows import Flow, Step
 from repo_xray.analysis.stack import Stack
 from repo_xray.render import theme as t
@@ -18,20 +19,19 @@ CARD_HEIGHT = 58
 ROW_GAP = 30
 HEADER_HEIGHT = 132
 LANE_HEADER = 56
-SERVICE_LANE = "Data & services"
-STEP_LABELS = {"entry": "ENTRY POINT", "application": "APPLICATION LOGIC", "domain": "DOMAIN",
-               "data": "DATA ACCESS", "integration": "INTEGRATION"}
+SERVICE_LANE = ""  # key of the data lane; no app has an empty name
 
 
-def render_flow(flow: Flow, stack: Stack, theme: t.Theme) -> str:
-    return _FlowRenderer(flow, stack, theme).render()
+def render_flow(flow: Flow, stack: Stack, theme: t.Theme, lang: str = i18n.DEFAULT) -> str:
+    return _FlowRenderer(flow, stack, theme, lang).render()
 
 
 class _FlowRenderer:
-    def __init__(self, flow: Flow, stack: Stack, theme: t.Theme):
+    def __init__(self, flow: Flow, stack: Stack, theme: t.Theme, lang: str):
         self.flow = flow
         self.stack = stack
         self.theme = theme
+        self.lang = lang
         self.apps = {a.name: a for a in stack.apps}
         self.categories = {s.name: s.category for s in stack.services}
         self.lanes: list[str] = []
@@ -50,7 +50,7 @@ class _FlowRenderer:
         rows_top = HEADER_HEIGHT + LANE_HEADER + 18
         heights = [self._card_height(step) for step in self.flow.steps]
         height = rows_top + sum(heights) + ROW_GAP * (len(heights) - 1) + 84
-        svg = Svg(width, height, self.theme.background, title=f"What happens when: {self.flow.title}",
+        svg = Svg(width, height, self.theme.background, title=i18n.text(self.lang, "flow.title", title=self.flow.title),
                   description=self._description())
         self._header(svg)
         lane_x = {lane: offset + i * (LANE_WIDTH + LANE_GAP) for i, lane in enumerate(self.lanes)}
@@ -75,7 +75,7 @@ class _FlowRenderer:
 
     def _header(self, svg: Svg) -> None:
         th = self.theme
-        svg.text(PAD, PAD + 18, "WHAT HAPPENS WHEN…", t.LABEL, th.text_muted, weight=700, letter_spacing=1)
+        svg.text(PAD, PAD + 18, i18n.text(self.lang, "flow.kicker"), t.LABEL, th.text_muted, weight=700, letter_spacing=1)
         svg.text(PAD, PAD + 48, fit_text(self.flow.title, 1000, 22, 700), 22, th.text, weight=700)
         svg.text(PAD, PAD + 72, f"{self.stack.name}  ·  {self.flow.method} {self.flow.route}", t.BODY,
                  th.text_muted)
@@ -90,7 +90,8 @@ class _FlowRenderer:
             svg.rect(x, top, LANE_WIDTH, height - top - 56, 14, fill=th.surface_muted, fill_opacity=0.6)
             svg.rect(x + 16, top + 14, 28, 28, 7, fill=accent.soft)
             t.icon(svg, kind, x + 21, top + 19, 18, accent.strong)
-            svg.text(x + 54, top + 33, fit_text(lane, LANE_WIDTH - 70, 15, 700), 15, th.text, weight=700)
+            name = lane if lane != SERVICE_LANE else i18n.text(self.lang, "flow.data_lane")
+            svg.text(x + 54, top + 33, fit_text(name, LANE_WIDTH - 70, 15, 700), 15, th.text, weight=700)
 
     def _name_lines(self, step: Step) -> list[str]:
         """The step's name on one line, or split before the method when it is too long."""
@@ -114,14 +115,15 @@ class _FlowRenderer:
             svg.rect(x, y, width, CARD_HEIGHT, 10, fill=th.surface, stroke=accent.strong, stroke_width=1.5)
             svg.rect(x + 12, y + 11, 36, 36, 9, fill=accent.soft)
             t.icon(svg, category, x + 19, y + 18, 22, accent.strong)
-            svg.text(x + 60, y + 25, "STORES THE RESULT", t.LABEL, accent.strong, weight=700, letter_spacing=0.6)
+            svg.text(x + 60, y + 25, i18n.text(self.lang, "flow.stores"), t.LABEL, accent.strong, weight=700, letter_spacing=0.6)
             svg.text(x + 60, y + 44, fit_text(step.name, width - 72, 15, 700), 15, th.text, weight=700)
             return
         accent = th.accent(t.LAYER_ACCENTS.get(step.layer, "neutral"))
         svg.rect(x, y, width, height, 10, fill=th.surface, stroke=th.border, stroke_width=1)
         svg.circle(x + 26, y + height / 2, 12, fill=accent.soft)
         svg.text(x + 26, y + height / 2 + 4.5, str(number), t.SMALL, accent.strong, weight=700, anchor="middle")
-        label = STEP_LABELS.get(step.layer, "CODE")
+        key = f"step.{step.layer}"
+        label = i18n.text(self.lang, key if key in i18n.TEXTS else "step.other")
         svg.text(x + 48, y + 24, label, t.LABEL, accent.strong, weight=700, letter_spacing=0.6)
         for index, line in enumerate(self._name_lines(step)):
             svg.text(x + 48, y + 43 + index * 18, line, 14, th.text, weight=600)
@@ -158,9 +160,9 @@ class _FlowRenderer:
 
     def _footer(self, svg: Svg, width: float, height: float) -> None:
         th = self.theme
-        svg.text(PAD, height - PAD + 8, "Main path only: helpers, mappers and validations are left out.",
+        svg.text(PAD, height - PAD + 8, i18n.text(self.lang, "flow.footer"),
                  t.SMALL, th.text_subtle)
-        svg.text(width - PAD, height - PAD + 8, "Generated with repo-xray", t.SMALL, th.text_subtle, anchor="end")
+        svg.text(width - PAD, height - PAD + 8, i18n.text(self.lang, "generated"), t.SMALL, th.text_subtle, anchor="end")
 
     def _description(self) -> str:
         steps = " -> ".join(step.name for step in self.flow.steps)
