@@ -4,7 +4,7 @@ The analysed project is parsed, never imported or executed (see ADR-0002).
 """
 
 import ast
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 from scanner import ScanResult
@@ -97,6 +97,19 @@ def analyze_file(root: Path, relative_path: Path) -> ModuleInfo:
 
 def analyze_project(scan_result: ScanResult) -> list[ModuleInfo]:
     return [analyze_file(scan_result.root, path) for path in scan_result.files]
+
+
+SCHEMA_VERSION = 1
+
+
+def analysis_to_dict(scan_result: ScanResult, modules: list[ModuleInfo]) -> dict:
+    """JSON-ready form of an analysis, so analysing and displaying can be debugged apart."""
+    return {
+        "schema_version": SCHEMA_VERSION,
+        "root": scan_result.root.as_posix(),
+        "skipped_large": [p.as_posix() for p in scan_result.skipped_large],
+        "modules": [asdict(module) for module in modules],
+    }
 
 
 class _Collector(ast.NodeVisitor):
