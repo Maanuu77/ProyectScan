@@ -18,6 +18,7 @@ First release: a desktop app and a command line that turn a project's source cod
 - **Desktop app.** Drag a folder or choose it, follow the progress, preview diagrams and pages in light or dark, choose the language, edit names and descriptions (saved in `xray.toml`) and export the zip.
 - **Windows executable.** A single `repo-xray.exe` with its own icon and no console window.
 - **CI.** Tests on Windows and Linux and a smoke-tested executable on every push; releases publish the executable.
+- **License.** MIT.
 
 ### Fixed during development
 

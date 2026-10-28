@@ -126,3 +126,7 @@ The reasoning behind each decision is recorded as an [Architecture Decision Reco
 ```
 
 The code is in the `repo_xray` package: `parsers/` (one module per language), `analysis/` (stack, layers, features, calls, links, flows, texts), `render/` (the three diagrams), `export/` (Markdown, PNG and zip) and `app/` (the desktop app). The plan and its history are in [docs/ROADMAP.md](docs/ROADMAP.md), and changes per version in [CHANGELOG.md](CHANGELOG.md).
+
+## License
+
+[MIT](LICENSE) © 2026 Manuel Martínez
