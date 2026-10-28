@@ -18,8 +18,8 @@ Done when `python main.py <path>` prints a correct summary of a real project.
 
 | # | Issue | Branch | Status |
 | --- | --- | --- | --- |
-| #4 | Configuration module with defaults and optional `xray.toml` | `feature/backend-scanner` | ⬜ |
-| #5 | Scanner: walk a folder, skip `.git`, virtualenvs, caches and hidden dirs | `feature/backend-scanner` | ⬜ |
+| #4 | Configuration module with defaults and optional `xray.toml` | `feature/backend-scanner` | ✅ |
+| #5 | Scanner: walk a folder, skip `.git`, virtualenvs, caches and hidden dirs | `feature/backend-scanner` | ✅ |
 | #6 | Analyzer: extract modules, classes, functions and methods with `ast` | `feature/backend-analyzer` | ⬜ |
 | #7 | Analyzer: extract imports (absolute and relative) | `feature/backend-analyzer` | ⬜ |
 | #8 | Analyzer: extract calls with their enclosing scope | `feature/backend-analyzer` | ⬜ |
