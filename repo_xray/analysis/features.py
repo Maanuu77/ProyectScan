@@ -120,6 +120,8 @@ def _group(app: App, files: list[SourceFile], layers: dict[str, str]):
     if not files:
         return {}, {}
     root = _common_folder([f.path for f in files])
+    if posixpath.basename(root).lower() in CONTAINERS:
+        root = posixpath.dirname(root)  # every file is inside features/: keep the container visible
     for strategy in (_by_container, _by_slices):
         grouped = strategy(root, files, layers)
         if grouped is not None:
