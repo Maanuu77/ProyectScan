@@ -17,6 +17,8 @@ from repo_xray.model import Route, SourceFile
 
 DRAWN_LAYERS = ("entry", "application", "domain", "data", "integration")
 MAX_SCREENS = 5
+MIN_TITLES_FOR_BRAND = 3
+BRAND_SHARE = 0.6  # a segment in at least this share of the route titles is the app's brand
 _SEPARATORS = re.compile(r"\s+[·|\-–—:]\s+")
 _SCREEN_SUFFIX = re.compile(r"[-_.]?(page|component|view|screen|container)$", re.IGNORECASE)
 
@@ -36,13 +38,14 @@ def describe_features(feature_map: FeatureMap, files: list[SourceFile], stack: S
     owners = {path: feature for feature in feature_map.features for path in feature.files}
     by_module = {_without_extension(f.path): f.path for f in files}
     by_class = {s.name: f.path for f in files for s in f.symbols if s.kind == "class"}
-    for file in files:
-        for route in file.routes:
-            path = by_module.get(route.target) or by_module.get(route.target + "/index") or by_class.get(route.target)
-            feature = owners.get(path) if path else None
-            name = _screen_name(route, path, stack.name)
-            if feature is not None and name and name not in feature.screens:
-                feature.screens.append(name)
+    routes = [route for file in files for route in file.routes]
+    brand = {stack.name, *_shared_segments([r.title for r in routes if r.title])}
+    for route in routes:
+        path = by_module.get(route.target) or by_module.get(route.target + "/index") or by_class.get(route.target)
+        feature = owners.get(path) if path else None
+        name = _screen_name(route, path, brand)
+        if feature is not None and name and name not in feature.screens:
+            feature.screens.append(name)
     names = {f.key: f.name for f in feature_map.features}
     for feature in feature_map.features:
         if not feature.screens:
@@ -69,18 +72,33 @@ def apply_user_texts(feature_map: FeatureMap, stack: Stack, config: Config) -> N
             feature.description_source = "user"
 
 
-def clean_title(title: str, project: str) -> str:
+def clean_title(title: str, brand: str | set[str]) -> str:
     """`Iniciar sesión · Benchify` -> `Iniciar sesión`: the app's own name says nothing here."""
+    names = {brand} if isinstance(brand, str) else brand
+    dropped = {name.casefold() for name in names}
     parts = [p.strip() for p in _SEPARATORS.split(title.strip())]
-    kept = [p for p in parts if p and p.casefold() != project.casefold()]
+    kept = [p for p in parts if p and p.casefold() not in dropped]
     if not kept or len(kept) == len(parts):
         return title.strip()  # nothing to drop: keep the title exactly as written
     return " · ".join(kept)
 
 
-def _screen_name(route: Route, path: str | None, project: str) -> str | None:
+def _shared_segments(titles: list[str]) -> set[str]:
+    """Segments most titles repeat, like the app's name in "Mapa · Benchify" and "Perfil · Benchify"."""
+    if len(titles) < MIN_TITLES_FOR_BRAND:
+        return set()
+    counts: dict[str, int] = {}
+    for title in titles:
+        parts = [p.strip() for p in _SEPARATORS.split(title.strip())]
+        if len(parts) > 1:
+            for part in {p.casefold() for p in parts}:
+                counts[part] = counts.get(part, 0) + 1
+    return {part for part, count in counts.items() if count >= BRAND_SHARE * len(titles)}
+
+
+def _screen_name(route: Route, path: str | None, brand: set[str]) -> str | None:
     if route.title:
-        return clean_title(route.title, project)
+        return clean_title(route.title, brand)
     if path and _SCREEN_SUFFIX.search(posixpath.basename(path).split(".")[0]):
         return _humanize(posixpath.basename(path).split(".")[0])
     return None
