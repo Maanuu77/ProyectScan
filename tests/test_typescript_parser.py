@@ -141,3 +141,10 @@ def test_http_calls_from_angular_fetch_and_axios():
         ("GET", "/api/orders", "list"),
         ("GET", "{url}", "search"),
     ]
+
+
+def test_arrow_functions_with_an_expression_body_record_their_calls():
+    info = parse_ts("export const load = () => fetch('/api/items');\n")
+
+    assert [(c.caller, c.callee) for c in info.calls] == [("src/app/orders/orders-api.load", "fetch")]
+    assert [h.url for h in info.http_calls] == ["/api/items"]
