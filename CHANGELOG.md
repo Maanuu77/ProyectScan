@@ -2,6 +2,13 @@
 
 All notable changes to repo-xray. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and versions follow [Semantic Versioning](https://semver.org/).
 
+## 1.0.1 - 2026-10-28
+
+### Fixed
+
+- The app could close without warning when a new task started just as the previous one finished, for example exporting right after an analysis or changing the language quickly: a background thread was destroyed while it was still stopping.
+- The CI smoke test now waits for the executable to finish before checking its zip, so the 1.0.0 release, which never published its executable, is replaced by this one.
+
 ## 1.0.0 - 2026-10-28
 
 First release: a desktop app and a command line that turn a project's source code into architecture documentation in three levels.

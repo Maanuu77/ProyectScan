@@ -1,4 +1,8 @@
+import subprocess
+import sys
+import textwrap
 import zipfile
+from pathlib import Path
 
 import pytest
 from PySide6.QtCore import QSettings, QThread, Qt
@@ -204,3 +208,30 @@ def test_language_selector_offers_auto_and_both_languages(qtbot, window, project
 
     assert items == ["Language: auto (English)", "Language: English", "Language: Español"]
     assert window.results.language.currentData() is None
+
+
+def test_dropping_a_task_right_after_it_finishes_does_not_crash():
+    # Qt aborts the process when a running QThread is destroyed, so the check runs in its own process.
+    script = textwrap.dedent("""
+        import gc
+        from PySide6.QtCore import QEventLoop
+        from PySide6.QtWidgets import QApplication
+        from repo_xray.app.workers import Task
+
+        app = QApplication([])
+        for _ in range(100):
+            task = Task(lambda report: sum(range(2000)))
+            loop = QEventLoop()
+            task.finished.connect(lambda _: loop.quit())
+            task.start()
+            loop.exec()
+            del task  # what the window does when it starts the next task
+            gc.collect()
+        print("ok")
+    """)
+
+    result = subprocess.run([sys.executable, "-c", script], capture_output=True, text=True, timeout=120,
+                            cwd=Path(__file__).resolve().parent.parent)
+
+    assert result.returncode == 0, result.stderr
+    assert result.stdout.strip() == "ok"

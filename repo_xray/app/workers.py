@@ -55,12 +55,24 @@ class Task(QObject):
         self._runner.failed.connect(self.failed)
         self._runner.finished.connect(self._thread.quit)
         self._runner.failed.connect(self._thread.quit)
+        self._thread.finished.connect(self._release)
 
     def start(self) -> None:
+        # Keep the task, and so its QThread, alive until the thread has really stopped: Qt aborts the
+        # whole process if a running QThread is destroyed, e.g. when the window replaces its task
+        # right after `finished`, while the thread is still winding down.
+        _RUNNING.add(self)
         self._thread.start()
 
     def wait(self) -> None:
         self._thread.wait()
+
+    def _release(self) -> None:
+        self._thread.wait()  # the thread has left its event loop; this returns at once
+        _RUNNING.discard(self)
+
+
+_RUNNING: set[Task] = set()
 
 
 def analysis_task(folder: Path) -> Task:
