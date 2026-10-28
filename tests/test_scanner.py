@@ -140,3 +140,20 @@ def test_collects_manifests_including_ci_workflows(tmp_path):
         "firebase.json",
         "frontend/package.json",
     ]
+
+
+def test_keeps_source_folders_with_generic_names(tmp_path):
+    make_files(
+        tmp_path,
+        "src/main/java/shop/order/application/port/out/OrderRepository.java",
+        "src/main/java/shop/order/application/port/in/PlaceOrder.java",
+        "tools/bin/run.py",
+    )
+
+    result = scan(tmp_path, Config())
+
+    assert as_posix(result.files) == [
+        "src/main/java/shop/order/application/port/in/PlaceOrder.java",
+        "src/main/java/shop/order/application/port/out/OrderRepository.java",
+        "tools/bin/run.py",
+    ]
