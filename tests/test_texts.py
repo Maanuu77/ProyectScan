@@ -110,3 +110,16 @@ def test_user_texts_win_and_choose_the_language(tmp_path):
     assert (features["web/orders"].name, features["web/orders"].description_source) == ("Pedidos", "user")
     assert features["web/orders"].description == "Historial de compras"
     assert features["web/home"].description == "Pantalla: Home."  # generated, in the chosen language
+
+
+def test_the_segment_most_titles_share_is_dropped_whatever_the_folder_is_called():
+    titles = ["Mapa · Benchify", "Perfil · Benchify", "Iniciar sesión · Benchify", "Ayuda"]
+    router = SourceFile("web/src/app.routes.ts", "typescript", "web/src/app.routes", "web/src", 5, routes=[
+        Route(title.split(" ")[0].lower(), title, f"web/src/pages/p{i}-page", i) for i, title in enumerate(titles)
+    ])
+    pages = [page(f"web/src/pages/p{i}-page.ts") for i in range(len(titles))]
+    feature = Feature("web/pages", "Pages", "web", "web/src/pages", files=[p.path for p in pages])
+
+    describe_features(frontend(feature), [router, *pages], Stack(name="bench-copy"), "es")
+
+    assert feature.screens == ["Mapa", "Perfil", "Iniciar sesión", "Ayuda"]
