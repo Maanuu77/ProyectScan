@@ -7,7 +7,6 @@ cloud configuration and CI workflows.
 """
 
 import json
-import posixpath
 import re
 import tomllib
 import xml.etree.ElementTree as ElementTree
@@ -19,6 +18,7 @@ import yaml
 
 from repo_xray.analysis import catalog
 from repo_xray.analysis.catalog import Tech
+from repo_xray.analysis.paths import is_inside
 from repo_xray.model import SourceFile
 from repo_xray.scanner import ScanResult
 
@@ -76,6 +76,7 @@ class _Detector:
         self.app_techs: dict[str, list[Tech]] = {}
 
     def run(self) -> Stack:
+        self.stack.name = self._declared_project_name() or self.stack.name
         self._find_apps()
         self._services_from_imports()
         self._services_from_compose()
@@ -105,7 +106,7 @@ class _Detector:
             app = self._make_app(folder, techs, versions)
             if app is None:
                 continue
-            nested_in = next((a for a in self.stack.apps if _is_inside(folder, a.path)), None)
+            nested_in = next((a for a in self.stack.apps if is_inside(folder, a.path)), None)
             if nested_in is not None and app.kind == "library":
                 continue  # e.g. an e2e test package inside the frontend
             if folder == "." and self.stack.apps and app.kind == "library":
@@ -119,7 +120,7 @@ class _Detector:
         self._count_files()
 
     def _make_app(self, folder: str, techs: list[Tech], versions: dict[str, str]) -> App | None:
-        sources = [f for f in self.files if _is_inside(f.path, folder)]
+        sources = [f for f in self.files if is_inside(f.path, folder)]
         if not sources and not techs:
             return None
         roles = [t.role for t in techs if t.category == "framework"]
@@ -143,7 +144,7 @@ class _Detector:
         # The deepest app that contains a file owns it.
         apps = sorted(self.stack.apps, key=lambda a: -a.path.count("/") - (a.path != "."))
         for source in self.files:
-            owner = next((a for a in apps if _is_inside(source.path, a.path)), None)
+            owner = next((a for a in apps if is_inside(source.path, a.path)), None)
             if owner is not None:
                 owner.files += 1
                 owner.lines += source.line_count
@@ -160,6 +161,27 @@ class _Detector:
         if name in ("build.gradle", "build.gradle.kts"):
             return _gradle_dependencies(text)
         return _python_dependencies(name, text)
+
+    def _declared_project_name(self) -> str | None:
+        """The name in a manifest at the root, which is usually nicer than the folder name."""
+        for manifest in ("package.json", "pyproject.toml", "pom.xml"):
+            text = self._read(manifest) if manifest in self.manifests else None
+            if not text:
+                continue
+            try:
+                if manifest == "package.json":
+                    name = json.loads(text).get("name")
+                elif manifest == "pyproject.toml":
+                    name = tomllib.loads(text).get("project", {}).get("name")
+                else:
+                    match = re.search(r"<project[^>]*>.*?<artifactId>([^<]+)</artifactId>",
+                                      re.sub(r"<parent>.*?</parent>", "", text, flags=re.S), re.S)
+                    name = match.group(1) if match else None
+            except (json.JSONDecodeError, tomllib.TOMLDecodeError):
+                continue
+            if isinstance(name, str) and name.strip():
+                return name.strip()
+        return None
 
     # Services
 
@@ -208,7 +230,7 @@ class _Detector:
         hosting = data.get("hosting")
         for site in hosting if isinstance(hosting, list) else [hosting] if hosting else []:
             public = site.get("public", "")
-            app = next((a for a in self.stack.apps if a.path != "." and _is_inside(public, a.path)), None)
+            app = next((a for a in self.stack.apps if a.path != "." and is_inside(public, a.path)), None)
             app = app or next((a for a in self.stack.apps if a.kind == "web"), None)
             if app is not None:
                 _add_once(app.deployments, "Firebase Hosting")
@@ -273,7 +295,7 @@ class _Detector:
     # Helpers
 
     def _app_object(self, path: str) -> App | None:
-        candidates = [a for a in self.stack.apps if _is_inside(path, a.path)]
+        candidates = [a for a in self.stack.apps if is_inside(path, a.path)]
         return max(candidates, key=lambda a: len(a.path) if a.path != "." else 0, default=None)
 
     def _app_of(self, path: str) -> str | None:
@@ -384,13 +406,6 @@ def _main_language(sources: list[SourceFile]) -> str:
     if counts.get("javascript") and counts.get("typescript"):
         counts["typescript"] += counts.pop("javascript")
     return counts.most_common(1)[0][0] if counts else ""
-
-
-def _is_inside(path: str, folder: str) -> bool:
-    if folder in (".", ""):
-        return True
-    normalized = posixpath.normpath(path)
-    return normalized == folder or normalized.startswith(folder + "/")
 
 
 def _add_once(items: list[str], item: str) -> None:
