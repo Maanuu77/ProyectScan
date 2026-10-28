@@ -1,6 +1,6 @@
 [project]
 name = "repo-xray"
-version = "0.1.0"
+version = "1.0.0"
 description = "Architecture documentation generated from source code: overview, features and flows"
 requires-python = ">=3.11"
 
