@@ -92,3 +92,55 @@ def test_nested_functions_and_classes():
     assert symbols["pkg.mod.outer.inner"].kind == "function"
     assert symbols["pkg.mod.outer.inner"].parent == "pkg.mod.outer"
     assert symbols["pkg.mod.outer.Local.method"].kind == "method"
+
+
+def imports_as_tuples(info):
+    return [(i.module, i.name, i.alias, i.level) for i in info.imports]
+
+
+def test_absolute_imports():
+    info = analyze("""
+        import os
+        import os.path as osp, json
+        from collections import OrderedDict as OD, deque
+    """)
+
+    assert imports_as_tuples(info) == [
+        ("os", None, None, 0),
+        ("os.path", None, "osp", 0),
+        ("json", None, None, 0),
+        ("collections", "OrderedDict", "OD", 0),
+        ("collections", "deque", None, 0),
+    ]
+
+
+@pytest.mark.parametrize(
+    ("path", "code", "expected_module"),
+    [
+        ("pkg/sub/mod.py", "from . import x", "pkg.sub"),
+        ("pkg/sub/mod.py", "from .utils import x", "pkg.sub.utils"),
+        ("pkg/sub/mod.py", "from ..core import x", "pkg.core"),
+        ("pkg/sub/__init__.py", "from .utils import x", "pkg.sub.utils"),
+        ("pkg/sub/__init__.py", "from .. import x", "pkg"),
+        ("mod.py", "from ...far import x", "...far"),
+    ],
+)
+def test_relative_imports_are_resolved(path, code, expected_module):
+    (imported,) = analyze(code, path).imports
+
+    assert imported.module == expected_module
+    assert imported.name == "x"
+
+
+def test_import_scope_is_recorded():
+    info = analyze("""
+        import os
+
+        def lazy():
+            import json
+    """)
+
+    assert [(i.module, i.scope, i.lineno) for i in info.imports] == [
+        ("os", "pkg.mod", 2),
+        ("json", "pkg.mod.lazy", 5),
+    ]
