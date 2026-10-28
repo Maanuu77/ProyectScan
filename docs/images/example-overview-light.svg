@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1217.3" height="612" viewBox="0 0 1217.3 612" role="img" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+<title>Benchify: Visión general de la arquitectura</title>
+<desc>Benchify está formado por backend (API, Spring Boot 4.1, Java 21), frontend (aplicación web, Angular 21, TypeScript 5). Usa Firebase Auth, PostgreSQL, Firebase Storage.</desc>
+<rect x="0" y="0" width="1217.3" height="612" fill="#ffffff"/>
+<text x="40" y="64" font-size="26" font-weight="700" fill="#1f2328">Benchify</text>
+<text x="40" y="90" font-size="13" font-weight="400" fill="#59636e">Visión general de la arquitectura  ·  2 aplicaciones  ·  3 servicios  ·  15.8k líneas de código</text>
+<text x="40" y="118" font-size="13" font-weight="400" fill="#1f2328">Mapa colaborativo de bancos públicos. Descubre bancos cerca de ti, valóralos, guárdalos en favoritos, haz check-in cuando te sientes en uno y comparte fotos. Cada aportación pasa</text>
+<text x="40" y="138" font-size="13" font-weight="400" fill="#1f2328">por moderación.</text>
+<circle cx="175" cy="203" r="22" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="1"/>
+<circle cx="175" cy="199.3" r="3.7" fill="none" stroke="#59636e" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M 167.7 211.2 C 167.7 206.7 171.3 204.8 175.0 204.8 C 178.7 204.8 182.3 206.7 182.3 211.2" fill="none" stroke="#59636e" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="207" y="208" font-size="13" font-weight="600" fill="#59636e">Usuarios</text>
+<path d="M 175.0 231.0 L 175.0 285.0" fill="none" stroke="#8c959f" stroke-width="1.5"/>
+<polygon points="175,285 170.5,277 179.5,277" fill="#8c959f"/>
+<path d="M 312.0 388.0 C 395.2 388.0 395.2 388.0 478.5 388.0" fill="none" stroke="#8c959f" stroke-width="1.5"/>
+<polygon points="479.5,388 471.5,392.5 471.5,383.5" fill="#8c959f"/>
+<rect x="347.8" y="378" width="125.5" height="20" rx="10" fill="#ffffff" stroke="#d1d9e0" stroke-width="1"/>
+<text x="410.5" y="392" font-size="11" font-weight="400" fill="#59636e" text-anchor="middle">REST · 40 llamadas</text>
+<path d="M 753.5 370.0 C 824.9 370.0 824.9 287.0 896.3 287.0" fill="none" stroke="#8c959f" stroke-width="1.5"/>
+<polygon points="897.3,287 889.3,291.5 889.3,282.5" fill="#8c959f"/>
+<rect x="787.1" y="303.8" width="101.8" height="20" rx="10" fill="#ffffff" stroke="#d1d9e0" stroke-width="1"/>
+<text x="838" y="317.8" font-size="11" font-weight="400" fill="#59636e" text-anchor="middle">verifica usuarios</text>
+<path d="M 274 285.0 L 274 236 Q 274 226 284 226 L 1155.28344 226 Q 1165.28344 226 1165.28344 236 L 1165.28344 277.0 Q 1165.28344 287.0 1155.28344 287.0 L 1147.28344 287.0" fill="none" stroke="#8c959f" stroke-width="1.5" stroke-dasharray="5 4"/>
+<polygon points="1146.3,287 1154.3,282.5 1154.3,291.5" fill="#8c959f"/>
+<rect x="679" y="216" width="81.2" height="20" rx="10" fill="#ffffff" stroke="#d1d9e0" stroke-width="1"/>
+<text x="719.6" y="230" font-size="11" font-weight="400" fill="#59636e" text-anchor="middle">inicia sesión</text>
+<path d="M 753.5 388.0 C 824.9 388.0 824.9 388.0 896.3 388.0" fill="none" stroke="#8c959f" stroke-width="1.5"/>
+<polygon points="897.3,388 889.3,392.5 889.3,383.5" fill="#8c959f"/>
+<rect x="796.6" y="378" width="82.7" height="20" rx="10" fill="#ffffff" stroke="#d1d9e0" stroke-width="1"/>
+<text x="838" y="392" font-size="11" font-weight="400" fill="#59636e" text-anchor="middle">lee y escribe</text>
+<path d="M 753.5 406.0 C 824.9 406.0 824.9 489.0 896.3 489.0" fill="none" stroke="#8c959f" stroke-width="1.5"/>
+<polygon points="897.3,489 889.3,493.5 889.3,484.5" fill="#8c959f"/>
+<rect x="787.7" y="452.2" width="100.5" height="20" rx="10" fill="#ffffff" stroke="#d1d9e0" stroke-width="1"/>
+<text x="838" y="466.2" font-size="11" font-weight="400" fill="#59636e" text-anchor="middle">guarda archivos</text>
+<rect x="40" y="287" width="270" height="202" rx="12" fill="#ffffff" stroke="#d1d9e0" stroke-width="1"/>
+<rect x="56" y="303" width="40" height="40" rx="10" fill="#fbefff"/>
+<rect x="66.8" y="315.7" width="18.3" height="14.7" rx="2.3" fill="none" stroke="#8250df" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+<line x1="66.8" y1="320.2" x2="85.2" y2="320.2" fill="none" stroke="#8250df" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="70" cy="318" r="0.5" fill="#8250df"/>
+<circle cx="72.3" cy="318" r="0.5" fill="#8250df"/>
+<text x="108" y="318" font-size="11" font-weight="700" fill="#8250df" letter-spacing="0.8">APLICACIÓN WEB</text>
+<text x="108" y="338" font-size="17" font-weight="700" fill="#1f2328">frontend</text>
+<rect x="56" y="357" width="80.7" height="24" rx="6" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="1"/>
+<text x="65" y="373.5" font-size="12" font-weight="400" fill="#1f2328">Angular 21</text>
+<rect x="142.7" y="357" width="90.7" height="24" rx="6" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="1"/>
+<text x="151.7" y="373.5" font-size="12" font-weight="400" fill="#1f2328">TypeScript 5</text>
+<rect x="56" y="387" width="56.9" height="24" rx="6" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="1"/>
+<text x="65" y="403.5" font-size="12" font-weight="400" fill="#1f2328">Leaflet</text>
+<text x="56" y="435" font-size="12" font-weight="400" fill="#59636e">75 archivos  ·  5.2k líneas</text>
+<line x1="41" y1="451" x2="309" y2="451" stroke="#d1d9e0" stroke-width="1"/>
+<path d="M 60.7 474.0 C 58.7 474.0 57.7 472.7 57.7 471.2 C 57.7 469.7 58.9 468.5 60.3 468.5 C 60.9 466.5 62.4 465.3 64.3 465.3 C 66.7 465.3 68.4 467.1 68.5 469.3 C 69.7 469.5 70.5 470.5 70.5 471.7 C 70.5 473.0 69.5 474.0 68.3 474.0 Z" fill="none" stroke="#59636e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="80" y="475" font-size="12" font-weight="400" fill="#59636e">Firebase Hosting</text>
+<rect x="481.5" y="263" width="270" height="250" rx="12" fill="#ffffff" stroke="#d1d9e0" stroke-width="1"/>
+<rect x="497.5" y="279" width="40" height="40" rx="10" fill="#dafbe1"/>
+<rect x="509.2" y="290.8" width="16.5" height="6.9" rx="1.8" fill="none" stroke="#1a7f37" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="509.2" y="300.4" width="16.5" height="6.9" rx="1.8" fill="none" stroke="#1a7f37" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="512.9" cy="294.2" r="0.8" fill="#1a7f37"/>
+<circle cx="512.9" cy="303.8" r="0.8" fill="#1a7f37"/>
+<text x="549.5" y="294" font-size="11" font-weight="700" fill="#1a7f37" letter-spacing="0.8">API</text>
+<text x="549.5" y="314" font-size="17" font-weight="700" fill="#1f2328">backend</text>
+<rect x="497.5" y="333" width="107.3" height="24" rx="6" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="1"/>
+<text x="506.5" y="349.5" font-size="12" font-weight="400" fill="#1f2328">Spring Boot 4.1</text>
+<rect x="610.8" y="333" width="63.4" height="24" rx="6" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="1"/>
+<text x="619.8" y="349.5" font-size="12" font-weight="400" fill="#1f2328">Java 21</text>
+<rect x="680.2" y="333" width="41.8" height="24" rx="6" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="1"/>
+<text x="689.2" y="349.5" font-size="12" font-weight="400" fill="#1f2328">JPA</text>
+<rect x="497.5" y="363" width="105.9" height="24" rx="6" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="1"/>
+<text x="506.5" y="379.5" font-size="12" font-weight="400" fill="#1f2328">Spring Security</text>
+<rect x="609.3" y="363" width="58.3" height="24" rx="6" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="1"/>
+<text x="618.3" y="379.5" font-size="12" font-weight="400" fill="#1f2328">Flyway</text>
+<rect x="497.5" y="393" width="70.6" height="24" rx="6" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="1"/>
+<text x="506.5" y="409.5" font-size="12" font-weight="400" fill="#1f2328">OpenAPI</text>
+<text x="497.5" y="441" font-size="12" font-weight="400" fill="#59636e">210 archivos  ·  10.6k líneas</text>
+<text x="497.5" y="459" font-size="12" font-weight="400" fill="#59636e">40 endpoints</text>
+<line x1="482.5" y1="475" x2="750.5" y2="475" stroke="#d1d9e0" stroke-width="1"/>
+<path d="M 502.1 498.0 C 500.1 498.0 499.1 496.7 499.1 495.2 C 499.1 493.7 500.3 492.5 501.8 492.5 C 502.3 490.5 503.9 489.3 505.8 489.3 C 508.1 489.3 509.9 491.1 510.0 493.3 C 511.2 493.5 512.0 494.5 512.0 495.7 C 512.0 497.0 511.0 498.0 509.7 498.0 Z" fill="none" stroke="#59636e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="521.5" y="499" font-size="12" font-weight="400" fill="#59636e">Cloud Run  (Docker)</text>
+<rect x="899.3" y="252" width="244" height="70" rx="12" fill="#ffffff" stroke="#d1d9e0" stroke-width="1"/>
+<rect x="913.3" y="267" width="40" height="40" rx="10" fill="#ffeff7"/>
+<path d="M 933.3 278.3 L 940.6 281.0 L 940.6 286.1 C 940.6 290.7 937.4 293.9 933.3 295.7 C 929.2 293.9 926.0 290.7 926.0 286.1 L 926.0 281.0 Z" fill="none" stroke="#bf3989" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M 930.1 287.0 L 932.4 289.3 L 936.5 284.7" fill="none" stroke="#bf3989" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="965.3" y="284" font-size="15" font-weight="700" fill="#1f2328">Firebase Auth</text>
+<text x="965.3" y="303" font-size="12" font-weight="400" fill="#59636e">Autenticación</text>
+<rect x="899.3" y="344" width="244" height="88" rx="12" fill="#ffffff" stroke="#d1d9e0" stroke-width="1"/>
+<rect x="913.3" y="359" width="40" height="40" rx="10" fill="#fff8c5"/>
+<path d="M 926.0 373.5 C 926.0 371.0 940.6 371.0 940.6 373.5 C 940.6 376.0 926.0 376.0 926.0 373.5 Z" fill="none" stroke="#9a6700" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M 926.0 373.5 L 926.0 384.5 C 926.0 387.0 940.6 387.0 940.6 384.5 L 940.6 373.5" fill="none" stroke="#9a6700" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M 926.0 379.0 C 926.0 381.5 940.6 381.5 940.6 379.0" fill="none" stroke="#9a6700" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="965.3" y="376" font-size="15" font-weight="700" fill="#1f2328">PostgreSQL</text>
+<text x="965.3" y="395" font-size="12" font-weight="400" fill="#59636e">Base de datos</text>
+<text x="965.3" y="414" font-size="12" font-weight="600" fill="#9a6700">PostGIS  ·  Cloud SQL</text>
+<rect x="899.3" y="454" width="244" height="70" rx="12" fill="#ffffff" stroke="#d1d9e0" stroke-width="1"/>
+<rect x="913.3" y="469" width="40" height="40" rx="10" fill="#d8f6f8"/>
+<path d="M 925.0 484.4 L 925.0 495.4 C 925.0 496.0 925.4 496.3 926.0 496.3 L 940.6 496.3 C 941.2 496.3 941.5 496.0 941.5 495.4 L 941.5 486.2 C 941.5 485.7 941.2 485.3 940.6 485.3 L 933.3 485.3 L 931.5 482.6 L 926.0 482.6 C 925.4 482.6 925.0 482.9 925.0 483.5 Z" fill="none" stroke="#1b7c83" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="965.3" y="486" font-size="15" font-weight="700" fill="#1f2328">Firebase Storage</text>
+<text x="965.3" y="505" font-size="12" font-weight="400" fill="#59636e">Almacenamiento</text>
+<line x1="40" y1="546" x2="1177.3" y2="546" stroke="#d1d9e0" stroke-width="1"/>
+<text x="40" y="572" font-size="12" font-weight="400" fill="#59636e">CI  ·  GitHub Actions</text>
+<text x="1177.3" y="572" font-size="12" font-weight="400" fill="#818b98" text-anchor="end">Generado con repo-xray</text>
+</svg>
