@@ -1,5 +1,7 @@
 """Shared sample projects for the analysis and rendering tests."""
 
+import os
+import sys
 from pathlib import Path
 from textwrap import dedent
 
@@ -9,6 +11,10 @@ from repo_xray.analysis.stack import detect_stack
 from repo_xray.config import Config
 from repo_xray.project import analyze_project
 from repo_xray.scanner import scan
+
+if sys.platform != "win32":
+    # CI machines have no display; Windows renders off screen on its own.
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 POM = """\
 <project xmlns="http://maven.apache.org/POM/4.0.0">
