@@ -3,6 +3,7 @@
 from collections.abc import Callable
 from pathlib import Path
 
+from repo_xray.fs import extended
 from repo_xray.model import SourceFile
 from repo_xray.parsers import java, python, typescript
 
@@ -30,7 +31,7 @@ def parse_file(root: Path, relative_path: Path) -> SourceFile:
     """Parse one file. A broken file is reported in `error` instead of raising."""
     language, parser = PARSERS[relative_path.suffix.lower()]
     try:
-        return parser((root / relative_path).read_bytes(), relative_path)
+        return parser(extended(root / relative_path).read_bytes(), relative_path)
     except SyntaxError as exc:
         error = f"SyntaxError: {exc.msg} (line {exc.lineno})"
     except (ValueError, RecursionError, OSError) as exc:

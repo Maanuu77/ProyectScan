@@ -19,6 +19,7 @@ import yaml
 from repo_xray.analysis import catalog, readme
 from repo_xray.analysis.catalog import Tech
 from repo_xray.analysis.paths import is_inside
+from repo_xray.fs import extended
 from repo_xray.model import SourceFile
 from repo_xray.scanner import ScanResult
 
@@ -333,7 +334,7 @@ class _Detector:
         return any(needle in text for needle in needles)
 
     def _read(self, relative: str) -> str | None:
-        path = self.root / relative
+        path = extended(self.root / relative)
         try:
             if path.stat().st_size > MAX_CONFIG_BYTES:
                 return None
