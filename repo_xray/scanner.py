@@ -5,6 +5,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from repo_xray.config import Config
+from repo_xray.fs import extended
 
 SOURCE_EXTENSIONS = frozenset({".py", ".java", ".ts", ".tsx", ".js", ".jsx", ".mjs"})
 # Generated or bundled files that would only add noise.
@@ -37,19 +38,24 @@ def scan(root: Path, config: Config) -> ScanResult:
         raise NotADirectoryError(f"Not a directory: {root}")
 
     result = ScanResult(root=root)
-    for dirpath, dirnames, filenames in os.walk(root):
+    walk_root = extended(root)  # deep folders would fail past 260 characters on Windows
+    for dirpath, dirnames, filenames in os.walk(walk_root):
         current = Path(dirpath)
         # Pruning dirnames in place stops os.walk from descending into them.
         dirnames[:] = [d for d in dirnames if not _is_ignored_dir(current / d, config)]
 
         for name in filenames:
             path = current / name
-            relative = path.relative_to(root)
+            relative = path.relative_to(walk_root)
             if _is_manifest(name):
                 result.manifests.append(relative)
             if not _is_source_file(name):
                 continue
-            if path.stat().st_size > config.max_file_bytes:
+            try:
+                too_large = path.stat().st_size > config.max_file_bytes
+            except OSError:
+                continue  # vanished or unreadable: the rest of the project is still analysed
+            if too_large:
                 result.skipped_large.append(relative)
             else:
                 result.files.append(relative)
