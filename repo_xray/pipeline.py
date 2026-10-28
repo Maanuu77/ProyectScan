@@ -15,8 +15,8 @@ from repo_xray.analysis.features import FeatureMap, detect_features
 from repo_xray.analysis.flows import Flow, build_flows, pick_flows
 from repo_xray.analysis.linking import HttpLink, link_http_calls
 from repo_xray.analysis.stack import Stack, detect_stack
-from repo_xray.analysis.texts import describe_features
-from repo_xray.config import load_config
+from repo_xray.analysis.texts import apply_user_texts, describe_features
+from repo_xray.config import Config, load_config
 from repo_xray.model import SourceFile
 from repo_xray.parsers import language_of, parse_file
 from repo_xray.scanner import ScanResult, scan
@@ -36,13 +36,16 @@ class Analysis:
     flows: list[Flow] = field(default_factory=list)  # every flow, one per endpoint
     highlights: list[Flow] = field(default_factory=list)  # the few shown on the main page
     language: str = i18n.DEFAULT  # language of the documents: "en" or "es"
+    detected_language: str = i18n.DEFAULT  # what the code suggests, before the user's choice
+    config: Config = field(default_factory=Config)
 
 
 def analyse(root: Path, progress: Progress | None = None) -> Analysis:
     report = progress or (lambda message, fraction: None)
 
     report("Looking for source files", 0.0)
-    scan_result = scan(root, load_config(root))
+    config = load_config(root)
+    scan_result = scan(root, config)
 
     sources = [p for p in scan_result.files if language_of(p)]
     files = []
@@ -60,11 +63,13 @@ def analyse(root: Path, progress: Progress | None = None) -> Analysis:
     features = detect_features(stack, files, graph, links)
     report("Tracing request flows", 0.93)
     flows = build_flows(stack, files, graph, links, features)
-    language = i18n.detect_language([stack.description, *_prose(files)])
+    detected = i18n.detect_language([stack.description, *_prose(files)])
+    language = config.language or detected
     describe_features(features, files, stack, language)
+    apply_user_texts(features, stack, config)
     report("Done", 1.0)
     return Analysis(scan_result.root, scan_result, files, stack, graph, links, features, flows, pick_flows(flows),
-                    language)
+                    language, detected, config)
 
 
 _QUOTED = re.compile(r'"([^"]{3,})"')
