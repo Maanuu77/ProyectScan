@@ -12,6 +12,7 @@ import re
 from repo_xray import i18n
 from repo_xray.analysis.features import Feature, FeatureMap
 from repo_xray.analysis.stack import Stack
+from repo_xray.config import Config
 from repo_xray.model import Route, SourceFile
 
 DRAWN_LAYERS = ("entry", "application", "domain", "data", "integration")
@@ -49,6 +50,21 @@ def describe_features(feature_map: FeatureMap, files: list[SourceFile], stack: S
         if not feature.description:
             feature.description = _sentence(feature, names, lang)
             feature.description_source = "generated"
+
+
+def apply_user_texts(feature_map: FeatureMap, stack: Stack, config: Config) -> None:
+    """The user's words from xray.toml replace whatever was found or generated."""
+    if config.description:
+        stack.description = config.description
+    for feature in feature_map.features:
+        text = config.features.get(feature.key)
+        if text is None:
+            continue
+        if text.name:
+            feature.name = text.name
+        if text.description:
+            feature.description = text.description
+            feature.description_source = "user"
 
 
 def clean_title(title: str, project: str) -> str:

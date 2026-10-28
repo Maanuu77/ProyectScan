@@ -90,3 +90,23 @@ def test_pipeline_fills_texts_for_an_angular_frontend(tmp_path):
     assert features["web/orders"].screens == ["My orders"]
     assert features["web/orders"].description == "Screen: My orders."
     assert features["web/home"].description == "Screen: Home."
+
+
+def test_user_texts_win_and_choose_the_language(tmp_path):
+    write(tmp_path, {
+        "package.json": '{"name": "App", "private": true}',
+        "web/package.json": '{"dependencies": {"@angular/core": "^19.0.0"}}',
+        "web/src/app/features/orders/orders-page.ts": "@Component({ selector: 'x' })\nexport class OrdersPage {}\n",
+        "web/src/app/features/home/home-page.ts": "@Component({ selector: 'y' })\nexport class HomePage {}\n",
+        "xray.toml": 'language = "es"\ndescription = "Tienda de prueba"\n\n'
+                     '[features."web/orders"]\nname = "Pedidos"\ndescription = "Historial de compras"\n',
+    })
+
+    analysis = analyse(tmp_path)
+
+    features = {f.key: f for f in analysis.features.features}
+    assert (analysis.language, analysis.detected_language) == ("es", "en")
+    assert analysis.stack.description == "Tienda de prueba"
+    assert (features["web/orders"].name, features["web/orders"].description_source) == ("Pedidos", "user")
+    assert features["web/orders"].description == "Historial de compras"
+    assert features["web/home"].description == "Pantalla: Home."  # generated, in the chosen language
