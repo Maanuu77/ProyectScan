@@ -57,8 +57,8 @@ Plus one detail page per feature. Each diagram shows at most ~9 elements; anythi
 
 | # | Issue | Branch | Status |
 | --- | --- | --- | --- |
-| #20 | Detect apps (containers) and their tech stack from manifests | `feature/backend-stack-detection` | ⬜ |
-| #21 | Detect databases, external services and deployment targets | `feature/backend-stack-detection` | ⬜ |
+| #20 | Detect apps (containers) and their tech stack from manifests | `feature/backend-stack-detection` | ✅ |
+| #21 | Detect databases, external services and deployment targets | `feature/backend-stack-detection` | ✅ |
 | #22 | SVG design system: theme tokens, light and dark variants, text measurement | `feature/frontend-svg-theme` | ⬜ |
 | #23 | Overview diagram renderer | `feature/frontend-overview-diagram` | ⬜ |
 
