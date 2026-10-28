@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="806" viewBox="0 0 1100 806" role="img" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+<title>Qué pasa cuando: Reseñar un banco publicado</title>
+<desc>Reseñar un banco publicado (POST /api/v1/bancos/{bancoId}/resenas): ResenasSection.enviar -&gt; ResenasApi.publicar -&gt; ResenaController.publicar -&gt; ResenaService.publicar -&gt; ResenaPersistenceAdapter.save -&gt; PostgreSQL.</desc>
+<rect x="0" y="0" width="1100" height="806" fill="#ffffff"/>
+<text x="40" y="58" font-size="11" font-weight="700" fill="#59636e" letter-spacing="1">QUÉ PASA CUANDO…</text>
+<text x="40" y="88" font-size="22" font-weight="700" fill="#1f2328">Reseñar un banco publicado</text>
+<text x="40" y="112" font-size="13" font-weight="400" fill="#59636e">Benchify  ·  POST /api/v1/bancos/{bancoId}/resenas</text>
+<rect x="40" y="132" width="316" height="618" rx="14" fill="#f6f8fa" fill-opacity="0.6"/>
+<rect x="56" y="146" width="28" height="28" rx="7" fill="#fbefff"/>
+<rect x="62.5" y="154" width="15" height="12" rx="1.9" fill="none" stroke="#8250df" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<line x1="62.5" y1="157.8" x2="77.5" y2="157.8" fill="none" stroke="#8250df" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="65.1" cy="155.9" r="0.4" fill="#8250df"/>
+<circle cx="67" cy="155.9" r="0.4" fill="#8250df"/>
+<text x="94" y="165" font-size="15" font-weight="700" fill="#1f2328">frontend</text>
+<rect x="392" y="132" width="316" height="618" rx="14" fill="#f6f8fa" fill-opacity="0.6"/>
+<rect x="408" y="146" width="28" height="28" rx="7" fill="#dafbe1"/>
+<rect x="415.2" y="153.2" width="13.5" height="5.6" rx="1.5" fill="none" stroke="#1a7f37" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="415.2" y="161.1" width="13.5" height="5.6" rx="1.5" fill="none" stroke="#1a7f37" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="418.2" cy="156.1" r="0.7" fill="#1a7f37"/>
+<circle cx="418.2" cy="163.9" r="0.7" fill="#1a7f37"/>
+<text x="446" y="165" font-size="15" font-weight="700" fill="#1f2328">backend</text>
+<rect x="744" y="132" width="316" height="618" rx="14" fill="#f6f8fa" fill-opacity="0.6"/>
+<rect x="760" y="146" width="28" height="28" rx="7" fill="#fff8c5"/>
+<path d="M 768.0 155.5 C 768.0 153.5 780.0 153.5 780.0 155.5 C 780.0 157.5 768.0 157.5 768.0 155.5 Z" fill="none" stroke="#9a6700" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M 768.0 155.5 L 768.0 164.5 C 768.0 166.5 780.0 166.5 780.0 164.5 L 780.0 155.5" fill="none" stroke="#9a6700" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M 768.0 160.0 C 768.0 162.0 780.0 162.0 780.0 160.0" fill="none" stroke="#9a6700" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="798" y="165" font-size="15" font-weight="700" fill="#1f2328">Datos y servicios</text>
+<line x1="198" y1="266" x2="198" y2="291" stroke="#8c959f" stroke-width="1.5"/>
+<polygon points="198,293 193.5,285 202.5,285" fill="#8c959f"/>
+<path d="M 338.0 323.0 L 540.0 323.0 Q 550.0 323.0 550.0 333.0 L 550.0 379.0" fill="none" stroke="#59636e" stroke-width="2"/>
+<polygon points="550,381 545.5,373 554.5,373" fill="#59636e"/>
+<rect x="344" y="293" width="268.7" height="22" rx="11" fill="#ffffff" stroke="#afb8c1" stroke-width="1"/>
+<text x="478.3" y="308" font-size="12" font-weight="600" fill="#1f2328" text-anchor="middle">POST /api/v1/bancos/{bancoId}/resenas</text>
+<line x1="550" y1="442" x2="550" y2="467" stroke="#8c959f" stroke-width="1.5"/>
+<polygon points="550,469 545.5,461 554.5,461" fill="#8c959f"/>
+<line x1="550" y1="530" x2="550" y2="555" stroke="#8c959f" stroke-width="1.5"/>
+<polygon points="550,557 545.5,549 554.5,549" fill="#8c959f"/>
+<path d="M 690.0 596.0 L 892.0 596.0 Q 902.0 596.0 902.0 606.0 L 902.0 661.0" fill="none" stroke="#8c959f" stroke-width="1.5"/>
+<polygon points="902,663 897.5,655 906.5,655" fill="#8c959f"/>
+<rect x="60" y="206" width="276" height="58" rx="10" fill="#ffffff" stroke="#d1d9e0" stroke-width="1"/>
+<circle cx="86" cy="235" r="12" fill="#fbefff"/>
+<text x="86" y="239.5" font-size="12" font-weight="700" fill="#8250df" text-anchor="middle">1</text>
+<text x="108" y="230" font-size="11" font-weight="700" fill="#8250df" letter-spacing="0.6">PUNTO DE ENTRADA</text>
+<text x="108" y="249" font-size="14" font-weight="600" fill="#1f2328">ResenasSection.enviar</text>
+<rect x="60" y="294" width="276" height="58" rx="10" fill="#ffffff" stroke="#d1d9e0" stroke-width="1"/>
+<circle cx="86" cy="323" r="12" fill="#ddf4ff"/>
+<text x="86" y="327.5" font-size="12" font-weight="700" fill="#0969da" text-anchor="middle">2</text>
+<text x="108" y="318" font-size="11" font-weight="700" fill="#0969da" letter-spacing="0.6">ACCESO A DATOS</text>
+<text x="108" y="337" font-size="14" font-weight="600" fill="#1f2328">ResenasApi.publicar</text>
+<rect x="412" y="382" width="276" height="58" rx="10" fill="#ffffff" stroke="#d1d9e0" stroke-width="1"/>
+<circle cx="438" cy="411" r="12" fill="#fbefff"/>
+<text x="438" y="415.5" font-size="12" font-weight="700" fill="#8250df" text-anchor="middle">3</text>
+<text x="460" y="406" font-size="11" font-weight="700" fill="#8250df" letter-spacing="0.6">PUNTO DE ENTRADA</text>
+<text x="460" y="425" font-size="14" font-weight="600" fill="#1f2328">ResenaController.publicar</text>
+<rect x="412" y="470" width="276" height="58" rx="10" fill="#ffffff" stroke="#d1d9e0" stroke-width="1"/>
+<circle cx="438" cy="499" r="12" fill="#dafbe1"/>
+<text x="438" y="503.5" font-size="12" font-weight="700" fill="#1a7f37" text-anchor="middle">4</text>
+<text x="460" y="494" font-size="11" font-weight="700" fill="#1a7f37" letter-spacing="0.6">LÓGICA DE APLICACIÓN</text>
+<text x="460" y="513" font-size="14" font-weight="600" fill="#1f2328">ResenaService.publicar</text>
+<rect x="412" y="558" width="276" height="76" rx="10" fill="#ffffff" stroke="#d1d9e0" stroke-width="1"/>
+<circle cx="438" cy="596" r="12" fill="#ddf4ff"/>
+<text x="438" y="600.5" font-size="12" font-weight="700" fill="#0969da" text-anchor="middle">5</text>
+<text x="460" y="582" font-size="11" font-weight="700" fill="#0969da" letter-spacing="0.6">ACCESO A DATOS</text>
+<text x="460" y="601" font-size="14" font-weight="600" fill="#1f2328">ResenaPersistenceAdapter</text>
+<text x="460" y="619" font-size="14" font-weight="600" fill="#1f2328">.save</text>
+<rect x="764" y="664" width="276" height="58" rx="10" fill="#ffffff" stroke="#9a6700" stroke-width="1.5"/>
+<rect x="776" y="675" width="36" height="36" rx="9" fill="#fff8c5"/>
+<path d="M 786.7 687.5 C 786.7 685.0 801.3 685.0 801.3 687.5 C 801.3 690.0 786.7 690.0 786.7 687.5 Z" fill="none" stroke="#9a6700" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M 786.7 687.5 L 786.7 698.5 C 786.7 701.0 801.3 701.0 801.3 698.5 L 801.3 687.5" fill="none" stroke="#9a6700" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M 786.7 693.0 C 786.7 695.5 801.3 695.5 801.3 693.0" fill="none" stroke="#9a6700" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="824" y="689" font-size="11" font-weight="700" fill="#9a6700" letter-spacing="0.6">GUARDA EL RESULTADO</text>
+<text x="824" y="708" font-size="15" font-weight="700" fill="#1f2328">PostgreSQL</text>
+<text x="40" y="774" font-size="12" font-weight="400" fill="#818b98">Solo el camino principal: se omiten utilidades, mappers y validaciones.</text>
+<text x="1060" y="774" font-size="12" font-weight="400" fill="#818b98" text-anchor="end">Generado con repo-xray</text>
+</svg>
