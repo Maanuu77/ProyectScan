@@ -15,6 +15,7 @@ from repo_xray.analysis.features import FeatureMap, detect_features
 from repo_xray.analysis.flows import Flow, build_flows, pick_flows
 from repo_xray.analysis.linking import HttpLink, link_http_calls
 from repo_xray.analysis.stack import Stack, detect_stack
+from repo_xray.analysis.texts import describe_features
 from repo_xray.config import load_config
 from repo_xray.model import SourceFile
 from repo_xray.parsers import language_of, parse_file
@@ -59,8 +60,9 @@ def analyse(root: Path, progress: Progress | None = None) -> Analysis:
     features = detect_features(stack, files, graph, links)
     report("Tracing request flows", 0.93)
     flows = build_flows(stack, files, graph, links, features)
-    report("Done", 1.0)
     language = i18n.detect_language([stack.description, *_prose(files)])
+    describe_features(features, files, stack, language)
+    report("Done", 1.0)
     return Analysis(scan_result.root, scan_result, files, stack, graph, links, features, flows, pick_flows(flows),
                     language)
 
