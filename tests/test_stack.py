@@ -85,3 +85,16 @@ def test_description_from_readme_then_manifest(tmp_path):
 
     write(tmp_path, {"README.md": "# Shop\n\nBuy and sell second-hand books near you.\n"})
     assert detect(tmp_path).description == "Buy and sell second-hand books near you."
+
+
+def test_a_root_workspace_manifest_is_not_an_app(tmp_path):
+    write(tmp_path, {
+        "package.json": '{"name": "shop", "private": true, "workspaces": ["web"]}',
+        "web/package.json": '{"dependencies": {"react": "^18.0.0"}}',
+        "web/src/App.tsx": "export const App = () => null;\n",
+    })
+
+    stack = detect(tmp_path)
+
+    assert stack.name == "shop"
+    assert [(a.name, a.kind) for a in stack.apps] == [("web", "web")]
