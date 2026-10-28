@@ -10,6 +10,7 @@ import re
 import unicodedata
 from dataclasses import asdict
 
+from repo_xray import i18n
 from repo_xray.analysis.features import Feature
 from repo_xray.analysis.flows import Flow
 from repo_xray.analysis.layers import LAYERS
@@ -22,7 +23,6 @@ from repo_xray.render.theme import THEMES
 
 FOLDER = "architecture"
 FLOWS_PER_FEATURE = 3
-KIND_NAMES = {"web": "web app", "api": "API", "mobile": "mobile app", "desktop": "desktop app", "library": "application"}
 
 Bundle = dict[str, str | bytes]  # path inside the zip -> content
 
@@ -39,15 +39,16 @@ def feature_page(feature_key: str) -> str:
 class _Writer:
     def __init__(self, analysis: Analysis):
         self.a = analysis
+        self.lang = analysis.language
         self.bundle: Bundle = {}
         self.slugs = {f.key: _slug(f.key) for f in analysis.features.features}
 
     def write(self) -> Bundle:
-        stack = self.a.stack
-        self._diagram("overview", lambda theme: render_overview(stack, self.a.files, theme))
-        self._diagram("features", lambda theme: render_features(stack, self.a.features, theme))
+        stack, lang = self.a.stack, self.lang
+        self._diagram("overview", lambda theme: render_overview(stack, self.a.files, theme, lang))
+        self._diagram("features", lambda theme: render_features(stack, self.a.features, theme, lang))
         for flow in self._flows_to_draw():
-            self._diagram(f"flow-{flow.key}", lambda theme, flow=flow: render_flow(flow, stack, theme))
+            self._diagram(f"flow-{flow.key}", lambda theme, flow=flow: render_flow(flow, stack, theme, lang))
         self.bundle[f"{FOLDER}/README.md"] = self._index()
         for feature in self.a.features.features:
             self.bundle[feature_page(feature.key)] = self._feature_page(feature)
@@ -57,59 +58,62 @@ class _Writer:
     # Pages
 
     def _index(self) -> str:
-        stack = self.a.stack
-        lines = [f"# {stack.name} architecture", "", self._summary(), ""]
-        lines += ["## What is it made of?", "", _picture("images/overview", f"{stack.name} overview"), ""]
-        lines += ["## What does it do?", "", _picture("images/features", f"{stack.name} features"), ""]
+        stack, tr = self.a.stack, self._text
+        lines = [f"# {tr('page.title', name=stack.name)}", "", self._summary(), ""]
+        lines += [f"## {tr('page.made_of')}", "", _picture("images/overview", tr("page.alt_overview", name=stack.name)), ""]
+        lines += [f"## {tr('page.does')}", "", _picture("images/features", tr("page.alt_features", name=stack.name)), ""]
         for app in self._apps_with_features():
-            lines.append(f"**{app.name}** ({KIND_NAMES.get(app.kind, 'app')})")
+            lines.append(f"**{app.name}** ({tr(f'kind_name.{app.kind}')})")
             lines.append("")
             for feature in self.a.features.of_app(app.name):
                 text = f" — {feature.description}" if feature.description else ""
                 lines.append(f"- [{feature.name}](features/{self.slugs[feature.key]}.md){text}")
             lines.append("")
         if self.a.highlights:
-            lines += ["## What happens when…?", ""]
+            lines += [f"## {tr('page.happens')}", ""]
             for flow in self.a.highlights:
                 lines += [f"### {flow.title}", "", f"`{flow.method} {flow.route}`", "",
                           _picture(f"images/flow-{flow.key}", flow.title), ""]
-        lines += ["---", "", "_Generated with repo-xray from the source code. "
-                  "Diagrams show the main structure; small helpers are left out._", ""]
+        lines += ["---", "", tr("page.footer"), ""]
         return "\n".join(lines)
 
+    def _text(self, key: str, **values) -> str:
+        return i18n.text(self.lang, key, **values)
+
     def _feature_page(self, feature: Feature) -> str:
+        tr = self._text
         app = next(a for a in self.a.stack.apps if a.name == feature.app)
         lines = [f"# {feature.name}", ""]
         if feature.description:
             lines += [f"> {feature.description}", ""]
-        where = f"`{feature.path}`" if feature.path else "files grouped by name"
-        lines += [f"Part of **{app.name}** ({KIND_NAMES.get(app.kind, 'app')}) · {where} · "
-                  f"[back to the overview](../README.md)", ""]
+        where = f"`{feature.path}`" if feature.path else tr("page.grouped_by_name")
+        lines += [tr("page.part_of", app=app.name, kind=tr(f"kind_name.{app.kind}"), where=where), ""]
 
-        lines += ["## Layers", "", "| Layer | Files |", "| --- | ---: |"]
-        for layer, label in LAYERS.items():
+        lines += [f"## {tr('page.layers')}", "", tr("page.layer_table"), "| --- | ---: |"]
+        for layer in LAYERS:
             if feature.layers.get(layer):
-                lines.append(f"| {label} | {feature.layers[layer]} |")
+                lines.append(f"| {tr(f'layer.{layer}')} | {feature.layers[layer]} |")
         lines.append("")
 
         if feature.endpoints:
-            lines += ["## Endpoints", "", "| Method | Route | What it does |", "| --- | --- | --- |"]
+            lines += [f"## {tr('page.endpoints')}", "", tr("page.endpoint_table"), "| --- | --- | --- |"]
             for endpoint in feature.endpoints:
                 lines.append(f"| `{endpoint.method}` | `{endpoint.path}` | {_cell(endpoint.summary or '')} |")
             lines.append("")
 
         relations = self._relations(feature)
         if relations:
-            lines += ["## Connections", "", *relations, ""]
+            lines += [f"## {tr('page.connections')}", "", *relations, ""]
 
         flows = self._flows_of(feature)
         if flows:
-            lines += ["## What happens when…?", ""]
+            lines += [f"## {tr('page.happens')}", ""]
             for flow in flows:
                 lines += [f"### {flow.title}", "", f"`{flow.method} {flow.route}`", "",
                           _picture(f"../images/flow-{flow.key}", flow.title), ""]
 
-        lines += ["## Files", "", f"<details><summary>{len(feature.files)} files</summary>", ""]
+        files = i18n.count(self.lang, len(feature.files), "file")
+        lines += [f"## {tr('page.files')}", "", f"<details><summary>{files}</summary>", ""]
         lines += [f"- `{path}`" for path in feature.files]
         lines += ["", "</details>", ""]
         return "\n".join(lines)
@@ -120,37 +124,49 @@ class _Writer:
         def link(key: str) -> str:
             return f"[{names[key].name}]({self.slugs[key]}.md) ({names[key].app})"
 
+        def calls(n: int) -> str:
+            return i18n.count(self.lang, n, "call")
+
+        def item(label_key: str, values: list[str]) -> str:
+            return f"- **{self._text(label_key)}:** " + ", ".join(values)
+
         lines = []
         if feature.calls:
-            lines.append("- **Calls:** " + ", ".join(f"{link(k)} · {_calls(n)}" for k, n in _by_count(feature.calls)))
+            lines.append(item("page.calls", [f"{link(k)} · {calls(n)}" for k, n in _by_count(feature.calls)]))
         callers = {f.key: f.calls[feature.key] for f in self.a.features.features if feature.key in f.calls}
         if callers:
-            lines.append("- **Called from:** " + ", ".join(f"{link(k)} · {_calls(n)}" for k, n in _by_count(callers)))
+            lines.append(item("page.called_from", [f"{link(k)} · {calls(n)}" for k, n in _by_count(callers)]))
         if feature.depends_on:
-            lines.append("- **Depends on:** " + ", ".join(link(k) for k, _ in _by_count(feature.depends_on)))
+            lines.append(item("page.depends_on", [link(k) for k, _ in _by_count(feature.depends_on)]))
         users = [f.key for f in self.a.features.features if feature.key in f.depends_on]
         if users:
-            lines.append("- **Used by:** " + ", ".join(link(k) for k in users))
+            lines.append(item("page.used_by", [link(k) for k in users]))
         if feature.services:
-            lines.append("- **Services:** " + ", ".join(feature.services))
+            lines.append(item("page.services", feature.services))
         return lines
 
     def _summary(self) -> str:
-        stack = self.a.stack
-        apps = [f"{_article(KIND_NAMES.get(a.kind, 'app'))} {KIND_NAMES.get(a.kind, 'app')} (`{a.name}`)"
-                + (f" built with {_join(a.technologies[:2])}" if a.technologies else "") for a in stack.apps]
-        text = f"{stack.name} is made of {_join(apps)}." if apps else f"{stack.name} has no recognisable app yet."
+        stack, tr, lang = self.a.stack, self._text, self.lang
+        apps = []
+        for a in stack.apps:
+            kind = tr(f"kind_name.{a.kind}")
+            entry = tr("summary.app", article=_article(kind), kind=kind, app=a.name)
+            if a.technologies:
+                entry += tr("summary.built_with", techs=i18n.join(lang, a.technologies[:2]))
+            apps.append(entry)
+        text = (tr("summary.made_of", name=stack.name, apps=i18n.join(lang, apps)) if apps
+                else tr("summary.no_app", name=stack.name))
         databases = [s for s in stack.services if s.category == "database"]
         others = [s.name for s in stack.services if s.category != "database"]
         if databases:
-            stored = _join([s.name + (f" ({', '.join(s.details)})" if s.details else "") for s in databases])
-            text += f" It stores its data in {stored}"
-            text += f" and relies on {_join(others)}." if others else "."
+            stored = i18n.join(lang, [s.name + (f" ({', '.join(s.details)})" if s.details else "") for s in databases])
+            text += tr("summary.stores", stores=stored)
+            text += tr("summary.and_relies", others=i18n.join(lang, others)) if others else "."
         elif others:
-            text += f" It relies on {_join(others)}."
+            text += tr("summary.relies", others=i18n.join(lang, others))
         count = len(self.a.features.features)
         if count > 1:
-            text += f" The code is organised in {count} features, described below."
+            text += tr("summary.features", n=count)
         return text
 
     # Diagrams
@@ -198,19 +214,8 @@ def _slug(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", plain).strip("-") or "feature"
 
 
-def _join(items: list[str]) -> str:
-    items = [i for i in items if i]
-    if len(items) <= 1:
-        return "".join(items)
-    return ", ".join(items[:-1]) + " and " + items[-1]
-
-
 def _article(word: str) -> str:
     return "an" if word[:1].lower() in "aeiou" else "a"
-
-
-def _calls(count: int) -> str:
-    return f"{count} call" + ("" if count == 1 else "s")
 
 
 def _by_count(counts: dict[str, int]) -> list[tuple[str, int]]:
