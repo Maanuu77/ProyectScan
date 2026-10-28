@@ -76,6 +76,7 @@ class _Detector:
         self.app_techs: dict[str, list[Tech]] = {}
 
     def run(self) -> Stack:
+        self.stack.name = self._declared_project_name() or self.stack.name
         self._find_apps()
         self._services_from_imports()
         self._services_from_compose()
@@ -160,6 +161,27 @@ class _Detector:
         if name in ("build.gradle", "build.gradle.kts"):
             return _gradle_dependencies(text)
         return _python_dependencies(name, text)
+
+    def _declared_project_name(self) -> str | None:
+        """The name in a manifest at the root, which is usually nicer than the folder name."""
+        for manifest in ("package.json", "pyproject.toml", "pom.xml"):
+            text = self._read(manifest) if manifest in self.manifests else None
+            if not text:
+                continue
+            try:
+                if manifest == "package.json":
+                    name = json.loads(text).get("name")
+                elif manifest == "pyproject.toml":
+                    name = tomllib.loads(text).get("project", {}).get("name")
+                else:
+                    match = re.search(r"<project[^>]*>.*?<artifactId>([^<]+)</artifactId>",
+                                      re.sub(r"<parent>.*?</parent>", "", text, flags=re.S), re.S)
+                    name = match.group(1) if match else None
+            except (json.JSONDecodeError, tomllib.TOMLDecodeError):
+                continue
+            if isinstance(name, str) and name.strip():
+                return name.strip()
+        return None
 
     # Services
 
