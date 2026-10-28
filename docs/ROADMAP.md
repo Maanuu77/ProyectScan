@@ -110,7 +110,7 @@ Plus one detail page per feature. Each diagram shows at most ~9 elements; anythi
 
 | # | Issue | Branch | Status |
 | --- | --- | --- | --- |
-| #43 | Windows executable with PyInstaller | `chore/packaging` | ⬜ |
+| #43 | Windows executable with PyInstaller | `chore/packaging` | ✅ |
 | #44 | GitHub Actions: tests on every push, executable on tags | `ci/tests-and-build` | ⬜ |
 | #45 | README in English and Spanish with screenshots and repo-xray's own diagrams | `docs/readme` | ⬜ |
 | #46 | Release 1.0.0: `CHANGELOG.md`, tag `v1.0.0` | `release/1.0.0` | ⬜ |
