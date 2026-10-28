@@ -1,6 +1,6 @@
 # ADR-0004: Flat module layout and separate analysis and rendering
 
-- Status: accepted
+- Status: superseded by ADR-0008
 - Date: 2026-10-28
 
 ## Context
