@@ -24,8 +24,8 @@ Done when `python main.py <path>` prints a correct summary of a real project.
 | #7 | Analyzer: extract imports (absolute and relative) | `feature/backend-analyzer` | ✅ |
 | #8 | Analyzer: extract calls with their enclosing scope | `feature/backend-analyzer` | ✅ |
 | #9 | Analyzer: survive files with syntax or encoding errors | `feature/backend-analyzer` | ✅ |
-| #10 | Export the analysis to JSON | `feature/backend-cli` | ⬜ |
-| #11 | CLI entry point that prints a project summary | `feature/backend-cli` | ⬜ |
+| #10 | Export the analysis to JSON | `feature/backend-cli` | ✅ |
+| #11 | CLI entry point that prints a project summary | `feature/backend-cli` | ✅ |
 
 ## Sprint 2 · Dependency graph
 
@@ -34,7 +34,7 @@ Done when nodes and edges exported to JSON match what you see in the code.
 | # | Issue | Branch | Status |
 | --- | --- | --- | --- |
 | #12 | Build a `networkx` graph with file, class and function nodes and `contains` edges | `feature/backend-graph` | ⬜ |
-| #13 | Resolve imports to project modules (`imports` edges) | `feature/backend-graph` | ⬜ |
+| #13 | Resolve imports to project modules (`imports` edges); prefix module names with the root folder when the root is itself a package | `feature/backend-graph` | ⬜ |
 | #14 | Resolve calls inside the same file and through direct imports; mark the rest as probable | `feature/backend-call-resolution` | ⬜ |
 | #15 | Inheritance edges (`inherits`) | `feature/backend-call-resolution` | ⬜ |
 | #16 | Export graph nodes and edges to JSON | `feature/backend-graph` | ⬜ |
