@@ -4,7 +4,7 @@ import os
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from config import Config
+from repo_xray.config import Config
 
 
 @dataclass

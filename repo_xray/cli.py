@@ -1,4 +1,4 @@
-"""Command-line entry point: python main.py <project> [--json analysis.json]"""
+"""Command-line entry point: python -m repo_xray <project> [--json analysis.json]"""
 
 import argparse
 import json
@@ -6,9 +6,9 @@ import sys
 from collections import Counter
 from pathlib import Path
 
-from analyzer import ModuleInfo, analysis_to_dict, analyze_project
-from config import load_config
-from scanner import ScanResult, scan
+from repo_xray.analyzer import ModuleInfo, analysis_to_dict, analyze_project
+from repo_xray.config import load_config
+from repo_xray.scanner import ScanResult, scan
 
 
 def parse_args(argv: list[str] | None) -> argparse.Namespace:

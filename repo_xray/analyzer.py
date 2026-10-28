@@ -7,7 +7,7 @@ import ast
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
-from scanner import ScanResult
+from repo_xray.scanner import ScanResult
 
 
 @dataclass

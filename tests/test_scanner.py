@@ -3,8 +3,8 @@ from pathlib import Path
 
 import pytest
 
-from config import Config
-from scanner import scan
+from repo_xray.config import Config
+from repo_xray.scanner import scan
 
 
 def make_files(root: Path, *relative_paths: str, content: str = "x = 1\n") -> None:
