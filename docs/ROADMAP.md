@@ -9,8 +9,8 @@ Each issue below has a number (`#n`) that branches and commits reference. Status
 | # | Issue | Branch | Status |
 | --- | --- | --- | --- |
 | #1 | Roadmap with sprint backlog | `docs/roadmap` | ✅ |
-| #2 | Project setup: `.gitignore`, `.gitattributes`, dev requirements, pytest config | `chore/project-setup` | ⬜ |
-| #3 | ADR process and initial architecture decisions | `docs/adr` | ⬜ |
+| #2 | Project setup: `.gitignore`, `.gitattributes`, dev requirements, pytest config | `chore/project-setup` | ✅ |
+| #3 | ADR process and initial architecture decisions | `docs/adr` | ✅ |
 
 ## Sprint 1 · Scanner and static analysis
 
