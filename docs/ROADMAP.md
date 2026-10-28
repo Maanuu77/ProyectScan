@@ -20,10 +20,10 @@ Done when `python main.py <path>` prints a correct summary of a real project.
 | --- | --- | --- | --- |
 | #4 | Configuration module with defaults and optional `xray.toml` | `feature/backend-scanner` | ✅ |
 | #5 | Scanner: walk a folder, skip `.git`, virtualenvs, caches and hidden dirs | `feature/backend-scanner` | ✅ |
-| #6 | Analyzer: extract modules, classes, functions and methods with `ast` | `feature/backend-analyzer` | ⬜ |
-| #7 | Analyzer: extract imports (absolute and relative) | `feature/backend-analyzer` | ⬜ |
-| #8 | Analyzer: extract calls with their enclosing scope | `feature/backend-analyzer` | ⬜ |
-| #9 | Analyzer: survive files with syntax or encoding errors | `feature/backend-analyzer` | ⬜ |
+| #6 | Analyzer: extract modules, classes, functions and methods with `ast` | `feature/backend-analyzer` | ✅ |
+| #7 | Analyzer: extract imports (absolute and relative) | `feature/backend-analyzer` | ✅ |
+| #8 | Analyzer: extract calls with their enclosing scope | `feature/backend-analyzer` | ✅ |
+| #9 | Analyzer: survive files with syntax or encoding errors | `feature/backend-analyzer` | ✅ |
 | #10 | Export the analysis to JSON | `feature/backend-cli` | ⬜ |
 | #11 | CLI entry point that prints a project summary | `feature/backend-cli` | ⬜ |
 
