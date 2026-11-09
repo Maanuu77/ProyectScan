@@ -8,6 +8,7 @@ from PySide6.QtCore import QObject, QThread, Signal
 
 from repo_xray.export.archive import build_bundle, write_zip
 from repo_xray.export.markdown import Bundle, build_documents
+from repo_xray.parsers.cache import ParseCache
 from repo_xray.pipeline import STAGES, Analysis, Cancelled, Progress, analyse
 
 # The stages the analysis screen lists: the pipeline's own, then drawing the diagrams.
@@ -110,11 +111,14 @@ class Task(QObject):
 _RUNNING: set[Task] = set()
 
 
-def analysis_task(folder: Path) -> Task:
-    """Analyse `folder` and render its documents; finishes with (Analysis, Bundle)."""
+def analysis_task(folder: Path, cache: ParseCache | None = None) -> Task:
+    """Analyse `folder` and render its documents; finishes with (Analysis, Bundle).
+
+    With a `cache`, a later analysis of the same folder only reads the files that changed.
+    """
 
     def work(job: Job) -> tuple[Analysis, Bundle]:
-        analysis = analyse(folder, job.report, job.cancelled)
+        analysis = analyse(folder, job.report, job.cancelled, cache)
         job.check()
         job.report(Progress("render"))
         documents = build_documents(analysis)

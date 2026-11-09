@@ -9,6 +9,7 @@ percentage, and the caller may cancel between any two files or stages.
 import re
 import time
 from collections.abc import Callable, Iterator
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -21,7 +22,8 @@ from repo_xray.analysis.stack import Stack, detect_stack
 from repo_xray.analysis.texts import apply_user_texts, describe_features
 from repo_xray.config import Config, load_config
 from repo_xray.model import SourceFile
-from repo_xray.parsers import language_of, parse_file
+from repo_xray.parsers import language_of, parse_source, read_source
+from repo_xray.parsers.cache import ParseCache
 from repo_xray.scanner import ScanResult, scan
 
 # Stages in the order they run, with the words shown to the user while each one runs.
@@ -35,6 +37,8 @@ STAGES: dict[str, str] = {
     "texts": "Writing names and descriptions",
 }
 REPORT_EVERY = 10  # files between two progress reports while parsing
+READ_THREADS = 8  # reading waits on the disk and on antivirus scans, which threads can overlap
+READ_AHEAD = 64  # files read ahead of the parser, so memory stays bounded on huge projects
 
 
 @dataclass(frozen=True)
@@ -76,12 +80,13 @@ class Analysis:
 
 
 def analyse(root: Path, progress: ProgressCallback | None = None,
-            cancelled: Callable[[], bool] | None = None) -> Analysis:
+            cancelled: Callable[[], bool] | None = None, cache: ParseCache | None = None) -> Analysis:
     """Analyse the project at `root`.
 
     `progress` receives a `Progress` at the start of every stage and every few
     files while parsing. `cancelled` is polled at the same points; when it
-    returns True the analysis stops by raising `Cancelled`.
+    returns True the analysis stops by raising `Cancelled`. With a `cache`,
+    files that have not changed since an earlier analysis are not read again.
     """
     started = time.perf_counter()
 
@@ -96,12 +101,7 @@ def analyse(root: Path, progress: ProgressCallback | None = None,
     scan_result = scan(root, config)
 
     sources = [p for p in scan_result.files if language_of(p)]
-    files = []
-    for index, path in enumerate(sources):
-        if index % REPORT_EVERY == 0:
-            report("parse", index, len(sources), path.as_posix())
-        files.append(parse_file(scan_result.root, path))
-    report("parse", len(sources), len(sources))
+    files = _parse(scan_result.root, sources, report, cache)
 
     report("stack")
     stack = detect_stack(scan_result, files)
@@ -119,6 +119,33 @@ def analyse(root: Path, progress: ProgressCallback | None = None,
     apply_user_texts(features, stack, config)
     return Analysis(scan_result.root, scan_result, files, stack, graph, links, features, flows, pick_flows(flows),
                     language, detected, config, seconds=time.perf_counter() - started)
+
+
+def _parse(root: Path, sources: list[Path], report, cache: ParseCache | None) -> list[SourceFile]:
+    """Parse `sources` in order. Files are read a few at a time on threads, then parsed here one by one."""
+    files: list[SourceFile] = []
+    total = len(sources)
+    pool = ThreadPoolExecutor(max_workers=READ_THREADS, thread_name_prefix="repo-xray-read")
+    try:
+        for start in range(0, total, READ_AHEAD):
+            batch = sources[start:start + READ_AHEAD]
+            stamps = [ParseCache.stamp(root, path) if cache is not None else None for path in batch]
+            known = [cache.lookup(root, path, stamp) if cache is not None else None
+                     for path, stamp in zip(batch, stamps)]
+            reads = [None if file is not None else pool.submit(read_source, root, path)
+                     for path, file in zip(batch, known)]
+            for offset, (path, stamp, file, read) in enumerate(zip(batch, stamps, known, reads)):
+                if (start + offset) % REPORT_EVERY == 0:
+                    report("parse", start + offset, total, path.as_posix())
+                if file is None:
+                    file = parse_source(read.result(), path)
+                    if cache is not None:
+                        cache.store(root, path, stamp, file)
+                files.append(file)
+    finally:
+        pool.shutdown(wait=False, cancel_futures=True)  # a cancelled analysis does not wait for the disk
+    report("parse", total, total)
+    return files
 
 
 _QUOTED = re.compile(r'"([^"]{3,})"')
