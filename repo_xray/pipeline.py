@@ -15,6 +15,7 @@ from pathlib import Path
 
 from repo_xray import i18n
 from repo_xray.analysis.calls import CallGraph, build_call_graph
+from repo_xray.analysis.diagnostics import Diagnostic, diagnose
 from repo_xray.analysis.features import FeatureMap, detect_features
 from repo_xray.analysis.flows import Flow, build_flows, pick_flows
 from repo_xray.analysis.linking import HttpLink, link_http_calls
@@ -77,6 +78,7 @@ class Analysis:
     detected_language: str = i18n.DEFAULT  # what the code suggests, before the user's choice
     config: Config = field(default_factory=Config)
     seconds: float = 0.0  # how long the analysis took
+    diagnostics: list[Diagnostic] = field(default_factory=list)  # what could not be read, linked or resolved
 
 
 def analyse(root: Path, progress: ProgressCallback | None = None,
@@ -117,8 +119,9 @@ def analyse(root: Path, progress: ProgressCallback | None = None,
     language = config.language or detected
     describe_features(features, files, stack, language)
     apply_user_texts(features, stack, config)
+    diagnostics = diagnose(scan_result, files, stack, links, features, flows)
     return Analysis(scan_result.root, scan_result, files, stack, graph, links, features, flows, pick_flows(flows),
-                    language, detected, config, seconds=time.perf_counter() - started)
+                    language, detected, config, seconds=time.perf_counter() - started, diagnostics=diagnostics)
 
 
 def _parse(root: Path, sources: list[Path], report, cache: ParseCache | None) -> list[SourceFile]:
