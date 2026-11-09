@@ -13,6 +13,7 @@ from repo_xray.app.texts_dialog import TextsDialog
 from repo_xray.config import save_texts
 from repo_xray.app.workers import ANALYSIS_STAGES, Task, analysis_task, export_task
 from repo_xray.export.markdown import FOLDER, Bundle, feature_page
+from repo_xray.parsers.cache import ParseCache
 from repo_xray.pipeline import Analysis, Progress
 from repo_xray.render.theme import THEMES, Theme
 
@@ -300,6 +301,7 @@ class MainWindow(QMainWindow):
         self.analysis: Analysis | None = None
         self.task: Task | None = None
         self.export_message: QMessageBox | None = None
+        self.cache = ParseCache()  # a refresh after editing texts only reads the files that changed
 
         self.pages = QStackedWidget()
         self.start = StartPage(self.settings)
@@ -326,7 +328,7 @@ class MainWindow(QMainWindow):
         else:
             self.progress.start(folder)
             self.pages.setCurrentWidget(self.progress)
-        self.task = analysis_task(folder)
+        self.task = analysis_task(folder, self.cache)
         self.task.progress.connect(self.progress.show_progress)
         self.task.finished.connect(lambda result: self._analysed(folder, *result, quiet=quiet))
         self.task.failed.connect(self._analysis_failed)
