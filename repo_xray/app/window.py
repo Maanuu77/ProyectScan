@@ -11,9 +11,9 @@ from PySide6.QtWidgets import (QButtonGroup, QComboBox, QDialog, QFileDialog, QF
 from repo_xray.app.preview import DiagramView, PageView
 from repo_xray.app.texts_dialog import TextsDialog
 from repo_xray.config import save_texts
-from repo_xray.app.workers import Task, analysis_task, export_task
+from repo_xray.app.workers import ANALYSIS_STAGES, Task, analysis_task, export_task
 from repo_xray.export.markdown import FOLDER, Bundle, feature_page
-from repo_xray.pipeline import Analysis
+from repo_xray.pipeline import Analysis, Progress
 from repo_xray.render.theme import THEMES, Theme
 
 MAX_RECENT = 5
@@ -128,7 +128,6 @@ class ProgressPage(QWidget):
         self.message = QLabel()
         self.message.setObjectName("muted")
         self.bar = QProgressBar()
-        self.bar.setRange(0, 1000)
         self.bar.setTextVisible(False)
         self.bar.setFixedHeight(8)
         layout.addWidget(self.heading)
@@ -139,11 +138,15 @@ class ProgressPage(QWidget):
 
     def start(self, folder: Path) -> None:
         self.heading.setText(f"Analysing {folder.name}…")
-        self.update(0, "Starting")
+        self.show_progress(Progress("scan"))
 
-    def update(self, fraction: float, message: str) -> None:
-        self.bar.setValue(round(fraction * 1000))
-        self.message.setText(message)
+    def show_progress(self, progress: Progress) -> None:
+        """A stage that counts files fills the bar; the others only show that they are running."""
+        label = ANALYSIS_STAGES.get(progress.stage, progress.stage)
+        self.bar.setRange(0, progress.total)  # (0, 0) is Qt's "busy" bar
+        self.bar.setValue(progress.done)
+        counted = f"  ·  {progress.done} of {progress.total} files" if progress.total else ""
+        self.message.setText(label + counted)
 
 
 LANGUAGE_NAMES = {"en": "English", "es": "Español"}
@@ -324,7 +327,7 @@ class MainWindow(QMainWindow):
             self.progress.start(folder)
             self.pages.setCurrentWidget(self.progress)
         self.task = analysis_task(folder)
-        self.task.progress.connect(lambda message, fraction: self.progress.update(fraction, message))
+        self.task.progress.connect(self.progress.show_progress)
         self.task.finished.connect(lambda result: self._analysed(folder, *result, quiet=quiet))
         self.task.failed.connect(self._analysis_failed)
         self.task.start()
