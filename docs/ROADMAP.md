@@ -123,7 +123,51 @@ The local AI was dropped ([ADR-0011](adr/0011-no-ai.md)); #32-#35 and #42 are ca
 | #45 | README in English and Spanish with screenshots and repo-xray's own diagrams | `docs/readme` | ✅ |
 | #46 | Release 1.0.0: `CHANGELOG.md`, tag `v1.0.0` | `release/1.0.0` | ✅ |
 
-## After 1.0.0
+## Sprint 11 · Analysis engine for a responsive app
+
+1.0 proved the idea; sprints 11 to 14 turn it into a product: a redesigned app, a new visual language for the diagrams and an analysis that tells the truth about its progress and its gaps.
+
+| # | Issue | Branch | Status |
+| --- | --- | --- | --- |
+| #53 | Roadmap for the product redesign | `docs/roadmap-redesign` | ✅ |
+| #54 | Structured progress: real stages and counts instead of invented fractions | `refactor/pipeline-progress` | ⬜ |
+| #55 | Cancel an analysis safely | `refactor/pipeline-progress` | ⬜ |
+| #56 | Parse cache and parallel reads: a refresh does not read unchanged files again | `feature/backend-parse-cache` | ⬜ |
+| #57 | Diagnostics: what could not be parsed, linked or resolved, and the evidence behind each service | `feature/backend-diagnostics` | ⬜ |
+
+## Sprint 12 · Diagram engine
+
+| # | Issue | Branch | Status |
+| --- | --- | --- | --- |
+| #58 | Text engine: accents and wide characters measured, long identifiers broken, middle ellipsis, monospace | `feature/frontend-svg-text` | ⬜ |
+| #59 | Shared components: header, footer, zones, chips, pills and connectors, one identity for the three levels | `feature/frontend-svg-components` | ⬜ |
+| #60 | Overview: zones per tier, ordering that avoids crossings, ports, overflow for large stacks | `feature/frontend-overview-v2` | ⬜ |
+| #61 | Feature map: one zone per app, the HTTP bridge between them, chip overflow | `feature/frontend-features-v2` | ⬜ |
+| #62 | Flows: method badges, reads and writes told apart, steps as type and method | `feature/frontend-flows-v2` | ⬜ |
+| #63 | Element ids, so the app can make diagrams clickable | `feature/frontend-svg-components` | ⬜ |
+
+## Sprint 13 · Desktop app redesign
+
+| # | Issue | Branch | Status |
+| --- | --- | --- | --- |
+| #64 | Design system: tokens, type scale, icon set, light, dark and system themes for the whole app | `feature/frontend-design-system` | ⬜ |
+| #65 | App shell: sidebar navigation by level, top bar, status bar, keyboard shortcuts | `feature/frontend-app-shell` | ⬜ |
+| #66 | Start page: recent projects with details, drop a folder anywhere | `feature/frontend-app-shell` | ⬜ |
+| #67 | Analysis page: real stages, cancel, errors and empty projects explained in place | `feature/frontend-app-shell` | ⬜ |
+| #68 | Diagram canvas: zoom, pan, fit, find, full screen and click-through | `feature/frontend-diagram-canvas` | ⬜ |
+| #69 | Pages with their diagrams inline and links that navigate | `feature/frontend-diagram-canvas` | ⬜ |
+| #70 | Edit texts: one card per feature, filter, reset, edited markers | `feature/frontend-edit-texts-v2` | ⬜ |
+| #71 | Export menu: the zip, the current diagram as SVG or PNG, copy to the clipboard | `feature/frontend-export-menu` | ⬜ |
+| #72 | Analysis report page: summary, evidence and diagnostics | `feature/frontend-analysis-report` | ⬜ |
+
+## Sprint 14 · Hardening and release
+
+| # | Issue | Branch | Status |
+| --- | --- | --- | --- |
+| #73 | Large and unusual projects: stress tests and the fixes they ask for | `fix/large-projects` | ⬜ |
+| #74 | README, screenshots, example diagrams, ADRs and changelog for the redesign | `docs/redesign` | ⬜ |
+
+## Later
 
 - GitHub Action that regenerates the docs on every push.
 - macOS and Linux builds.
