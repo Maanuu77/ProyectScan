@@ -1,6 +1,8 @@
 import subprocess
 import sys
 import textwrap
+import threading
+import time
 import zipfile
 from pathlib import Path
 
@@ -11,6 +13,7 @@ from repo_xray.app.preview import DiagramView, PageView
 from repo_xray.app.window import MAX_RECENT, MainWindow
 from repo_xray.app.workers import Task
 from repo_xray.config import FeatureText
+from repo_xray.pipeline import Progress
 from repo_xray.render.theme import LIGHT
 from tests.conftest import hexagonal_backend
 
@@ -42,32 +45,54 @@ def analysed(qtbot, window, project):
 def test_task_reports_on_the_thread_that_created_it(qtbot):
     seen = {}
 
-    def work(report):
+    def work(job):
         seen["worker"] = QThread.currentThread()
-        report("halfway", 0.5)
+        job.report(Progress("parse", 1, 2))
         return 42
 
     task = Task(work)
-    task.progress.connect(lambda message, fraction: seen.setdefault("progress", (message, fraction)))
+    task.progress.connect(lambda progress: seen.setdefault("progress", progress))
     task.finished.connect(lambda result: seen.update(result=result, slot=QThread.currentThread()))
     with qtbot.waitSignal(task.finished, timeout=TIMEOUT):
         task.start()
     task.wait()
 
     assert seen["result"] == 42
-    assert seen["progress"] == ("halfway", 0.5)
+    assert seen["progress"] == Progress("parse", 1, 2)
     assert seen["worker"] is not seen["slot"]
     assert seen["slot"] is QThread.currentThread()  # slots may touch widgets safely
 
 
 def test_task_failure_is_reported_not_raised(qtbot):
-    task = Task(lambda report: 1 / 0)
+    task = Task(lambda job: 1 / 0)
 
     with qtbot.waitSignal(task.failed, timeout=TIMEOUT) as blocker:
         task.start()
     task.wait()
 
     assert blocker.args[0].startswith("ZeroDivisionError")
+
+
+def test_task_stops_when_cancelled(qtbot):
+    started = threading.Event()
+    outcome = []
+
+    def work(job):
+        started.set()
+        while True:  # work that only ends by being cancelled
+            job.check()
+            time.sleep(0.005)
+
+    task = Task(work)
+    task.finished.connect(lambda result: outcome.append("finished"))
+    task.failed.connect(lambda error: outcome.append("failed"))
+    with qtbot.waitSignal(task.cancelled, timeout=TIMEOUT):
+        task.start()
+        assert started.wait(TIMEOUT / 1000)
+        task.cancel()
+    task.wait()
+
+    assert outcome == [] and task.is_cancelling()
 
 
 def test_analysis_shows_diagrams_and_pages(qtbot, window, project):
@@ -220,7 +245,7 @@ def test_dropping_a_task_right_after_it_finishes_does_not_crash():
 
         app = QApplication([])
         for _ in range(100):
-            task = Task(lambda report: sum(range(2000)))
+            task = Task(lambda job: sum(range(2000)))
             loop = QEventLoop()
             task.finished.connect(lambda _: loop.quit())
             task.start()
