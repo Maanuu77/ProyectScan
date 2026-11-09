@@ -209,6 +209,7 @@ class _Writer:
             "features": [asdict(f) for f in self.a.features.features],
             "shared": [asdict(s) for s in self.a.features.shared],
             "flows": [asdict(f) for f in self.a.flows],
+            "diagnostics": [asdict(d) for d in self.a.diagnostics],
         }
         return json.dumps(data, indent=2, ensure_ascii=False)
 

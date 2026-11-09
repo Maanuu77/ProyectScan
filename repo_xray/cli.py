@@ -6,11 +6,15 @@ import sys
 from collections import Counter
 from pathlib import Path
 
+from repo_xray.analysis.diagnostics import ERROR, INFO, WARNING
 from repo_xray.config import load_config
 from repo_xray.model import SourceFile
 from repo_xray.pipeline import Analysis, analyse
 from repo_xray.project import analysis_to_dict
 from repo_xray.scanner import ScanResult
+
+MARKS = {ERROR: "x", WARNING: "!", INFO: "-"}
+MAX_ITEMS = 10  # items listed under a warning; the app's report shows all of them
 
 
 def parse_args(argv: list[str] | None) -> argparse.Namespace:
@@ -33,6 +37,14 @@ def summarize_analysis(analysis: Analysis) -> str:
     lines.append(f"  Services  {services}")
     lines.append(f"  Features  {len(analysis.features.features)}")
     lines.append(f"  Flows     {len(analysis.flows)} ({len(analysis.links)} linked HTTP calls)")
+    if analysis.diagnostics:
+        lines += ["", "Notes:"]
+        for diagnostic in analysis.diagnostics:
+            lines.append(f"  {MARKS[diagnostic.severity]} {diagnostic.title}")
+            if diagnostic.severity != INFO:
+                lines += [f"      {item}" for item in diagnostic.items[:MAX_ITEMS]]
+                if len(diagnostic.items) > MAX_ITEMS:
+                    lines.append(f"      … and {len(diagnostic.items) - MAX_ITEMS} more")
     return "\n".join(lines)
 
 
