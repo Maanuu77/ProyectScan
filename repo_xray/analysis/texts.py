@@ -20,7 +20,9 @@ MAX_SCREENS = 5
 MIN_TITLES_FOR_BRAND = 3
 BRAND_SHARE = 0.6  # a segment in at least this share of the route titles is the app's brand
 _SEPARATORS = re.compile(r"\s+[·|\-–—:]\s+")
-_SCREEN_SUFFIX = re.compile(r"[-_.]?(page|component|view|screen|container)$", re.IGNORECASE)
+# `checkout-page`, `checkout_view`, `CheckoutPage`: the suffix is a word of its own, so `overview` is not a view.
+_SCREEN_SUFFIX = re.compile(r"(?:[-_.](?:page|component|view|screen|container)"
+                            r"|(?<=[a-z0-9])(?:Page|Component|View|Screen|Container))$")
 
 TEXTS = {
     "screen": {"en": "Screen: {names}.", "es": "Pantalla: {names}."},

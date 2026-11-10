@@ -94,6 +94,49 @@ def test_layer_first_projects_group_files_by_name(tmp_path):
     assert [s.name for s in feature_map.shared] == ["utils"]
 
 
+def test_a_project_organised_as_packages_shows_its_packages(tmp_path):
+    write(tmp_path, {
+        "pyproject.toml": '[project]\nname = "tool"\n',
+        "setup_helpers.py": "x = 1\n",
+        "tool/__init__.py": "",
+        "tool/cli.py": "from tool.render.draw import draw\n\ndef main():\n    draw()\n",
+        "tool/parsers/__init__.py": '"""Read source files into one model. Each language has its module."""\n',
+        "tool/parsers/python.py": "def parse(): ...\n",
+        "tool/parsers/java.py": "def parse(): ...\n",
+        "tool/render/__init__.py": "",
+        "tool/render/draw.py": "from tool.parsers.python import parse\n\ndef draw():\n    return parse()\n",
+        "tool/render/theme.py": "DARK = 1\n",
+        "tool/utils/__init__.py": "",
+        "tool/utils/text.py": "def fit(): ...\n",
+        "tool/utils/paths.py": "def join(): ...\n",
+    })
+
+    feature_map = features_of(tmp_path)
+
+    features = by_key(feature_map)
+    assert set(features) == {"tool/parsers", "tool/render"}  # `utils` is shared code, not a part of the product
+    assert features["tool/parsers"].path == "tool/parsers" and len(features["tool/parsers"].files) == 3
+    assert features["tool/parsers"].description == "Read source files into one model"  # the package's own words
+    assert features["tool/render"].depends_on == {"tool/parsers": 1}
+    assert sorted((s.name, s.files) for s in feature_map.shared) == [("(root)", 3), ("utils", 3)]
+
+
+def test_folders_named_after_layers_are_not_modules(tmp_path):
+    write(tmp_path, {
+        "package.json": '{"dependencies": {"react": "^19.0.0"}}',
+        "src/components/Card.tsx": "export function Card() { return null; }\n",
+        "src/components/List.tsx": "export function List() { return null; }\n",
+        "src/services/api.ts": "export const load = () => fetch('/api/items');\n",
+        "src/services/auth.ts": "export const login = () => 1;\n",
+        "src/hooks/useItems.ts": "export function useItems() { return 1; }\n",
+        "src/hooks/useAuth.ts": "export function useAuth() { return 1; }\n",
+    })
+
+    feature_map = features_of(tmp_path)
+
+    assert len(feature_map.features) == 1  # split by layer it would say how it is built, not what it does
+
+
 def test_small_projects_are_a_single_feature(tmp_path):
     write(tmp_path, {"pyproject.toml": '[project]\nname = "tool"\n', "tool.py": "def main():\n    pass\n"})
 
