@@ -7,6 +7,8 @@ from PySide6.QtGui import QColor, QImage, QPainter, QPixmap, QTextBlockFormat, Q
 from PySide6.QtSvg import QSvgRenderer
 from PySide6.QtWidgets import QLabel, QScrollArea, QTextBrowser
 
+from repo_xray.export.png import for_qt
+
 _PICTURE = re.compile(r"<picture>.*?alt=\"([^\"]*)\".*?</picture>", re.S)
 _DETAILS = re.compile(r"</?(details|summary)>")
 
@@ -25,7 +27,7 @@ class DiagramView(QScrollArea):
         self._background = "#ffffff"
 
     def show_svg(self, svg: str, background: str) -> None:
-        self._renderer = QSvgRenderer(QByteArray(svg.encode("utf-8")))
+        self._renderer = QSvgRenderer(QByteArray(for_qt(svg).encode("utf-8")))
         self._background = background
         self._label.setStyleSheet(f"background: {background}; border: none;")
         self._redraw()
