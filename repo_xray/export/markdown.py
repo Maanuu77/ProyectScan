@@ -42,6 +42,21 @@ def feature_page(feature_key: str) -> str:
     return f"{FOLDER}/features/{_slug(feature_key)}.md"
 
 
+def diagram_path(name: str, theme: str) -> str:
+    """Path of a diagram inside the bundle: `diagram_path("overview", "dark")`."""
+    return f"{FOLDER}/images/{name}-{theme}.svg"
+
+
+def flow_diagram(flow: Flow) -> str:
+    """Name of the diagram drawn for a flow."""
+    return f"flow-{flow.key}"
+
+
+def flows_of(analysis: Analysis, feature: Feature) -> list[Flow]:
+    """The flows drawn on a feature's page, the most telling first."""
+    return _Writer(analysis)._flows_of(feature)
+
+
 class _Writer:
     def __init__(self, analysis: Analysis):
         self.a = analysis
@@ -55,7 +70,7 @@ class _Writer:
         requests = sum(n or 0 for n in frontend_requests(stack, self.a.files, self.a.links).values())
         self._diagram("features", lambda theme: render_features(stack, self.a.features, theme, lang, requests))
         for flow in self._flows_to_draw():
-            self._diagram(f"flow-{flow.key}", lambda theme, flow=flow: render_flow(flow, stack, theme, lang))
+            self._diagram(flow_diagram(flow), lambda theme, flow=flow: render_flow(flow, stack, theme, lang))
         self.bundle[f"{FOLDER}/README.md"] = self._index()
         for feature in self.a.features.features:
             self.bundle[feature_page(feature.key)] = self._feature_page(feature)
@@ -184,7 +199,7 @@ class _Writer:
 
     def _diagram(self, name: str, render) -> None:
         for theme_name, theme in THEMES.items():
-            self.bundle[f"{FOLDER}/images/{name}-{theme_name}.svg"] = render(theme)
+            self.bundle[diagram_path(name, theme_name)] = render(theme)
 
     def _flows_to_draw(self) -> list[Flow]:
         drawn, seen = [], set()
