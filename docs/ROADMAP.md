@@ -150,15 +150,15 @@ The local AI was dropped ([ADR-0011](adr/0011-no-ai.md)); #32-#35 and #42 are ca
 
 | # | Issue | Branch | Status |
 | --- | --- | --- | --- |
-| #64 | Design system: tokens, type scale, icon set, light, dark and system themes for the whole app | `feature/frontend-design-system` | ⬜ |
-| #65 | App shell: sidebar navigation by level, top bar, status bar, keyboard shortcuts | `feature/frontend-app-shell` | ⬜ |
-| #66 | Start page: recent projects with details, drop a folder anywhere | `feature/frontend-app-shell` | ⬜ |
-| #67 | Analysis page: real stages, cancel, errors and empty projects explained in place | `feature/frontend-app-shell` | ⬜ |
-| #68 | Diagram canvas: zoom, pan, fit, find, full screen and click-through | `feature/frontend-diagram-canvas` | ⬜ |
-| #69 | Pages with their diagrams inline and links that navigate | `feature/frontend-diagram-canvas` | ⬜ |
-| #70 | Edit texts: one card per feature, filter, reset, edited markers | `feature/frontend-edit-texts-v2` | ⬜ |
-| #71 | Export menu: the zip, the current diagram as SVG or PNG, copy to the clipboard | `feature/frontend-export-menu` | ⬜ |
-| #72 | Analysis report page: summary, evidence and diagnostics | `feature/frontend-analysis-report` | ⬜ |
+| #64 | Design system: tokens, type scale, icon set, light, dark and system themes for the whole app | `feature/frontend-design-system` | ✅ |
+| #65 | App shell: sidebar navigation by level, top bar, status bar, keyboard shortcuts | `feature/frontend-app-shell` | ✅ |
+| #66 | Start page: recent projects with details, drop a folder anywhere | `feature/frontend-app-shell` | ✅ |
+| #67 | Analysis page: real stages, cancel, errors and empty projects explained in place | `feature/frontend-app-shell` | ✅ |
+| #68 | Diagram canvas: zoom, pan, fit, find, full screen and click-through | `feature/frontend-app-shell` | ✅ |
+| #69 | Pages with their diagrams inline and links that navigate | `feature/frontend-app-shell` | ✅ |
+| #70 | Edit texts: one card per feature, filter, reset, edited markers | `feature/frontend-app-shell` | ✅ |
+| #71 | Export menu: the zip, the current diagram as SVG or PNG, copy to the clipboard | `feature/frontend-app-shell` | ✅ |
+| #72 | Analysis report page: summary, evidence and diagnostics | `feature/frontend-app-shell` | ✅ |
 
 ## Sprint 14 · Hardening and release
 
