@@ -102,11 +102,25 @@ def pixmap(name: str, colour: str, size: int = 16, ratio: float = 1.0) -> QPixma
     return result
 
 
-def icon(name: str, colour: str, disabled: str | None = None, size: int = 16, ratio: float = 2.0) -> QIcon:
-    """A QIcon in `colour`, with `disabled` for controls that are switched off."""
+def icon(name: str, colour: str, disabled: str | None = None, size: int = 16, ratio: float = 2.0,
+         gap: int = 0) -> QIcon:
+    """A QIcon in `colour`, with `disabled` for controls that are switched off.
+
+    `gap` adds empty room to the right of the drawing, for buttons that show the icon beside
+    a text: Qt leaves almost none between the two. Such a button's icon size is (size + gap, size).
+    """
     result = QIcon()
-    result.addPixmap(pixmap(name, colour, size, ratio), QIcon.Mode.Normal)
-    result.addPixmap(pixmap(name, disabled or colour, size, ratio), QIcon.Mode.Disabled)
+    for mode, tint in ((QIcon.Mode.Normal, colour), (QIcon.Mode.Disabled, disabled or colour)):
+        drawn = pixmap(name, tint, size, ratio)
+        if gap:
+            padded = QPixmap(round((size + gap) * ratio), round(size * ratio))
+            padded.setDevicePixelRatio(ratio)  # before painting: the painter then works in logical pixels
+            padded.fill(Qt.GlobalColor.transparent)
+            painter = QPainter(padded)
+            painter.drawPixmap(0, 0, drawn)
+            painter.end()
+            drawn = padded
+        result.addPixmap(drawn, mode)
     return result
 
 
