@@ -24,7 +24,7 @@ class HttpLink:
 
 
 def link_http_calls(files: list[SourceFile]) -> list[HttpLink]:
-    endpoints = [(e, f.path) for f in files if not is_test_path(f.path) for e in f.endpoints]
+    endpoints = _EndpointIndex([(e, f.path) for f in files if not is_test_path(f.path) for e in f.endpoints])
     links = []
     for file in files:
         if is_test_path(file.path):
@@ -36,17 +36,44 @@ def link_http_calls(files: list[SourceFile]) -> list[HttpLink]:
     return links
 
 
-def _best_endpoint(call: HttpCall, endpoints: list[tuple[Endpoint, str]]) -> tuple[Endpoint, str] | None:
+class _EndpointIndex:
+    """Endpoints by method and last segment, so a call is compared only with routes it could match.
+
+    Comparing every call with every endpoint is quadratic: a project with a thousand of each
+    spent most of its analysis here. A call's last segment must equal the route's, unless one
+    of the two is a parameter, so that is what the index is keyed by.
+    """
+
+    def __init__(self, endpoints: list[tuple[Endpoint, str]]):
+        self._routes: dict[str, dict[str | None, list[tuple[int, Endpoint, str, list[str | None]]]]] = {}
+        for order, (endpoint, path) in enumerate(endpoints):
+            segments = _segments(endpoint.path)
+            if segments:  # the root route has nothing a call could be matched on
+                by_last = self._routes.setdefault(endpoint.method, {})
+                by_last.setdefault(segments[-1], []).append((order, endpoint, path, segments))
+
+    def candidates(self, method: str, last: str | None):
+        """Routes of `method` whose last segment could match `last` (None: the call ends in a parameter)."""
+        for served in (method, "ANY"):
+            by_last = self._routes.get(served, {})
+            if last is None:
+                for routes in by_last.values():
+                    yield from routes
+            else:
+                yield from by_last.get(last, ())
+                yield from by_last.get(None, ())
+
+
+def _best_endpoint(call: HttpCall, endpoints: _EndpointIndex) -> tuple[Endpoint, str] | None:
     call_segments, anchored = _call_segments(call.url)
     if call_segments is None:
         return None
-    best, best_score = None, 0
-    for endpoint, path in endpoints:
-        if endpoint.method not in (call.method, "ANY"):
-            continue
-        score = _score(call_segments, _segments(endpoint.path), anchored)
-        if score > best_score:
-            best, best_score = (endpoint, path), score
+    best, best_key = None, (0, 0)
+    for order, endpoint, path, segments in endpoints.candidates(call.method, call_segments[-1]):
+        score = _score(call_segments, segments, anchored)
+        key = (score, -order)  # between equal scores, the endpoint declared first, as before the index
+        if score > 0 and key > best_key:
+            best, best_key = (endpoint, path), key
     return best
 
 
