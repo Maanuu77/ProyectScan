@@ -43,7 +43,7 @@ def parse_source(data: bytes | OSError, relative_path: Path) -> SourceFile:
             raise data
         return parser(data, relative_path)
     except SyntaxError as exc:
-        error = f"SyntaxError: {exc.msg} (line {exc.lineno})"
+        error = f"SyntaxError: {exc.msg}" + (f" (line {exc.lineno})" if exc.lineno else "")
     except (ValueError, RecursionError, OSError) as exc:
         error = f"{type(exc).__name__}: {exc}"
     return SourceFile(

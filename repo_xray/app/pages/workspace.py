@@ -9,7 +9,6 @@
     └──────────────┴ status bar: what is running · how to move around · what the analysis found ──┘
 """
 
-import re
 from posixpath import dirname, normpath
 
 from PySide6.QtCore import QEvent, Qt, Signal
@@ -123,7 +122,7 @@ class WorkspacePage(QWidget):
         super().__init__()
         self._themes = themes
         self.analysis: Analysis | None = None
-        self.bundle: Bundle = {}
+        self.bundle = Bundle()
         self.navigation = Navigation()
         self.target: Target | None = None
         self._report = ""
@@ -282,7 +281,6 @@ class WorkspacePage(QWidget):
         self.sidebar.set_navigation(self.navigation)
         self._show_language(analysis)
         self._show_facts(analysis)
-        self.canvas.set_clickable(i for i in _element_ids(bundle) if nav.target_of_element(analysis, i) is not None)
         target = previous if previous is not None and self.navigation.find(previous) else nav.OVERVIEW_DIAGRAM
         self.target = None
         self.open(target, keep_view=keep_selection)
@@ -302,6 +300,9 @@ class WorkspacePage(QWidget):
         if target.kind == DIAGRAM:
             palette = self._themes.palette
             self.canvas.show_svg(self._diagram(target.name), palette.diagram.background, keep_view=keep_view and same)
+            # Only the cards that lead somewhere react to the pointer.
+            self.canvas.set_clickable(i for i in self.canvas.element_ids()
+                                      if nav.target_of_element(self.analysis, i) not in (None, target))
             self.views.setCurrentWidget(self.canvas)
         else:
             if self.find_bar.isVisible():
@@ -497,11 +498,3 @@ class WorkspacePage(QWidget):
         if self.target is not None and self.analysis is not None:
             self.open(self.target, keep_view=True)
 
-
-def _element_ids(bundle: Bundle) -> set[str]:
-    """Every id carried by a card of any diagram of the bundle."""
-    found: set[str] = set()
-    for path, content in bundle.items():
-        if path.endswith("-light.svg"):
-            found.update(re.findall(r' id="([^"]+)"', str(content)))
-    return found
