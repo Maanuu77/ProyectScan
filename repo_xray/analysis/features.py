@@ -1,12 +1,14 @@
 """Level 2: what a project does, as business features per app.
 
-A feature is found in one of three ways, in this order:
+A feature is found in one of four ways, in this order:
 
 1. an explicit container folder (`features/`, `modules/`, `domains/`);
 2. vertical slices: folders that hold several layers on their own
    (`banco/` with `web/`, `application/`, `domain/` and `persistence/`);
 3. in layer-first projects, files grouped by their base name
-   (`OrderController`, `OrderService` and `OrderRepository` make "Order").
+   (`OrderController`, `OrderService` and `OrderRepository` make "Order");
+4. in projects organised as packages (a library, a command-line tool),
+   the packages themselves: `parsers/`, `render/`, `export/`.
 
 Folders such as `shared/` or `core/` are reported as shared foundations,
 not as features. Frontend features are then linked to the backend
@@ -21,7 +23,7 @@ from dataclasses import dataclass, field
 
 from repo_xray.analysis import catalog
 from repo_xray.analysis.calls import CallGraph
-from repo_xray.analysis.layers import classify
+from repo_xray.analysis.layers import FOLDERS, classify
 from repo_xray.analysis.linking import HttpLink
 from repo_xray.analysis.paths import is_inside, is_test_path
 from repo_xray.analysis.stack import App, Stack
@@ -37,6 +39,9 @@ NAME_SUFFIXES = {"controller", "service", "services", "repository", "repo", "dao
                  "store", "model", "models", "resource", "handler", "router", "routes", "view", "schema",
                  "serializer", "form", "client", "jpa", "persistence", "web", "command", "query", "test"}
 MAX_CALL_DEPTH = 5
+MIN_MODULE_FILES = 2  # a package smaller than this is a detail, not a module
+MODULES_SHARE = 0.5  # packages must hold at least this share of the code to stand for its features
+DOMINANT_SHARE = 0.8  # a folder with this share of the code is where the project really starts
 
 
 @dataclass
@@ -124,11 +129,11 @@ def _group(app: App, files: list[SourceFile], layers: dict[str, str]):
     root = _common_folder([f.path for f in files])
     if posixpath.basename(root).lower() in CONTAINERS:
         root = posixpath.dirname(root)  # every file is inside features/: keep the container visible
-    for strategy in (_by_container, _by_slices):
+    for strategy in (_by_container, _by_slices, _by_name, _by_modules):
         grouped = strategy(root, files, layers)
         if grouped is not None:
             return grouped
-    return _by_name(root, files, layers)
+    return {"": (root, files)}, {}  # nothing to split by: the whole app is one feature
 
 
 def _by_container(root: str, files: list[SourceFile], layers: dict[str, str]):
@@ -185,8 +190,52 @@ def _by_name(root: str, files: list[SourceFile], layers: dict[str, str]):
         else:
             rest.extend(members)
     if len(features) < 2:
-        return {"": (root, files)}, {}
+        return None
     return features, _shared_by_top_folder(root, rest)
+
+
+def _by_modules(root: str, files: list[SourceFile], layers: dict[str, str]):
+    """The project's own packages as features, when it is organised by module and by nothing else.
+
+    Folders named after a layer (`services/`, `models/`) or after shared code (`utils/`, `core/`)
+    are not modules, so a layer-first project is left as one feature rather than split by layer.
+    """
+    root = _where_the_code_starts(root, files)
+    children = defaultdict(list)
+    for file in files:
+        relative = _relative(file.path, root) if is_inside(file.path, root) else ""
+        children[relative.split("/")[0] if "/" in relative else ""].append(file)
+    modules = {name: members for name, members in children.items()
+               if name and len(members) >= MIN_MODULE_FILES and not _is_layer_or_shared(name)}
+    if len(modules) < 2 or sum(len(members) for members in modules.values()) < len(files) * MODULES_SHARE:
+        return None
+    features = {name: (_join(root, name), members) for name, members in modules.items()}
+    rest = [f for name, members in children.items() if name not in modules for f in members]
+    return features, _shared_by_top_folder(root, rest)
+
+
+def _where_the_code_starts(root: str, files: list[SourceFile]) -> str:
+    """Go down while one folder holds nearly all the code: `src/`, the package of a Python project…"""
+    while True:
+        inside = Counter()
+        for file in files:
+            relative = _relative(file.path, root) if is_inside(file.path, root) else ""
+            if "/" in relative:
+                inside[relative.split("/")[0]] += 1
+        folder, count = inside.most_common(1)[0] if inside else ("", 0)
+        if not folder or count < len(files) * DOMINANT_SHARE:
+            return root
+        root = _join(root, folder)
+
+
+def _is_layer_or_shared(folder: str) -> bool:
+    """Whether a folder's name says "a layer" or "shared code" rather than "a part of the product".
+
+    `app` is shared code beside feature folders (Angular's `src/app`), but as a package among
+    packages it is a module like the others.
+    """
+    name = folder.lower()
+    return (name in SHARED_NAMES and name != "app") or name == "api" or any(name in names for names in FOLDERS.values())
 
 
 def _shared_by_top_folder(root: str, files: list[SourceFile]) -> dict[str, list[SourceFile]]:
@@ -289,6 +338,9 @@ def _description(feature: Feature, members: list[SourceFile], layers: dict[str, 
             return text
     if described:
         return described[0]
+    package = next((m.docstring for m in members if m.is_package and posixpath.dirname(m.path) == feature.path), None)
+    if package:  # a Python package says what it is for in its own `__init__.py`
+        return _first_sentence(package)
     for wanted in ("entry", "application", "domain"):
         for member in members:
             if layers[member.path] == wanted:
