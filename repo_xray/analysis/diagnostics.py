@@ -59,10 +59,11 @@ def _parsing(scan, files, stack, links, features, flows):
 
 
 def _stack(scan, files, stack, links, features, flows):
-    if files and not stack.apps:
-        yield Diagnostic(WARNING, "no-apps", "No application was recognised",
-                         "repo-xray finds applications through their build files: pom.xml, build.gradle, "
-                         "package.json, pyproject.toml or requirements.txt. None was found next to the code.")
+    if stack.inferred_app:
+        yield Diagnostic(INFO, "no-build-file", "No build file found: the folder is shown as one application",
+                         "repo-xray finds applications and their technologies through build files: pom.xml, "
+                         "build.gradle, package.json, pyproject.toml or requirements.txt. None was found, so "
+                         "the overview has no frameworks or versions to show.")
     unused = [s.name for s in stack.services if not s.used_by]
     if unused:
         yield Diagnostic(INFO, "unattached-services", f"{_n(len(unused), 'service')} found only in configuration",
