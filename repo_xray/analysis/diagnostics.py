@@ -100,8 +100,8 @@ def _requests(scan, files, stack, links, features, flows):
 def _flows(scan, files, stack, links, features, flows):
     if files and not flows:
         yield Diagnostic(INFO, "no-flows", "No request flows (level 3)",
-                         "Flows start at HTTP endpoints, and repo-xray recognises Spring's (@GetMapping, "
-                         "@PostMapping…). None was found, so the documents have levels 1 and 2 only.")
+                         "Flows start at HTTP endpoints, and repo-xray recognises those of Spring, FastAPI, "
+                         "Flask and NestJS. None was found, so the documents have levels 1 and 2 only.")
     backend = [(flow, [s for s in flow.steps[flow.http_index or 0:] if s.layer != "service"]) for flow in flows]
     shallow = [f"{flow.method} {flow.route}" for flow, steps in backend if len(steps) <= 1]
     if shallow:

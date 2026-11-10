@@ -39,8 +39,14 @@ class _Resolver:
         self.members: dict[str, dict[str, Symbol]] = defaultdict(dict)  # type qualname -> name -> member
         self.implementations: dict[str, list[Symbol]] = defaultdict(list)  # base name -> subtypes
         self.module_members: dict[str, dict[str, Symbol]] = defaultdict(dict)  # file name -> top-level symbols
+        self.python_modules: dict[str, list[str]] = defaultdict(list)  # dotted name or its tail -> module names
 
         for file in files:
+            if file.language == "python":
+                # `api/app/services/orders.py` is imported as `app.services.orders` from inside `api/`.
+                parts = file.name.split(".")
+                for start in range(len(parts)):
+                    self.python_modules[".".join(parts[start:])].append(file.name)
             top_level_scope = file.package if file.language == "java" and file.package else file.name
             for symbol in file.symbols:
                 self.graph.symbols[symbol.qualname] = symbol
@@ -88,9 +94,46 @@ class _Resolver:
             if receiver_type is not None:  # a static call such as `Factory.create()`
                 return self._methods(receiver_type, method)
             module_symbol = imported.get(receiver)
-            if module_symbol is None and receiver in self.module_members:
-                return [s for s in [self.module_members[receiver].get(method)] if s]
+            if module_symbol is None:
+                # `orders.create()` on a module: `import orders`, or `from app.services import orders`
+                module = receiver if receiver in self.module_members else self._imported_module(file, receiver)
+                if module is not None:
+                    return [s for s in [self.module_members[module].get(method)] if s]
         return []
+
+    def _imported_module(self, file: SourceFile, local_name: str) -> str | None:
+        """The project module that `local_name` stands for in `file`, if it was imported as a module."""
+        for imported in file.imports:
+            if (imported.alias or imported.name or imported.module.rpartition(".")[2]) != local_name:
+                continue
+            module = self._module(file, f"{imported.module}.{imported.name}" if imported.name else imported.module)
+            if module is not None:
+                return module
+        return None
+
+    def _module(self, file: SourceFile, name: str) -> str | None:
+        """The project file that an import of `name` reaches from `file`, or None when it is not ours.
+
+        A Python package inside an app's folder is imported without that folder, so the name is
+        matched from its end; between several candidates, the one nearest to `file` wins.
+        """
+        for exact in (name, name + "/index"):
+            if exact in self.module_members:
+                return exact
+        candidates = self.python_modules.get(name, []) if file.language == "python" else []
+        if len(candidates) > 1:
+            def nearness(module: str) -> int:
+                shared = 0
+                for ours, theirs in zip(file.name.split("."), module.split(".")):
+                    if ours != theirs:
+                        break
+                    shared += 1
+                return shared
+
+            candidates = sorted(candidates, key=nearness, reverse=True)
+            if nearness(candidates[0]) == nearness(candidates[1]):
+                return None  # two modules equally near: guessing would draw a wrong connection
+        return candidates[0] if candidates else None
 
     def _methods(self, owner: Symbol, name: str) -> list[Symbol]:
         """`name` on `owner`, looking in its bases and, for an interface, its implementations."""
@@ -152,7 +195,8 @@ class _Resolver:
                 matches = [s for s in self.types_by_name.get(imported.name, [])
                            if self.graph.file_of[s.qualname].package == imported.module]
             else:
-                members = self.module_members.get(imported.module) or self.module_members.get(imported.module + "/index", {})
+                module = self._module(file, imported.module)
+                members = self.module_members.get(module, {}) if module else {}
                 matches = [members[imported.name]] if imported.name in members else []
             if matches:
                 names[local] = matches[0]
