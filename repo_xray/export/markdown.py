@@ -19,6 +19,7 @@ from repo_xray.pipeline import Analysis
 from repo_xray.render.features import render_features
 from repo_xray.render.flows import render_flow
 from repo_xray.render.overview import render_overview
+from repo_xray.render.requests import frontend_requests
 from repo_xray.render.theme import THEMES
 
 FOLDER = "architecture"
@@ -50,8 +51,9 @@ class _Writer:
 
     def write(self) -> Bundle:
         stack, lang = self.a.stack, self.lang
-        self._diagram("overview", lambda theme: render_overview(stack, self.a.files, theme, lang))
-        self._diagram("features", lambda theme: render_features(stack, self.a.features, theme, lang))
+        self._diagram("overview", lambda theme: render_overview(stack, self.a.files, theme, lang, self.a.links))
+        requests = sum(n or 0 for n in frontend_requests(stack, self.a.files, self.a.links).values())
+        self._diagram("features", lambda theme: render_features(stack, self.a.features, theme, lang, requests))
         for flow in self._flows_to_draw():
             self._diagram(f"flow-{flow.key}", lambda theme, flow=flow: render_flow(flow, stack, theme, lang))
         self.bundle[f"{FOLDER}/README.md"] = self._index()
