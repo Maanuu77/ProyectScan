@@ -64,6 +64,14 @@ TEXTS: dict[str, dict[str, str]] = {
     "step.other": {"en": "CODE", "es": "CÓDIGO"},
     # Level 1
     "overview": {"en": "Architecture overview", "es": "Visión general de la arquitectura"},
+    "kicker.overview": {"en": "WHAT IS IT MADE OF?", "es": "¿DE QUÉ ESTÁ HECHO?"},
+    "tier.frontend": {"en": "FRONTEND", "es": "FRONTEND"},
+    "tier.backend": {"en": "BACKEND", "es": "BACKEND"},
+    "tier.application": {"en": "APPLICATION", "es": "APLICACIÓN"},
+    "tier.applications": {"en": "APPLICATIONS", "es": "APLICACIONES"},
+    "tier.data": {"en": "DATA", "es": "DATOS"},
+    "tier.services": {"en": "EXTERNAL SERVICES", "es": "SERVICIOS EXTERNOS"},
+    "more": {"en": "+ {n} more", "es": "+ {n} más"},
     "users": {"en": "Users", "es": "Usuarios"},
     "rest": {"en": "REST", "es": "REST"},
     "generated": {"en": "Generated with repo-xray", "es": "Generado con repo-xray"},
@@ -71,7 +79,7 @@ TEXTS: dict[str, dict[str, str]] = {
                              "es": "{name} está formado por {apps}. Usa {services}."},
     "no_services": {"en": "no external services", "es": "ningún servicio externo"},
     # Level 2
-    "features.subtitle": {"en": "Features  ·  What does it do?", "es": "Funcionalidades  ·  ¿Qué hace?"},
+    "kicker.features": {"en": "WHAT DOES IT DO?", "es": "¿QUÉ HACE?"},
     "in_apps": {"en": "in {n} apps", "es": "en {n} aplicaciones"},
     "shared_code": {"en": "Shared code:", "es": "Código compartido:"},
     "chip.calls": {"en": "CALLS", "es": "LLAMA A"},
@@ -83,6 +91,9 @@ TEXTS: dict[str, dict[str, str]] = {
     "flow.title": {"en": "What happens when: {title}", "es": "Qué pasa cuando: {title}"},
     "flow.data_lane": {"en": "Data & services", "es": "Datos y servicios"},
     "flow.stores": {"en": "STORES THE RESULT", "es": "GUARDA EL RESULTADO"},
+    "flow.reads": {"en": "READS THE DATA", "es": "LEE LOS DATOS"},
+    "flow.deletes": {"en": "DELETES THE DATA", "es": "BORRA LOS DATOS"},
+    "flow.calls_service": {"en": "CALLS THE SERVICE", "es": "LLAMA AL SERVICIO"},
     "flow.footer": {"en": "Main path only: helpers, mappers and validations are left out.",
                     "es": "Solo el camino principal: se omiten utilidades, mappers y validaciones."},
     # Pages
@@ -134,6 +145,8 @@ COUNTS: dict[str, dict[str, tuple[str, str]]] = {
     "endpoint": {"en": ("{n} endpoint", "{n} endpoints"), "es": ("{n} endpoint", "{n} endpoints")},
     "feature": {"en": ("{n} feature", "{n} features"), "es": ("{n} funcionalidad", "{n} funcionalidades")},
     "call": {"en": ("{n} call", "{n} calls"), "es": ("{n} llamada", "{n} llamadas")},
+    "screen": {"en": ("{n} screen", "{n} screens"), "es": ("{n} pantalla", "{n} pantallas")},
+    "step": {"en": ("{n} step", "{n} steps"), "es": ("{n} paso", "{n} pasos")},
 }
 
 _SPANISH = {"de", "y", "la", "el", "los", "las", "que", "por", "para", "una", "con", "del", "se", "su", "sus",
