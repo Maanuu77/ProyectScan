@@ -51,11 +51,12 @@ def for_qt(svg: str) -> str:
     Qt's SVG renderer does not, and falls back to its default font, so the preview and the PNG
     copies would not look like the diagram on GitHub.
     """
-    return _FONT_FAMILY.sub(lambda match: f'font-family="{_first_installed(match.group(1))}"', svg)
+    return _FONT_FAMILY.sub(lambda match: f'font-family="{installed_family(match.group(1))}"', svg)
 
 
 @lru_cache(maxsize=16)
-def _first_installed(families: str) -> str:
+def installed_family(families: str) -> str:
+    """The first family of a `font-family` list that this computer has; the list itself when it has none."""
     installed = _installed_families()
     names = [name.strip().strip("'\"") for name in html.unescape(families).split(",")]
     for name in names:

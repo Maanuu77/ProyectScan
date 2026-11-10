@@ -36,10 +36,10 @@ def fonts(monkeypatch):
     def install(*families: str) -> None:
         monkeypatch.setattr(png, "_installed_families", lambda: set(families))
         monkeypatch.setattr(png, "_fixed_family", lambda: "Fixed")
-        png._first_installed.cache_clear()
+        png.installed_family.cache_clear()
 
     yield install
-    png._first_installed.cache_clear()
+    png.installed_family.cache_clear()
 
 
 def code_svg() -> str:
