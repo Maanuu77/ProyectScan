@@ -14,6 +14,7 @@ from repo_xray.app import icons
 from repo_xray.app.theme import Themes
 
 ICON_COLOURS = {"primary": "accent_on", "link": "accent_text"}  # by button variant; the rest use the text colour
+ICON_GAP = 5  # between a button's icon and its text
 
 
 def restyle(widget: QWidget) -> None:
@@ -81,7 +82,7 @@ class Button(QPushButton):
         if tooltip:
             self.setToolTip(tooltip)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.setIconSize(QSize(16, 16))
+        self.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Fixed)
         themes.changed.connect(self._refresh_icon)
         self._refresh_icon()
 
@@ -89,11 +90,17 @@ class Button(QPushButton):
         self._icon = name
         self._refresh_icon()
 
+    def setText(self, text: str) -> None:  # noqa: N802 - Qt's name
+        super().setText(text)
+        self._refresh_icon()  # the icon keeps a gap to its text only while there is a text
+
     def _refresh_icon(self, *_) -> None:
         if self._icon:
             palette = self._themes.palette
             colour = getattr(palette, ICON_COLOURS.get(self._variant, "text"))
-            self.setIcon(icons.icon(self._icon, colour, palette.text_subtle))
+            gap = ICON_GAP if self.text() else 0
+            self.setIconSize(QSize(16 + gap, 16))
+            self.setIcon(icons.icon(self._icon, colour, palette.text_subtle, gap=gap))
 
 
 class IconButton(QToolButton):
@@ -112,6 +119,7 @@ class IconButton(QToolButton):
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setIconSize(QSize(size, size))
         self.setFocusPolicy(Qt.FocusPolicy.TabFocus)
+        self.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         themes.changed.connect(self._refresh_icon)
         self._refresh_icon()
 
@@ -152,11 +160,12 @@ class Segmented(QWidget):
             button.setProperty("variant", "segment")
             button.setCursor(Qt.CursorShape.PointingHandCursor)
             button.setFocusPolicy(Qt.FocusPolicy.TabFocus)
+            button.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
             button.clicked.connect(lambda _=False, k=key: self.selected.emit(k))
             self._group.addButton(button)
             self._buttons[key] = button
             layout.addWidget(button)
-        self.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
+        self.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
 
     def select(self, key: str | None) -> None:
         """Show `key` as chosen without announcing it; None leaves nothing chosen."""

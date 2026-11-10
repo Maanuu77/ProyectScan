@@ -210,7 +210,7 @@ QMenu::separator { height: 1px; background: @border; margin: 5px 6px; }
 QMenu::icon { padding-left: 8px; }
 QMenu::indicator { width: 14px; height: 14px; padding-left: 6px; }
 
-QScrollArea, QTextBrowser, QListView, QAbstractScrollArea { background: transparent; border: none; }
+QScrollArea, QTextBrowser, QListView { background: transparent; border: none; }
 QTextBrowser { selection-background-color: @accent; selection-color: @accent_on; }
 QScrollBar:vertical { background: transparent; width: 12px; margin: 2px; }
 QScrollBar:horizontal { background: transparent; height: 12px; margin: 2px; }
