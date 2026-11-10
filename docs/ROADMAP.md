@@ -164,7 +164,7 @@ The local AI was dropped ([ADR-0011](adr/0011-no-ai.md)); #32-#35 and #42 are ca
 
 | # | Issue | Branch | Status |
 | --- | --- | --- | --- |
-| #73 | Large and unusual projects: stress tests and the fixes they ask for | `fix/large-projects` | ⬜ |
+| #73 | Large and unusual projects: stress tests and the fixes they ask for | `fix/large-projects` | ✅ |
 | #74 | README, screenshots, example diagrams, ADRs and changelog for the redesign | `docs/redesign` | ⬜ |
 
 ## Later
