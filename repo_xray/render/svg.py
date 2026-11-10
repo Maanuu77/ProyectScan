@@ -125,7 +125,7 @@ def wrap_text(text: str, max_width: float, size: float, weight: int = 400, max_l
         lines.append(current)
     if len(lines) > max_lines:
         lines = lines[:max_lines]
-        lines[-1] = fit_text(lines[-1] + " " + ELLIPSIS, max_width, size, weight, mono)
+        lines[-1] = fit_text(lines[-1].rstrip(" .,;:") + ELLIPSIS, max_width, size, weight, mono)
     return [fit_text(line, max_width, size, weight, mono) for line in lines]
 
 

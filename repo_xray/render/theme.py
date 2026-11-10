@@ -21,6 +21,8 @@ class Theme:
     background: str
     surface: str
     surface_muted: str
+    zone: str  # the panel that groups cards: a tier, an app or a lane
+    zone_border: str
     border: str
     border_strong: str
     text: str
@@ -38,6 +40,8 @@ LIGHT = Theme(
     background="#ffffff",
     surface="#ffffff",
     surface_muted="#f6f8fa",
+    zone="#f6f8fa",
+    zone_border="#e3e8ee",
     border="#d1d9e0",
     border_strong="#afb8c1",
     text="#1f2328",
@@ -68,6 +72,8 @@ DARK = Theme(
     background="#0d1117",
     surface="#151b23",
     surface_muted="#1b222c",
+    zone="#10151c",
+    zone_border="#262d36",
     border="#3d444d",
     border_strong="#656c76",
     text="#f0f6fc",
@@ -98,9 +104,13 @@ THEMES = {"light": LIGHT, "dark": DARK}
 # Type scale in px.
 TITLE = 26
 HEADING = 17
+SUBHEADING = 15
 BODY = 13
 SMALL = 12
 LABEL = 11
+
+# HTTP methods borrow accents that already read as their meaning: reading is safe, deleting is not.
+METHOD_ACCENTS = {"GET": "api", "POST": "desktop", "PUT": "mobile", "PATCH": "mobile", "DELETE": "cache"}
 
 
 def icon(svg: Svg, kind: str, x: float, y: float, size: float, color: str) -> None:
