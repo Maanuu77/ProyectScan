@@ -130,21 +130,21 @@ The local AI was dropped ([ADR-0011](adr/0011-no-ai.md)); #32-#35 and #42 are ca
 | # | Issue | Branch | Status |
 | --- | --- | --- | --- |
 | #53 | Roadmap for the product redesign | `docs/roadmap-redesign` | ✅ |
-| #54 | Structured progress: real stages and counts instead of invented fractions | `refactor/pipeline-progress` | ⬜ |
-| #55 | Cancel an analysis safely | `refactor/pipeline-progress` | ⬜ |
-| #56 | Parse cache and parallel reads: a refresh does not read unchanged files again | `feature/backend-parse-cache` | ⬜ |
-| #57 | Diagnostics: what could not be parsed, linked or resolved, and the evidence behind each service | `feature/backend-diagnostics` | ⬜ |
+| #54 | Structured progress: real stages and counts instead of invented fractions | `refactor/pipeline-progress` | ✅ |
+| #55 | Cancel an analysis safely | `refactor/pipeline-progress` | ✅ |
+| #56 | Parse cache and parallel reads: a refresh does not read unchanged files again | `feature/backend-parse-cache` | ✅ |
+| #57 | Diagnostics: what could not be parsed, linked or resolved, and the evidence behind each service | `feature/backend-diagnostics` | ✅ |
 
 ## Sprint 12 · Diagram engine
 
 | # | Issue | Branch | Status |
 | --- | --- | --- | --- |
-| #58 | Text engine: accents and wide characters measured, long identifiers broken, middle ellipsis, monospace | `feature/frontend-svg-text` | ⬜ |
-| #59 | Shared components: header, footer, zones, chips, pills and connectors, one identity for the three levels | `feature/frontend-svg-components` | ⬜ |
-| #60 | Overview: zones per tier, ordering that avoids crossings, ports, overflow for large stacks | `feature/frontend-overview-v2` | ⬜ |
-| #61 | Feature map: one zone per app, the HTTP bridge between them, chip overflow | `feature/frontend-features-v2` | ⬜ |
-| #62 | Flows: method badges, reads and writes told apart, steps as type and method | `feature/frontend-flows-v2` | ⬜ |
-| #63 | Element ids, so the app can make diagrams clickable | `feature/frontend-svg-components` | ⬜ |
+| #58 | Text engine: accents and wide characters measured, long identifiers broken, middle ellipsis, monospace | `feature/frontend-svg-text` | ✅ |
+| #59 | Shared components: header, footer, zones, chips, pills and connectors, one identity for the three levels | `feature/frontend-diagrams-v2` | ✅ |
+| #60 | Overview: zones per tier, ordering that avoids crossings, ports, overflow for large stacks | `feature/frontend-diagrams-v2` | ✅ |
+| #61 | Feature map: one zone per app, the HTTP bridge between them, chip overflow | `feature/frontend-diagrams-v2` | ✅ |
+| #62 | Flows: method badges, reads and writes told apart, steps as type and method | `feature/frontend-diagrams-v2` | ✅ |
+| #63 | Element ids, so the app can make diagrams clickable | `feature/frontend-diagrams-v2` | ✅ |
 
 ## Sprint 13 · Desktop app redesign
 
