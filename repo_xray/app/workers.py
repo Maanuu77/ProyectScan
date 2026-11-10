@@ -7,12 +7,14 @@ from pathlib import Path
 from PySide6.QtCore import QObject, QThread, Signal
 
 from repo_xray.export.archive import build_bundle, write_zip
-from repo_xray.export.markdown import Bundle, build_documents
+from repo_xray.export.markdown import Bundle, build_documents, diagram_path
 from repo_xray.parsers.cache import ParseCache
 from repo_xray.pipeline import STAGES, Analysis, Cancelled, Progress, analyse
+from repo_xray.render.theme import THEMES
 
 # The stages the analysis screen lists: the pipeline's own, then drawing the diagrams.
 ANALYSIS_STAGES: dict[str, str] = {**STAGES, "render": "Drawing the diagrams"}
+FIRST_DIAGRAMS = ("overview", "features")  # drawn with the analysis; the flows are drawn when opened
 
 
 class Job:
@@ -122,6 +124,9 @@ def analysis_task(folder: Path, cache: ParseCache | None = None) -> Task:
         job.check()
         job.report(Progress("render"))
         documents = build_documents(analysis)
+        for name in FIRST_DIAGRAMS:  # what the window opens on, drawn here so it appears at once
+            for theme in THEMES:
+                documents[diagram_path(name, theme)]
         job.check()
         return analysis, documents
 

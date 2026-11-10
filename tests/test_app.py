@@ -18,7 +18,7 @@ from repo_xray.app.theme import DARK, LIGHT, PALETTES, SYSTEM, Themes
 from repo_xray.app.window import MainWindow
 from repo_xray.app.workers import ANALYSIS_STAGES, Task, analysis_task
 from repo_xray.config import FeatureText
-from repo_xray.export.markdown import feature_page
+from repo_xray.export.markdown import diagram_path, feature_page
 from repo_xray.pipeline import Progress
 from repo_xray.render import ids
 from tests.conftest import hexagonal_backend, write
@@ -635,8 +635,28 @@ def test_only_cards_that_lead_somewhere_react_to_the_pointer(qtbot, window, proj
     canvas = window.workspace.canvas
     window.workspace.open(nav.FEATURES_DIAGRAM)
 
-    assert ids.feature_id("api/order") in canvas._clickable and ids.app_id("api") in canvas._clickable
+    assert canvas._clickable == {ids.feature_id("api/order"), ids.feature_id("api/catalog")}
+    assert ids.app_id("api") in canvas.element_ids()  # it would lead to this same diagram: it does not react
+
+    window.workspace.open(nav.OVERVIEW_DIAGRAM)
+    assert canvas._clickable == {ids.app_id("api")}
+    window.workspace.open(ORDERS_FLOW)
     assert ids.step_id(1, "api/order") in canvas._clickable
+
+
+def test_diagrams_are_drawn_when_they_are_opened_not_before(qtbot, window, project):
+    analysed(qtbot, window, project)
+    bundle = window.workspace.bundle
+    flow = diagram_path("flow-post-api-orders", "light")
+
+    assert bundle.is_written(diagram_path("overview", "light")) and bundle.is_written(diagram_path("features", "dark"))
+    assert flow in bundle and not bundle.is_written(flow)  # listed, not drawn
+
+    window.workspace.open(ORDERS_FLOW)
+
+    assert bundle.is_written(flow)
+    assert not bundle.is_written(diagram_path("flow-post-api-orders", "dark"))  # the other theme can wait
+    assert not bundle.is_written(diagram_path("flow-get-api-products", "light"))
 
 
 def test_links_of_a_page_lead_to_other_documents(qtbot, window, project):

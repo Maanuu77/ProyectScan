@@ -86,6 +86,10 @@ class DiagramCanvas(QWidget):
     def has_diagram(self) -> bool:
         return self._renderer is not None
 
+    def element_ids(self) -> list[str]:
+        """The ids of the named parts of the diagram on show."""
+        return [element_id for element_id, _ in self._regions]
+
     def set_clickable(self, ids: Iterable[str] | None) -> None:
         """Which named parts react to the pointer; None means every part that has an id."""
         self._clickable = set(ids) if ids is not None else None
