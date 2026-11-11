@@ -26,6 +26,8 @@ from repo_xray.app.widgets.canvas import DiagramCanvas
 from repo_xray.app.widgets.common import (Button, ElidedLabel, IconButton, Segmented, Spinner, hairline, label, menu,
                                           tag)
 from repo_xray.app.widgets.pageview import PageView
+from repo_xray.app.widgets.sidebar import MAX_WIDTH as SIDEBAR_MAX
+from repo_xray.app.widgets.sidebar import MIN_WIDTH as SIDEBAR_MIN
 from repo_xray.app.widgets.sidebar import WIDTH as SIDEBAR_WIDTH
 from repo_xray.app.widgets.sidebar import Sidebar
 from repo_xray.export.markdown import Bundle, diagram_path
@@ -127,6 +129,7 @@ class WorkspacePage(QWidget):
         self.target: Target | None = None
         self._report = ""
         self._busy = False
+        self._sidebar_width = SIDEBAR_WIDTH
         layout = QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
@@ -174,6 +177,7 @@ class WorkspacePage(QWidget):
         self.splitter.setStretchFactor(0, 0)
         self.splitter.setStretchFactor(1, 1)
         self.splitter.setSizes([SIDEBAR_WIDTH, 1000])
+        self.splitter.splitterMoved.connect(self._sidebar_dragged)
         layout.addWidget(self.splitter)
 
         themes.changed.connect(self._theme_changed)
@@ -459,6 +463,32 @@ class WorkspacePage(QWidget):
 
     def toggle_sidebar(self) -> None:
         self.sidebar.setVisible(not self.sidebar.isVisible())
+
+    def sidebar_width(self) -> int:
+        """How wide the sidebar is, or was before it was hidden or before this page was first shown."""
+        if self.sidebar.isVisible() and self.splitter.sizes()[0] > 0:
+            self._sidebar_width = self.splitter.sizes()[0]
+        return self._sidebar_width
+
+    def set_sidebar_width(self, width: int) -> None:
+        """Give the sidebar a width in pixels. A splitter only knows proportions until it has a size
+        of its own, so on a page that is not on screen yet the width waits for it to be shown."""
+        self._sidebar_width = max(SIDEBAR_MIN, min(int(width), SIDEBAR_MAX))
+        if self.isVisible():
+            self._apply_sidebar_width()
+
+    def _sidebar_dragged(self, *_) -> None:
+        if self.sidebar.isVisible():
+            self._sidebar_width = self.splitter.sizes()[0]  # so it comes back as the user left it
+
+    def _apply_sidebar_width(self) -> None:
+        total = self.splitter.width()
+        if total > self._sidebar_width:
+            self.splitter.setSizes([self._sidebar_width, total - self._sidebar_width])
+
+    def showEvent(self, event) -> None:  # noqa: N802
+        super().showEvent(event)
+        self._apply_sidebar_width()
 
     def set_busy(self, text: str | None) -> None:
         """Show what is running, and keep the user from starting something else meanwhile."""

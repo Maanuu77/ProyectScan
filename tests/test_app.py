@@ -785,13 +785,22 @@ def test_a_narrow_window_keeps_icons_and_drops_words(qtbot, window, project):
 def test_the_window_remembers_the_sidebar_width(qtbot, window, project, themes, settings):
     analysed(qtbot, window, project)
     window.show()
-    window.workspace.splitter.setSizes([340, 900])
-    width = window.workspace.splitter.sizes()[0]
+    window.workspace.set_sidebar_width(340)
+    assert window.workspace.splitter.sizes()[0] == 340
 
     window.close()
     again = MainWindow(themes, settings)
     qtbot.addWidget(again)
     analysed(qtbot, again, project)
+    again.resize(1360, 860)  # room for it: a window at its minimum width keeps the sidebar at its minimum
     again.show()
 
-    assert again.workspace.splitter.sizes()[0] == pytest.approx(width, abs=30)
+    assert again.workspace.splitter.sizes()[0] == 340  # in pixels, not as a share of the window
+
+    again.workspace.splitter.setSizes([300, 1060])
+    again.workspace.splitter.splitterMoved.emit(300, 1)  # what dragging the handle announces
+    again.show_start()
+    again.pages.setCurrentWidget(again.workspace)
+    assert again.workspace.splitter.sizes()[0] == 300  # coming back to the results keeps the user's width
+    again.workspace.set_sidebar_width(5000)
+    assert again.workspace.sidebar_width() <= 420  # never wider than a sidebar should be
