@@ -161,10 +161,14 @@ def test_dropping_a_task_right_after_it_finishes_does_not_crash():
 # From the start page to the workspace
 
 
-def test_the_app_opens_on_the_start_page(window):
+def test_the_app_opens_on_the_start_page(qtbot, window):
     assert window.pages.currentWidget() is window.start
     assert window.windowTitle() == "repo-xray"
     assert window.start.recent_rows() == []
+
+    window.show()
+    qtbot.waitExposed(window)
+    assert window.start.choose.hasFocus()  # Enter chooses a folder
 
 
 def test_analysis_opens_the_workspace_on_the_overview(qtbot, window, project):
