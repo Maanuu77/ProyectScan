@@ -1,219 +1,287 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1194" viewBox="0 0 1080 1194" role="img" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="1410" viewBox="0 0 1100 1410" role="img" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
 <title>Benchify features</title>
-<desc>Funcionalidades de Benchify. frontend: Admin, Auth, Bancos, Mapa, Not found, Perfil; backend: Bancos, Check-ins, Favoritos, Moderación, Reseñas, Usuarios.</desc>
-<rect x="0" y="0" width="1080" height="1194" fill="#0d1117"/>
-<text x="40" y="64" font-size="26" font-weight="700" fill="#f0f6fc">Benchify</text>
-<text x="40" y="90" font-size="13" font-weight="400" fill="#9198a1">Funcionalidades  ·  ¿Qué hace?  ·  12 funcionalidades en 2 aplicaciones</text>
-<rect x="40" y="120" width="32" height="32" rx="8" fill="#271c3a"/>
-<rect x="48.5" y="130" width="15" height="12" rx="1.9" fill="none" stroke="#ab7df8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-<line x1="48.5" y1="133.8" x2="63.5" y2="133.8" fill="none" stroke="#ab7df8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-<circle cx="51.1" cy="131.9" r="0.4" fill="#ab7df8"/>
-<circle cx="53" cy="131.9" r="0.4" fill="#ab7df8"/>
-<text x="84" y="142" font-size="17" font-weight="700" fill="#f0f6fc">frontend</text>
-<text x="168.1" y="142" font-size="13" font-weight="400" fill="#9198a1">Aplicación web  ·  6 funcionalidades</text>
-<rect x="40" y="176" width="320" height="190" rx="12" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
-<circle cx="64" cy="203" r="4.2" fill="none" stroke="#9198a1" stroke-width="1.5"/>
-<text x="78" y="208" font-size="16" font-weight="700" fill="#f0f6fc">Admin</text>
-<text x="342" y="208" font-size="12" font-weight="400" fill="#9198a1" text-anchor="end">8 archivos</text>
-<text x="58" y="232" font-size="13" font-weight="400" fill="#9198a1">Pantallas: Moderación, Bancos pendientes,</text>
-<text x="58" y="251" font-size="13" font-weight="400" fill="#9198a1">Reseñas reportadas, Fotos pendientes y …</text>
-<rect x="58" y="272" width="284" height="6" rx="3" fill="#1b222c"/>
-<rect x="58" y="272" width="284" height="6" rx="3" fill="#ab7df8" fill-opacity="0.6"/>
-<text x="58" y="310" font-size="11" font-weight="600" fill="#6e7681" letter-spacing="0.4">LLAMA A</text>
-<rect x="121.7" y="294" width="96.3" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
-<circle cx="134.7" cy="306" r="4" fill="#39c5cf"/>
-<text x="144.7" y="310.5" font-size="12" font-weight="400" fill="#f0f6fc">Moderación</text>
-<rect x="224" y="294" width="79.1" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
-<circle cx="237" cy="306" r="4" fill="#3fb950"/>
-<text x="247" y="310.5" font-size="12" font-weight="400" fill="#f0f6fc">Usuarios</text>
-<rect x="380" y="176" width="320" height="190" rx="12" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
-<circle cx="404" cy="203" r="4.2" fill="none" stroke="#9198a1" stroke-width="1.5"/>
-<text x="418" y="208" font-size="16" font-weight="700" fill="#f0f6fc">Bancos</text>
-<text x="682" y="208" font-size="12" font-weight="400" fill="#9198a1" text-anchor="end">4 archivos</text>
-<text x="398" y="232" font-size="13" font-weight="400" fill="#9198a1">Pantallas: Añadir banco, Editar banco y</text>
-<text x="398" y="251" font-size="13" font-weight="400" fill="#9198a1">Banco. Llama a Bancos, Reseñas, Favorito…</text>
-<rect x="398" y="272" width="284" height="6" rx="3" fill="#1b222c"/>
-<rect x="398" y="272" width="284" height="6" rx="3" fill="#ab7df8" fill-opacity="0.6"/>
-<text x="398" y="310" font-size="11" font-weight="600" fill="#6e7681" letter-spacing="0.4">LLAMA A</text>
-<rect x="461.7" y="294" width="71.2" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
-<circle cx="474.7" cy="306" r="4" fill="#4493f8"/>
-<text x="484.7" y="310.5" font-size="12" font-weight="400" fill="#f0f6fc">Bancos</text>
-<rect x="538.9" y="294" width="79.7" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
-<circle cx="551.9" cy="306" r="4" fill="#f85149"/>
-<text x="561.9" y="310.5" font-size="12" font-weight="400" fill="#f0f6fc">Reseñas</text>
-<rect x="461.7" y="324" width="81.3" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
-<circle cx="474.7" cy="336" r="4" fill="#db61a2"/>
-<text x="484.7" y="340.5" font-size="12" font-weight="400" fill="#f0f6fc">Favoritos</text>
-<rect x="549" y="324" width="85.6" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
-<circle cx="562" cy="336" r="4" fill="#f0883e"/>
-<text x="572" y="340.5" font-size="12" font-weight="400" fill="#f0f6fc">Check-ins</text>
-<rect x="720" y="176" width="320" height="190" rx="12" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
-<circle cx="744" cy="203" r="4.2" fill="none" stroke="#9198a1" stroke-width="1.5"/>
-<text x="758" y="208" font-size="16" font-weight="700" fill="#f0f6fc">Auth</text>
-<text x="1022" y="208" font-size="12" font-weight="400" fill="#9198a1" text-anchor="end">2 archivos</text>
-<text x="738" y="232" font-size="13" font-weight="400" fill="#9198a1">Pantallas: Iniciar sesión y Crear cuenta. Usa</text>
-<text x="738" y="251" font-size="13" font-weight="400" fill="#9198a1">Firebase Auth.</text>
-<rect x="738" y="272" width="284" height="6" rx="3" fill="#1b222c"/>
-<rect x="738" y="272" width="284" height="6" rx="3" fill="#ab7df8" fill-opacity="0.6"/>
-<text x="738" y="310" font-size="11" font-weight="600" fill="#6e7681" letter-spacing="0.4">USA</text>
-<rect x="774.1" y="294" width="98.7" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
-<text x="783.1" y="310.5" font-size="12" font-weight="400" fill="#f0f6fc">Firebase Auth</text>
-<rect x="40" y="386" width="320" height="220" rx="12" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
-<circle cx="64" cy="413" r="4.2" fill="none" stroke="#9198a1" stroke-width="1.5"/>
-<text x="78" y="418" font-size="16" font-weight="700" fill="#f0f6fc">Mapa</text>
-<text x="342" y="418" font-size="12" font-weight="400" fill="#9198a1" text-anchor="end">2 archivos</text>
-<text x="58" y="442" font-size="13" font-weight="400" fill="#9198a1">Pantalla: Mapa. Llama a Bancos.</text>
-<rect x="58" y="463" width="284" height="6" rx="3" fill="#1b222c"/>
-<rect x="58" y="463" width="284" height="6" rx="3" fill="#ab7df8" fill-opacity="0.6"/>
-<text x="58" y="501" font-size="11" font-weight="600" fill="#6e7681" letter-spacing="0.4">LLAMA A</text>
-<rect x="121.7" y="485" width="71.2" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
-<circle cx="134.7" cy="497" r="4" fill="#4493f8"/>
-<text x="144.7" y="501.5" font-size="12" font-weight="400" fill="#f0f6fc">Bancos</text>
-<rect x="380" y="386" width="320" height="220" rx="12" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
-<circle cx="404" cy="413" r="4.2" fill="none" stroke="#9198a1" stroke-width="1.5"/>
-<text x="418" y="418" font-size="16" font-weight="700" fill="#f0f6fc">Not found</text>
-<text x="682" y="418" font-size="12" font-weight="400" fill="#9198a1" text-anchor="end">1 archivo</text>
-<text x="398" y="442" font-size="13" font-weight="400" fill="#9198a1">Pantalla: Página no encontrada.</text>
-<rect x="398" y="463" width="284" height="6" rx="3" fill="#1b222c"/>
-<rect x="398" y="463" width="284" height="6" rx="3" fill="#ab7df8" fill-opacity="0.6"/>
-<rect x="720" y="386" width="320" height="220" rx="12" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
-<circle cx="744" cy="413" r="4.2" fill="none" stroke="#9198a1" stroke-width="1.5"/>
-<text x="758" y="418" font-size="16" font-weight="700" fill="#f0f6fc">Perfil</text>
-<text x="1022" y="418" font-size="12" font-weight="400" fill="#9198a1" text-anchor="end">1 archivo</text>
-<text x="738" y="442" font-size="13" font-weight="400" fill="#9198a1">Pantallas: Mi perfil y Perfil. Llama a Usuarios,</text>
-<text x="738" y="461" font-size="13" font-weight="400" fill="#9198a1">Check-ins, Bancos, Favoritos y Reseñas.</text>
-<rect x="738" y="482" width="284" height="6" rx="3" fill="#1b222c"/>
-<rect x="738" y="482" width="284" height="6" rx="3" fill="#ab7df8" fill-opacity="0.6"/>
-<text x="738" y="520" font-size="11" font-weight="600" fill="#6e7681" letter-spacing="0.4">LLAMA A</text>
-<rect x="801.7" y="504" width="79.1" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
-<circle cx="814.7" cy="516" r="4" fill="#3fb950"/>
-<text x="824.7" y="520.5" font-size="12" font-weight="400" fill="#f0f6fc">Usuarios</text>
-<rect x="886.8" y="504" width="85.6" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
-<circle cx="899.8" cy="516" r="4" fill="#f0883e"/>
-<text x="909.8" y="520.5" font-size="12" font-weight="400" fill="#f0f6fc">Check-ins</text>
-<rect x="801.7" y="534" width="71.2" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
-<circle cx="814.7" cy="546" r="4" fill="#4493f8"/>
-<text x="824.7" y="550.5" font-size="12" font-weight="400" fill="#f0f6fc">Bancos</text>
-<rect x="878.9" y="534" width="81.3" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
-<circle cx="891.9" cy="546" r="4" fill="#db61a2"/>
-<text x="901.9" y="550.5" font-size="12" font-weight="400" fill="#f0f6fc">Favoritos</text>
-<rect x="801.7" y="564" width="79.7" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
-<circle cx="814.7" cy="576" r="4" fill="#f85149"/>
-<text x="824.7" y="580.5" font-size="12" font-weight="400" fill="#f0f6fc">Reseñas</text>
-<text x="40" y="632" font-size="12" font-weight="400" fill="#6e7681">Código compartido:  core (16)  ·  shared (9)  ·  src (4)</text>
-<rect x="40" y="652" width="32" height="32" rx="8" fill="#14261b"/>
-<rect x="49.2" y="661.2" width="13.5" height="5.6" rx="1.5" fill="none" stroke="#3fb950" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-<rect x="49.2" y="669.1" width="13.5" height="5.6" rx="1.5" fill="none" stroke="#3fb950" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-<circle cx="52.2" cy="664.1" r="0.7" fill="#3fb950"/>
-<circle cx="52.2" cy="671.9" r="0.7" fill="#3fb950"/>
-<text x="84" y="674" font-size="17" font-weight="700" fill="#f0f6fc">backend</text>
-<text x="170.3" y="674" font-size="13" font-weight="400" fill="#9198a1">API  ·  6 funcionalidades</text>
-<rect x="40" y="708" width="320" height="160" rx="12" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
-<circle cx="64" cy="735" r="5" fill="#4493f8"/>
-<text x="78" y="740" font-size="16" font-weight="700" fill="#f0f6fc">Bancos</text>
-<text x="342" y="740" font-size="12" font-weight="400" fill="#9198a1" text-anchor="end">11 endpoints</text>
-<text x="58" y="764" font-size="13" font-weight="400" fill="#9198a1">Mapa, búsqueda por cercanía y gestión de</text>
-<text x="58" y="783" font-size="13" font-weight="400" fill="#9198a1">bancos</text>
-<rect x="58" y="804" width="284" height="6" rx="3" fill="#1b222c"/>
-<rect x="58" y="804" width="63.7" height="6" rx="3" fill="#ab7df8" fill-opacity="0.6"/>
-<rect x="123.7" y="804" width="53.1" height="6" rx="3" fill="#3fb950" fill-opacity="0.6"/>
-<rect x="178.8" y="804" width="90.2" height="6" rx="3" fill="#d29922" fill-opacity="0.6"/>
-<rect x="271" y="804" width="63.7" height="6" rx="3" fill="#4493f8" fill-opacity="0.6"/>
-<rect x="336.7" y="804" width="5.3" height="6" rx="3" fill="#9198a1" fill-opacity="0.6"/>
-<text x="58" y="842" font-size="11" font-weight="600" fill="#6e7681" letter-spacing="0.4">USA</text>
-<rect x="94.1" y="826" width="117.4" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
-<text x="103.1" y="842.5" font-size="12" font-weight="400" fill="#f0f6fc">Firebase Storage</text>
-<rect x="380" y="708" width="320" height="160" rx="12" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
-<circle cx="404" cy="735" r="5" fill="#3fb950"/>
-<text x="418" y="740" font-size="16" font-weight="700" fill="#f0f6fc">Usuarios</text>
-<text x="682" y="740" font-size="12" font-weight="400" fill="#9198a1" text-anchor="end">6 endpoints</text>
-<text x="398" y="764" font-size="13" font-weight="400" fill="#9198a1">Perfil propio y perfiles públicos</text>
-<rect x="398" y="785" width="284" height="6" rx="3" fill="#1b222c"/>
-<rect x="398" y="785" width="71.6" height="6" rx="3" fill="#ab7df8" fill-opacity="0.6"/>
-<rect x="471.6" y="785" width="71.6" height="6" rx="3" fill="#3fb950" fill-opacity="0.6"/>
-<rect x="545.1" y="785" width="40.9" height="6" rx="3" fill="#d29922" fill-opacity="0.6"/>
-<rect x="588" y="785" width="51.1" height="6" rx="3" fill="#4493f8" fill-opacity="0.6"/>
-<rect x="641.1" y="785" width="40.9" height="6" rx="3" fill="#9198a1" fill-opacity="0.6"/>
-<text x="398" y="823" font-size="11" font-weight="600" fill="#6e7681" letter-spacing="0.4">USA</text>
-<rect x="434.1" y="807" width="98.7" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
-<text x="443.1" y="823.5" font-size="12" font-weight="400" fill="#f0f6fc">Firebase Auth</text>
-<rect x="720" y="708" width="320" height="160" rx="12" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
-<circle cx="744" cy="735" r="5" fill="#f85149"/>
-<text x="758" y="740" font-size="16" font-weight="700" fill="#f0f6fc">Reseñas</text>
-<text x="1022" y="740" font-size="12" font-weight="400" fill="#9198a1" text-anchor="end">6 endpoints</text>
-<text x="738" y="764" font-size="13" font-weight="400" fill="#9198a1">Valoraciones de bancos y reportes de</text>
-<text x="738" y="783" font-size="13" font-weight="400" fill="#9198a1">contenido inapropiado</text>
-<rect x="738" y="804" width="284" height="6" rx="3" fill="#1b222c"/>
-<rect x="738" y="804" width="79.4" height="6" rx="3" fill="#ab7df8" fill-opacity="0.6"/>
-<rect x="819.4" y="804" width="59.6" height="6" rx="3" fill="#3fb950" fill-opacity="0.6"/>
-<rect x="881" y="804" width="59.6" height="6" rx="3" fill="#d29922" fill-opacity="0.6"/>
-<rect x="942.6" y="804" width="79.4" height="6" rx="3" fill="#4493f8" fill-opacity="0.6"/>
-<text x="738" y="842" font-size="11" font-weight="600" fill="#6e7681" letter-spacing="0.4">USA</text>
-<rect x="774.1" y="826" width="71.2" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
-<circle cx="787.1" cy="838" r="4" fill="#4493f8"/>
-<text x="797.1" y="842.5" font-size="12" font-weight="400" fill="#f0f6fc">Bancos</text>
-<rect x="40" y="888" width="320" height="190" rx="12" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
-<circle cx="64" cy="915" r="5" fill="#f0883e"/>
-<text x="78" y="920" font-size="16" font-weight="700" fill="#f0f6fc">Check-ins</text>
-<text x="342" y="920" font-size="12" font-weight="400" fill="#9198a1" text-anchor="end">3 endpoints</text>
-<text x="58" y="944" font-size="13" font-weight="400" fill="#9198a1">Visitas a bancos validadas por proximidad</text>
-<rect x="58" y="965" width="284" height="6" rx="3" fill="#1b222c"/>
-<rect x="58" y="965" width="106.2" height="6" rx="3" fill="#ab7df8" fill-opacity="0.6"/>
-<rect x="166.2" y="965" width="84.9" height="6" rx="3" fill="#3fb950" fill-opacity="0.6"/>
-<rect x="253.1" y="965" width="42.5" height="6" rx="3" fill="#d29922" fill-opacity="0.6"/>
-<rect x="297.5" y="965" width="21.2" height="6" rx="3" fill="#4493f8" fill-opacity="0.6"/>
-<rect x="320.8" y="965" width="21.2" height="6" rx="3" fill="#9198a1" fill-opacity="0.6"/>
-<text x="58" y="1003" font-size="11" font-weight="600" fill="#6e7681" letter-spacing="0.4">USA</text>
-<rect x="94.1" y="987" width="71.2" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
-<circle cx="107.1" cy="999" r="4" fill="#4493f8"/>
-<text x="117.1" y="1003.5" font-size="12" font-weight="400" fill="#f0f6fc">Bancos</text>
-<rect x="380" y="888" width="320" height="190" rx="12" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
-<circle cx="404" cy="915" r="5" fill="#db61a2"/>
-<text x="418" y="920" font-size="16" font-weight="700" fill="#f0f6fc">Favoritos</text>
-<text x="682" y="920" font-size="12" font-weight="400" fill="#9198a1" text-anchor="end">4 endpoints</text>
-<text x="398" y="944" font-size="13" font-weight="400" fill="#9198a1">Bancos guardados por el usuario</text>
-<rect x="398" y="965" width="284" height="6" rx="3" fill="#1b222c"/>
-<rect x="398" y="965" width="111.2" height="6" rx="3" fill="#ab7df8" fill-opacity="0.6"/>
-<rect x="511.2" y="965" width="111.2" height="6" rx="3" fill="#3fb950" fill-opacity="0.6"/>
-<rect x="624.4" y="965" width="27.8" height="6" rx="3" fill="#d29922" fill-opacity="0.6"/>
-<rect x="654.2" y="965" width="27.8" height="6" rx="3" fill="#4493f8" fill-opacity="0.6"/>
-<text x="398" y="1003" font-size="11" font-weight="600" fill="#6e7681" letter-spacing="0.4">USA</text>
-<rect x="434.1" y="987" width="71.2" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
-<circle cx="447.1" cy="999" r="4" fill="#4493f8"/>
-<text x="457.1" y="1003.5" font-size="12" font-weight="400" fill="#f0f6fc">Bancos</text>
-<rect x="720" y="888" width="320" height="190" rx="12" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
-<circle cx="744" cy="915" r="5" fill="#39c5cf"/>
-<text x="758" y="920" font-size="16" font-weight="700" fill="#f0f6fc">Moderación</text>
-<text x="1022" y="920" font-size="12" font-weight="400" fill="#9198a1" text-anchor="end">10 endpoints</text>
-<text x="738" y="944" font-size="13" font-weight="400" fill="#9198a1">Colas de revisión de bancos, reseñas e</text>
-<text x="738" y="963" font-size="13" font-weight="400" fill="#9198a1">imágenes</text>
-<rect x="738" y="984" width="284" height="6" rx="3" fill="#1b222c"/>
-<rect x="738" y="984" width="175" height="6" rx="3" fill="#ab7df8" fill-opacity="0.6"/>
-<rect x="915" y="984" width="70" height="6" rx="3" fill="#3fb950" fill-opacity="0.6"/>
-<rect x="987" y="984" width="35" height="6" rx="3" fill="#d29922" fill-opacity="0.6"/>
-<text x="738" y="1022" font-size="11" font-weight="600" fill="#6e7681" letter-spacing="0.4">USA</text>
-<rect x="774.1" y="1006" width="71.2" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
-<circle cx="787.1" cy="1018" r="4" fill="#4493f8"/>
-<text x="797.1" y="1022.5" font-size="12" font-weight="400" fill="#f0f6fc">Bancos</text>
-<rect x="851.4" y="1006" width="79.7" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
-<circle cx="864.4" cy="1018" r="4" fill="#f85149"/>
-<text x="874.4" y="1022.5" font-size="12" font-weight="400" fill="#f0f6fc">Reseñas</text>
-<rect x="937.1" y="1006" width="79.1" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
-<circle cx="950.1" cy="1018" r="4" fill="#3fb950"/>
-<text x="960.1" y="1022.5" font-size="12" font-weight="400" fill="#f0f6fc">Usuarios</text>
-<rect x="774.1" y="1036" width="117.4" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
-<text x="783.1" y="1052.5" font-size="12" font-weight="400" fill="#f0f6fc">Firebase Storage</text>
-<text x="40" y="1104" font-size="12" font-weight="400" fill="#6e7681">Código compartido:  shared (31)</text>
-<line x1="40" y1="1128" x2="1040" y2="1128" stroke="#3d444d" stroke-width="1"/>
-<rect x="40" y="1145" width="14" height="6" rx="3" fill="#ab7df8" fill-opacity="0.6"/>
-<text x="60" y="1154" font-size="12" font-weight="400" fill="#9198a1">Puntos de entrada</text>
-<rect x="187.9" y="1145" width="14" height="6" rx="3" fill="#3fb950" fill-opacity="0.6"/>
-<text x="207.9" y="1154" font-size="12" font-weight="400" fill="#9198a1">Lógica de aplicación</text>
-<rect x="348.5" y="1145" width="14" height="6" rx="3" fill="#d29922" fill-opacity="0.6"/>
-<text x="368.5" y="1154" font-size="12" font-weight="400" fill="#9198a1">Modelo de dominio</text>
-<rect x="500" y="1145" width="14" height="6" rx="3" fill="#4493f8" fill-opacity="0.6"/>
-<text x="520" y="1154" font-size="12" font-weight="400" fill="#9198a1">Acceso a datos</text>
-<rect x="630.6" y="1145" width="14" height="6" rx="3" fill="#9198a1" fill-opacity="0.6"/>
-<text x="650.6" y="1154" font-size="12" font-weight="400" fill="#9198a1">Integraciones y configuración</text>
-<text x="1040" y="1154" font-size="12" font-weight="400" fill="#6e7681" text-anchor="end">Generado con repo-xray</text>
+<desc>Funcionalidades de Benchify. frontend: Admin, Auth, Bancos, Mapa, Not found, Perfil; backend: Bancos, Check-ins, Favoritos, Incidencias, Lugares, Moderación, Notificaciones, Reseñas, Usuarios.</desc>
+<rect x="0" y="0" width="1100" height="1410" fill="#0d1117"/>
+<rect x="40" y="43" width="13" height="5" rx="2.5" fill="#3d444d"/>
+<rect x="57" y="43" width="13" height="5" rx="2.5" fill="#f0f6fc"/>
+<rect x="74" y="43" width="13" height="5" rx="2.5" fill="#3d444d"/>
+<text x="98" y="50" font-size="11" font-weight="700" fill="#9198a1" letter-spacing="1">¿QUÉ HACE?</text>
+<text x="40" y="86" font-size="26" font-weight="700" fill="#f0f6fc">Benchify</text>
+<text x="40" y="111" font-size="13" font-weight="400" fill="#9198a1">15 funcionalidades en 2 aplicaciones</text>
+<rect x="40" y="145" width="1020" height="496" rx="16" fill="#10151c" stroke="#262d36" stroke-width="1"/>
+<rect x="60" y="163" width="34" height="34" rx="9" fill="#271c3a" id="app-frontend"/>
+<rect x="69.5" y="174" width="15" height="12" rx="1.9" fill="none" stroke="#ab7df8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<line x1="69.5" y1="177.8" x2="84.5" y2="177.8" fill="none" stroke="#ab7df8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="72.1" cy="175.9" r="0.4" fill="#ab7df8"/>
+<circle cx="74" cy="175.9" r="0.4" fill="#ab7df8"/>
+<text x="106" y="186" font-size="17" font-weight="700" fill="#f0f6fc">frontend</text>
+<text x="190.1" y="186" font-size="13" font-weight="400" fill="#9198a1">Aplicación web</text>
+<text x="853.4" y="186" font-size="13" font-weight="700" fill="#f0f6fc">6</text>
+<text x="866.7" y="186" font-size="12" font-weight="400" fill="#9198a1">funcionalidades</text>
+<text x="974.8" y="186" font-size="13" font-weight="700" fill="#f0f6fc">8</text>
+<text x="988.1" y="186" font-size="12" font-weight="400" fill="#9198a1">pantallas</text>
+<rect x="60" y="215" width="316" height="178" rx="12" fill="#151b23" stroke="#3d444d" stroke-width="1" id="feature-frontend-admin"/>
+<circle cx="83" cy="241" r="4.2" fill="none" stroke="#9198a1" stroke-width="1.5"/>
+<text x="96" y="246" font-size="15" font-weight="700" fill="#f0f6fc">Admin</text>
+<text x="358" y="246" font-size="12" font-weight="400" fill="#9198a1" text-anchor="end">21 archivos</text>
+<text x="78" y="270" font-size="13" font-weight="400" fill="#9198a1">Historial de decisiones de moderación: quién</text>
+<text x="78" y="289" font-size="13" font-weight="400" fill="#9198a1">hizo qué, cuándo y por qué</text>
+<rect x="78" y="303" width="280" height="6" rx="3" fill="#1b222c"/>
+<rect x="78" y="303" width="280" height="6" rx="3" fill="#ab7df8" fill-opacity="0.6"/>
+<text x="78" y="339" font-size="11" font-weight="600" fill="#6e7681" letter-spacing="0.4">LLAMA A</text>
+<rect x="141.7" y="323" width="95.7" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
+<circle cx="154.7" cy="335" r="4" fill="#3fb950"/>
+<text x="164.7" y="339.5" font-size="12" font-weight="400" fill="#f0f6fc">Moderación</text>
+<rect x="243.4" y="323" width="92.8" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
+<circle cx="256.4" cy="335" r="4" fill="#39c5cf"/>
+<text x="266.4" y="339.5" font-size="12" font-weight="400" fill="#f0f6fc">Incidencias</text>
+<rect x="141.7" y="353" width="79.1" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
+<circle cx="154.7" cy="365" r="4" fill="#4493f8"/>
+<text x="164.7" y="369.5" font-size="12" font-weight="400" fill="#f0f6fc">Usuarios</text>
+<rect x="392" y="215" width="316" height="178" rx="12" fill="#151b23" stroke="#3d444d" stroke-width="1" id="feature-frontend-bancos"/>
+<circle cx="415" cy="241" r="4.2" fill="none" stroke="#9198a1" stroke-width="1.5"/>
+<text x="428" y="246" font-size="15" font-weight="700" fill="#f0f6fc">Bancos</text>
+<text x="690" y="246" font-size="12" font-weight="400" fill="#9198a1" text-anchor="end">2 pantallas</text>
+<text x="410" y="270" font-size="13" font-weight="400" fill="#9198a1">Formulario del aviso: un tipo y, si es "otro",</text>
+<text x="410" y="289" font-size="13" font-weight="400" fill="#9198a1">una explicación</text>
+<rect x="410" y="303" width="280" height="6" rx="3" fill="#1b222c"/>
+<rect x="410" y="303" width="231.7" height="6" rx="3" fill="#ab7df8" fill-opacity="0.6"/>
+<rect x="643.7" y="303" width="46.3" height="6" rx="3" fill="#9198a1" fill-opacity="0.6"/>
+<text x="410" y="339" font-size="11" font-weight="600" fill="#6e7681" letter-spacing="0.4">LLAMA A</text>
+<rect x="473.7" y="323" width="71.2" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
+<circle cx="486.7" cy="335" r="4" fill="#4493f8"/>
+<text x="496.7" y="339.5" font-size="12" font-weight="400" fill="#f0f6fc">Bancos</text>
+<rect x="550.9" y="323" width="79.1" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
+<circle cx="563.9" cy="335" r="4" fill="#ab7df8"/>
+<text x="573.9" y="339.5" font-size="12" font-weight="400" fill="#f0f6fc">Reseñas</text>
+<rect x="473.7" y="353" width="81.3" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
+<circle cx="486.7" cy="365" r="4" fill="#db61a2"/>
+<text x="496.7" y="369.5" font-size="12" font-weight="400" fill="#f0f6fc">Favoritos</text>
+<rect x="561" y="353" width="32.8" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
+<text x="570" y="369.5" font-size="12" font-weight="400" fill="#f0f6fc">+2</text>
+<rect x="724" y="215" width="316" height="178" rx="12" fill="#151b23" stroke="#3d444d" stroke-width="1" id="feature-frontend-mapa"/>
+<circle cx="747" cy="241" r="4.2" fill="none" stroke="#9198a1" stroke-width="1.5"/>
+<text x="760" y="246" font-size="15" font-weight="700" fill="#f0f6fc">Mapa</text>
+<text x="1022" y="246" font-size="12" font-weight="400" fill="#9198a1" text-anchor="end">1 pantalla</text>
+<text x="742" y="270" font-size="13" font-weight="400" fill="#9198a1">Buscador de direcciones del mapa</text>
+<rect x="742" y="284" width="280" height="6" rx="3" fill="#1b222c"/>
+<rect x="742" y="284" width="280" height="6" rx="3" fill="#ab7df8" fill-opacity="0.6"/>
+<text x="742" y="320" font-size="11" font-weight="600" fill="#6e7681" letter-spacing="0.4">LLAMA A</text>
+<rect x="805.7" y="304" width="71.2" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
+<circle cx="818.7" cy="316" r="4" fill="#4493f8"/>
+<text x="828.7" y="320.5" font-size="12" font-weight="400" fill="#f0f6fc">Bancos</text>
+<rect x="882.9" y="304" width="74.8" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
+<circle cx="895.9" cy="316" r="4" fill="#f85149"/>
+<text x="905.9" y="320.5" font-size="12" font-weight="400" fill="#f0f6fc">Lugares</text>
+<rect x="60" y="409" width="316" height="178" rx="12" fill="#151b23" stroke="#3d444d" stroke-width="1" id="feature-frontend-auth"/>
+<circle cx="83" cy="435" r="4.2" fill="none" stroke="#9198a1" stroke-width="1.5"/>
+<text x="96" y="440" font-size="15" font-weight="700" fill="#f0f6fc">Auth</text>
+<text x="358" y="440" font-size="12" font-weight="400" fill="#9198a1" text-anchor="end">3 pantallas</text>
+<text x="78" y="464" font-size="13" font-weight="400" fill="#9198a1">Envía el enlace de Firebase para elegir una</text>
+<text x="78" y="483" font-size="13" font-weight="400" fill="#9198a1">contraseña nueva</text>
+<rect x="78" y="497" width="280" height="6" rx="3" fill="#1b222c"/>
+<rect x="78" y="497" width="208.5" height="6" rx="3" fill="#ab7df8" fill-opacity="0.6"/>
+<rect x="288.5" y="497" width="69.5" height="6" rx="3" fill="#9198a1" fill-opacity="0.6"/>
+<text x="78" y="533" font-size="11" font-weight="600" fill="#6e7681" letter-spacing="0.4">USA</text>
+<rect x="114.1" y="517" width="98.7" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
+<text x="123.1" y="533.5" font-size="12" font-weight="400" fill="#f0f6fc">Firebase Auth</text>
+<rect x="392" y="409" width="316" height="178" rx="12" fill="#151b23" stroke="#3d444d" stroke-width="1" id="feature-frontend-not-found"/>
+<circle cx="415" cy="435" r="4.2" fill="none" stroke="#9198a1" stroke-width="1.5"/>
+<text x="428" y="440" font-size="15" font-weight="700" fill="#f0f6fc">Not found</text>
+<text x="690" y="440" font-size="12" font-weight="400" fill="#9198a1" text-anchor="end">1 pantalla</text>
+<text x="410" y="464" font-size="13" font-weight="400" fill="#9198a1">Pantalla: Not found.</text>
+<rect x="410" y="478" width="280" height="6" rx="3" fill="#1b222c"/>
+<rect x="410" y="478" width="280" height="6" rx="3" fill="#ab7df8" fill-opacity="0.6"/>
+<rect x="724" y="409" width="316" height="178" rx="12" fill="#151b23" stroke="#3d444d" stroke-width="1" id="feature-frontend-perfil"/>
+<circle cx="747" cy="435" r="4.2" fill="none" stroke="#9198a1" stroke-width="1.5"/>
+<text x="760" y="440" font-size="15" font-weight="700" fill="#f0f6fc">Perfil</text>
+<text x="1022" y="440" font-size="12" font-weight="400" fill="#9198a1" text-anchor="end">1 pantalla</text>
+<text x="742" y="464" font-size="13" font-weight="400" fill="#9198a1">Pantalla: Perfil. Llama a Usuarios, Bancos,</text>
+<text x="742" y="483" font-size="13" font-weight="400" fill="#9198a1">Favoritos, Check-ins y Reseñas. Usa…</text>
+<rect x="742" y="497" width="280" height="6" rx="3" fill="#1b222c"/>
+<rect x="742" y="497" width="280" height="6" rx="3" fill="#ab7df8" fill-opacity="0.6"/>
+<text x="742" y="533" font-size="11" font-weight="600" fill="#6e7681" letter-spacing="0.4">LLAMA A</text>
+<rect x="805.7" y="517" width="79.1" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
+<circle cx="818.7" cy="529" r="4" fill="#4493f8"/>
+<text x="828.7" y="533.5" font-size="12" font-weight="400" fill="#f0f6fc">Usuarios</text>
+<rect x="890.8" y="517" width="71.2" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
+<circle cx="903.8" cy="529" r="4" fill="#4493f8"/>
+<text x="913.8" y="533.5" font-size="12" font-weight="400" fill="#f0f6fc">Bancos</text>
+<rect x="805.7" y="547" width="81.3" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
+<circle cx="818.7" cy="559" r="4" fill="#db61a2"/>
+<text x="828.7" y="563.5" font-size="12" font-weight="400" fill="#f0f6fc">Favoritos</text>
+<rect x="893" y="547" width="85.6" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
+<circle cx="906" cy="559" r="4" fill="#f0883e"/>
+<text x="916" y="563.5" font-size="12" font-weight="400" fill="#f0f6fc">Check-ins</text>
+<rect x="984.6" y="547" width="32.8" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
+<text x="993.6" y="563.5" font-size="12" font-weight="400" fill="#f0f6fc">+2</text>
+<text x="62" y="613" font-size="12" font-weight="400" fill="#6e7681">Código compartido:  core (33)  ·  shared (18)  ·  src (5)</text>
+<path d="M 550.0 646.0 L 550.0 693.0" fill="none" stroke="#9198a1" stroke-width="1.8" stroke-linecap="round"/>
+<polygon points="550,698 545.9,690.5 554.1,690.5" fill="#9198a1"/>
+<rect x="484.5" y="659" width="131" height="20" rx="10" fill="#0d1117" stroke="#656c76" stroke-width="1"/>
+<text x="550" y="673" font-size="11" font-weight="600" fill="#f0f6fc" text-anchor="middle">REST · 56 llamadas</text>
+<rect x="40" y="701" width="1020" height="611" rx="16" fill="#10151c" stroke="#262d36" stroke-width="1"/>
+<rect x="60" y="719" width="34" height="34" rx="9" fill="#14261b" id="app-backend"/>
+<rect x="70.2" y="729.2" width="13.5" height="5.6" rx="1.5" fill="none" stroke="#3fb950" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="70.2" y="737.1" width="13.5" height="5.6" rx="1.5" fill="none" stroke="#3fb950" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="73.2" cy="732.1" r="0.7" fill="#3fb950"/>
+<circle cx="73.2" cy="739.9" r="0.7" fill="#3fb950"/>
+<text x="106" y="742" font-size="17" font-weight="700" fill="#f0f6fc">backend</text>
+<text x="192.3" y="742" font-size="13" font-weight="400" fill="#9198a1">API</text>
+<text x="840.7" y="742" font-size="13" font-weight="700" fill="#f0f6fc">9</text>
+<text x="854.1" y="742" font-size="12" font-weight="400" fill="#9198a1">funcionalidades</text>
+<text x="962.1" y="742" font-size="13" font-weight="700" fill="#f0f6fc">63</text>
+<text x="983.8" y="742" font-size="12" font-weight="400" fill="#9198a1">endpoints</text>
+<rect x="60" y="771" width="316" height="178" rx="12" fill="#151b23" stroke="#3d444d" stroke-width="1" id="feature-backend-banco"/>
+<circle cx="83" cy="797" r="5" fill="#4493f8"/>
+<text x="96" y="802" font-size="15" font-weight="700" fill="#f0f6fc">Bancos</text>
+<text x="358" y="802" font-size="12" font-weight="400" fill="#9198a1" text-anchor="end">18 endpoints</text>
+<text x="78" y="826" font-size="13" font-weight="400" fill="#9198a1">Mapa, búsqueda por cercanía y gestión de</text>
+<text x="78" y="845" font-size="13" font-weight="400" fill="#9198a1">bancos</text>
+<rect x="78" y="859" width="280" height="6" rx="3" fill="#1b222c"/>
+<rect x="78" y="859" width="56.7" height="6" rx="3" fill="#ab7df8" fill-opacity="0.6"/>
+<rect x="136.7" y="859" width="49.1" height="6" rx="3" fill="#3fb950" fill-opacity="0.6"/>
+<rect x="187.8" y="859" width="86.9" height="6" rx="3" fill="#d29922" fill-opacity="0.6"/>
+<rect x="276.7" y="859" width="52.9" height="6" rx="3" fill="#4493f8" fill-opacity="0.6"/>
+<rect x="331.6" y="859" width="26.4" height="6" rx="3" fill="#9198a1" fill-opacity="0.6"/>
+<text x="78" y="895" font-size="11" font-weight="600" fill="#6e7681" letter-spacing="0.4">USA</text>
+<rect x="114.1" y="879" width="117.4" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
+<text x="123.1" y="895.5" font-size="12" font-weight="400" fill="#f0f6fc">Firebase Storage</text>
+<rect x="392" y="771" width="316" height="178" rx="12" fill="#151b23" stroke="#3d444d" stroke-width="1" id="feature-backend-usuario"/>
+<circle cx="415" cy="797" r="5" fill="#4493f8"/>
+<text x="428" y="802" font-size="15" font-weight="700" fill="#f0f6fc">Usuarios</text>
+<text x="690" y="802" font-size="12" font-weight="400" fill="#9198a1" text-anchor="end">7 endpoints</text>
+<text x="410" y="826" font-size="13" font-weight="400" fill="#9198a1">Perfil propio y perfiles públicos</text>
+<rect x="410" y="840" width="280" height="6" rx="3" fill="#1b222c"/>
+<rect x="410" y="840" width="63.5" height="6" rx="3" fill="#ab7df8" fill-opacity="0.6"/>
+<rect x="475.5" y="840" width="81.6" height="6" rx="3" fill="#3fb950" fill-opacity="0.6"/>
+<rect x="559.1" y="840" width="36.3" height="6" rx="3" fill="#d29922" fill-opacity="0.6"/>
+<rect x="597.3" y="840" width="54.4" height="6" rx="3" fill="#4493f8" fill-opacity="0.6"/>
+<rect x="653.7" y="840" width="36.3" height="6" rx="3" fill="#9198a1" fill-opacity="0.6"/>
+<text x="410" y="876" font-size="11" font-weight="600" fill="#6e7681" letter-spacing="0.4">USA</text>
+<rect x="446.1" y="860" width="98.7" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
+<text x="455.1" y="876.5" font-size="12" font-weight="400" fill="#f0f6fc">Firebase Auth</text>
+<rect x="724" y="771" width="316" height="178" rx="12" fill="#151b23" stroke="#3d444d" stroke-width="1" id="feature-backend-moderacion"/>
+<circle cx="747" cy="797" r="5" fill="#3fb950"/>
+<text x="760" y="802" font-size="15" font-weight="700" fill="#f0f6fc">Moderación</text>
+<text x="1022" y="802" font-size="12" font-weight="400" fill="#9198a1" text-anchor="end">14 endpoints</text>
+<text x="742" y="826" font-size="13" font-weight="400" fill="#9198a1">Colas de revisión de bancos, reseñas e</text>
+<text x="742" y="845" font-size="13" font-weight="400" fill="#9198a1">imágenes</text>
+<rect x="742" y="859" width="280" height="6" rx="3" fill="#1b222c"/>
+<rect x="742" y="859" width="145.1" height="6" rx="3" fill="#ab7df8" fill-opacity="0.6"/>
+<rect x="889.1" y="859" width="48.4" height="6" rx="3" fill="#3fb950" fill-opacity="0.6"/>
+<rect x="939.4" y="859" width="64.5" height="6" rx="3" fill="#d29922" fill-opacity="0.6"/>
+<rect x="1005.9" y="859" width="16.1" height="6" rx="3" fill="#4493f8" fill-opacity="0.6"/>
+<text x="742" y="895" font-size="11" font-weight="600" fill="#6e7681" letter-spacing="0.4">USA</text>
+<rect x="778.1" y="879" width="71.2" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
+<circle cx="791.1" cy="891" r="4" fill="#4493f8"/>
+<text x="801.1" y="895.5" font-size="12" font-weight="400" fill="#f0f6fc">Bancos</text>
+<rect x="855.4" y="879" width="108.7" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
+<circle cx="868.4" cy="891" r="4" fill="#d29922"/>
+<text x="878.4" y="895.5" font-size="12" font-weight="400" fill="#f0f6fc">Notificaciones</text>
+<rect x="778.1" y="909" width="79.1" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
+<circle cx="791.1" cy="921" r="4" fill="#ab7df8"/>
+<text x="801.1" y="925.5" font-size="12" font-weight="400" fill="#f0f6fc">Reseñas</text>
+<rect x="863.3" y="909" width="79.1" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
+<circle cx="876.3" cy="921" r="4" fill="#4493f8"/>
+<text x="886.3" y="925.5" font-size="12" font-weight="400" fill="#f0f6fc">Usuarios</text>
+<rect x="948.4" y="909" width="32.8" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
+<text x="957.4" y="925.5" font-size="12" font-weight="400" fill="#f0f6fc">+1</text>
+<rect x="60" y="965" width="316" height="148" rx="12" fill="#151b23" stroke="#3d444d" stroke-width="1" id="feature-backend-resena"/>
+<circle cx="83" cy="991" r="5" fill="#ab7df8"/>
+<text x="96" y="996" font-size="15" font-weight="700" fill="#f0f6fc">Reseñas</text>
+<text x="358" y="996" font-size="12" font-weight="400" fill="#9198a1" text-anchor="end">8 endpoints</text>
+<text x="78" y="1020" font-size="13" font-weight="400" fill="#9198a1">Valoraciones de bancos y reportes de</text>
+<text x="78" y="1039" font-size="13" font-weight="400" fill="#9198a1">contenido inapropiado</text>
+<rect x="78" y="1053" width="280" height="6" rx="3" fill="#1b222c"/>
+<rect x="78" y="1053" width="78.3" height="6" rx="3" fill="#ab7df8" fill-opacity="0.6"/>
+<rect x="158.3" y="1053" width="58.7" height="6" rx="3" fill="#3fb950" fill-opacity="0.6"/>
+<rect x="219" y="1053" width="58.7" height="6" rx="3" fill="#d29922" fill-opacity="0.6"/>
+<rect x="279.7" y="1053" width="78.3" height="6" rx="3" fill="#4493f8" fill-opacity="0.6"/>
+<text x="78" y="1089" font-size="11" font-weight="600" fill="#6e7681" letter-spacing="0.4">USA</text>
+<rect x="114.1" y="1073" width="71.2" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
+<circle cx="127.1" cy="1085" r="4" fill="#4493f8"/>
+<text x="137.1" y="1089.5" font-size="12" font-weight="400" fill="#f0f6fc">Bancos</text>
+<rect x="392" y="965" width="316" height="148" rx="12" fill="#151b23" stroke="#3d444d" stroke-width="1" id="feature-backend-checkin"/>
+<circle cx="415" cy="991" r="5" fill="#f0883e"/>
+<text x="428" y="996" font-size="15" font-weight="700" fill="#f0f6fc">Check-ins</text>
+<text x="690" y="996" font-size="12" font-weight="400" fill="#9198a1" text-anchor="end">3 endpoints</text>
+<text x="410" y="1020" font-size="13" font-weight="400" fill="#9198a1">Visitas a bancos validadas por proximidad</text>
+<rect x="410" y="1034" width="280" height="6" rx="3" fill="#1b222c"/>
+<rect x="410" y="1034" width="104.6" height="6" rx="3" fill="#ab7df8" fill-opacity="0.6"/>
+<rect x="516.6" y="1034" width="83.7" height="6" rx="3" fill="#3fb950" fill-opacity="0.6"/>
+<rect x="602.3" y="1034" width="41.8" height="6" rx="3" fill="#d29922" fill-opacity="0.6"/>
+<rect x="646.2" y="1034" width="20.9" height="6" rx="3" fill="#4493f8" fill-opacity="0.6"/>
+<rect x="669.1" y="1034" width="20.9" height="6" rx="3" fill="#9198a1" fill-opacity="0.6"/>
+<text x="410" y="1070" font-size="11" font-weight="600" fill="#6e7681" letter-spacing="0.4">USA</text>
+<rect x="446.1" y="1054" width="71.2" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
+<circle cx="459.1" cy="1066" r="4" fill="#4493f8"/>
+<text x="469.1" y="1070.5" font-size="12" font-weight="400" fill="#f0f6fc">Bancos</text>
+<rect x="724" y="965" width="316" height="148" rx="12" fill="#151b23" stroke="#3d444d" stroke-width="1" id="feature-backend-incidencia"/>
+<circle cx="747" cy="991" r="5" fill="#39c5cf"/>
+<text x="760" y="996" font-size="15" font-weight="700" fill="#f0f6fc">Incidencias</text>
+<text x="1022" y="996" font-size="12" font-weight="400" fill="#9198a1" text-anchor="end">4 endpoints</text>
+<text x="742" y="1020" font-size="13" font-weight="400" fill="#9198a1">Avisos de los usuarios sobre bancos rotos,</text>
+<text x="742" y="1039" font-size="13" font-weight="400" fill="#9198a1">sucios o desaparecidos</text>
+<rect x="742" y="1053" width="280" height="6" rx="3" fill="#1b222c"/>
+<rect x="742" y="1053" width="114.2" height="6" rx="3" fill="#ab7df8" fill-opacity="0.6"/>
+<rect x="858.2" y="1053" width="68.5" height="6" rx="3" fill="#3fb950" fill-opacity="0.6"/>
+<rect x="928.7" y="1053" width="68.5" height="6" rx="3" fill="#d29922" fill-opacity="0.6"/>
+<rect x="999.2" y="1053" width="22.8" height="6" rx="3" fill="#4493f8" fill-opacity="0.6"/>
+<text x="742" y="1089" font-size="11" font-weight="600" fill="#6e7681" letter-spacing="0.4">USA</text>
+<rect x="778.1" y="1073" width="71.2" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
+<circle cx="791.1" cy="1085" r="4" fill="#4493f8"/>
+<text x="801.1" y="1089.5" font-size="12" font-weight="400" fill="#f0f6fc">Bancos</text>
+<rect x="855.4" y="1073" width="108.7" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
+<circle cx="868.4" cy="1085" r="4" fill="#d29922"/>
+<text x="878.4" y="1089.5" font-size="12" font-weight="400" fill="#f0f6fc">Notificaciones</text>
+<rect x="60" y="1129" width="316" height="129" rx="12" fill="#151b23" stroke="#3d444d" stroke-width="1" id="feature-backend-lugar"/>
+<circle cx="83" cy="1155" r="5" fill="#f85149"/>
+<text x="96" y="1160" font-size="15" font-weight="700" fill="#f0f6fc">Lugares</text>
+<text x="358" y="1160" font-size="12" font-weight="400" fill="#9198a1" text-anchor="end">1 endpoint</text>
+<text x="78" y="1184" font-size="13" font-weight="400" fill="#9198a1">Búsqueda de direcciones y sitios para mover</text>
+<text x="78" y="1203" font-size="13" font-weight="400" fill="#9198a1">el mapa</text>
+<rect x="78" y="1217" width="280" height="6" rx="3" fill="#1b222c"/>
+<rect x="78" y="1217" width="49.8" height="6" rx="3" fill="#ab7df8" fill-opacity="0.6"/>
+<rect x="129.8" y="1217" width="74.7" height="6" rx="3" fill="#3fb950" fill-opacity="0.6"/>
+<rect x="206.5" y="1217" width="74.7" height="6" rx="3" fill="#d29922" fill-opacity="0.6"/>
+<rect x="283.3" y="1217" width="74.7" height="6" rx="3" fill="#9198a1" fill-opacity="0.6"/>
+<rect x="392" y="1129" width="316" height="129" rx="12" fill="#151b23" stroke="#3d444d" stroke-width="1" id="feature-backend-favorito"/>
+<circle cx="415" cy="1155" r="5" fill="#db61a2"/>
+<text x="428" y="1160" font-size="15" font-weight="700" fill="#f0f6fc">Favoritos</text>
+<text x="690" y="1160" font-size="12" font-weight="400" fill="#9198a1" text-anchor="end">4 endpoints</text>
+<text x="410" y="1184" font-size="13" font-weight="400" fill="#9198a1">Bancos guardados por el usuario</text>
+<rect x="410" y="1198" width="280" height="6" rx="3" fill="#1b222c"/>
+<rect x="410" y="1198" width="109.6" height="6" rx="3" fill="#ab7df8" fill-opacity="0.6"/>
+<rect x="521.6" y="1198" width="109.6" height="6" rx="3" fill="#3fb950" fill-opacity="0.6"/>
+<rect x="633.2" y="1198" width="27.4" height="6" rx="3" fill="#d29922" fill-opacity="0.6"/>
+<rect x="662.6" y="1198" width="27.4" height="6" rx="3" fill="#4493f8" fill-opacity="0.6"/>
+<text x="410" y="1234" font-size="11" font-weight="600" fill="#6e7681" letter-spacing="0.4">USA</text>
+<rect x="446.1" y="1218" width="71.2" height="24" rx="12" fill="#1b222c" stroke="#3d444d" stroke-width="1"/>
+<circle cx="459.1" cy="1230" r="4" fill="#4493f8"/>
+<text x="469.1" y="1234.5" font-size="12" font-weight="400" fill="#f0f6fc">Bancos</text>
+<rect x="724" y="1129" width="316" height="129" rx="12" fill="#151b23" stroke="#3d444d" stroke-width="1" id="feature-backend-notificacion"/>
+<circle cx="747" cy="1155" r="5" fill="#d29922"/>
+<text x="760" y="1160" font-size="15" font-weight="700" fill="#f0f6fc">Notificaciones</text>
+<text x="1022" y="1160" font-size="12" font-weight="400" fill="#9198a1" text-anchor="end">4 endpoints</text>
+<text x="742" y="1184" font-size="13" font-weight="400" fill="#9198a1">Avisos al usuario, como el resultado de la</text>
+<text x="742" y="1203" font-size="13" font-weight="400" fill="#9198a1">moderación de su contenido</text>
+<rect x="742" y="1217" width="280" height="6" rx="3" fill="#1b222c"/>
+<rect x="742" y="1217" width="91.3" height="6" rx="3" fill="#ab7df8" fill-opacity="0.6"/>
+<rect x="835.3" y="1217" width="91.3" height="6" rx="3" fill="#3fb950" fill-opacity="0.6"/>
+<rect x="928.7" y="1217" width="60.9" height="6" rx="3" fill="#d29922" fill-opacity="0.6"/>
+<rect x="991.6" y="1217" width="30.4" height="6" rx="3" fill="#4493f8" fill-opacity="0.6"/>
+<text x="62" y="1284" font-size="12" font-weight="400" fill="#6e7681">Código compartido:  shared (38)</text>
+<line x1="40" y1="1344" x2="1060" y2="1344" stroke="#262d36" stroke-width="1"/>
+<text x="1060" y="1370" font-size="12" font-weight="400" fill="#6e7681" text-anchor="end">Generado con repo-xray</text>
+<rect x="40" y="1361" width="14" height="6" rx="3" fill="#ab7df8" fill-opacity="0.6"/>
+<text x="60" y="1370" font-size="12" font-weight="400" fill="#9198a1">Puntos de entrada</text>
+<rect x="187.9" y="1361" width="14" height="6" rx="3" fill="#3fb950" fill-opacity="0.6"/>
+<text x="207.9" y="1370" font-size="12" font-weight="400" fill="#9198a1">Lógica de aplicación</text>
+<rect x="347.3" y="1361" width="14" height="6" rx="3" fill="#d29922" fill-opacity="0.6"/>
+<text x="367.3" y="1370" font-size="12" font-weight="400" fill="#9198a1">Modelo de dominio</text>
+<rect x="498.8" y="1361" width="14" height="6" rx="3" fill="#4493f8" fill-opacity="0.6"/>
+<text x="518.8" y="1370" font-size="12" font-weight="400" fill="#9198a1">Acceso a datos</text>
+<rect x="629.4" y="1361" width="14" height="6" rx="3" fill="#9198a1" fill-opacity="0.6"/>
+<text x="649.4" y="1370" font-size="12" font-weight="400" fill="#9198a1">Integraciones y configuración</text>
 </svg>

@@ -159,6 +159,8 @@ class MainWindow(QMainWindow):
         self.workspace.show_results(analysis, bundle, keep_selection=quiet)
         self.pages.setCurrentWidget(self.workspace)
         self.setWindowTitle(f"{stack.name} — repo-xray")
+        if not quiet:
+            self.workspace.focus_document()
 
     def _no_sources(self, analysis: Analysis, quiet: bool) -> None:
         diagnostic = next((d for d in analysis.diagnostics if d.code == "no-sources"), None)

@@ -180,6 +180,14 @@ def test_analysis_opens_the_workspace_on_the_overview(qtbot, window, project):
     assert "2 features" in workspace.facts.text() and "2 flows" in workspace.facts.text()
 
 
+def test_the_keyboard_goes_to_the_diagram_when_the_results_open(qtbot, window, project):
+    window.show()
+    qtbot.waitExposed(window)
+    analysed(qtbot, window, project)
+
+    assert window.workspace.canvas.hasFocus()  # + and - zoom at once, without a click
+
+
 def test_the_sidebar_lists_every_document_by_level(qtbot, window, project):
     analysed(qtbot, window, project)
 

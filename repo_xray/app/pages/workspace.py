@@ -314,6 +314,10 @@ class WorkspacePage(QWidget):
             self.status.setText(HINTS[target.kind])
         return True
 
+    def focus_document(self) -> None:
+        """Give the keyboard to the document, so arrows, + and - act on it at once."""
+        self.views.currentWidget().setFocus()
+
     def open_level(self, level: int) -> bool:
         return self.open(self.navigation.home(level))
 

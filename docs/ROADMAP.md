@@ -165,12 +165,17 @@ The local AI was dropped ([ADR-0011](adr/0011-no-ai.md)); #32-#35 and #42 are ca
 | # | Issue | Branch | Status |
 | --- | --- | --- | --- |
 | #73 | Large and unusual projects: stress tests and the fixes they ask for | `fix/large-projects` | ✅ |
-| #74 | README, screenshots, example diagrams, ADRs and changelog for the redesign | `docs/redesign` | ⬜ |
+| #74 | README, screenshots, example diagrams, ADRs and changelog for the redesign | `docs/redesign` | ✅ |
 | #75 | Endpoints of FastAPI, Flask and NestJS, so their projects get flows too | `feature/backend-more-endpoints` | ✅ |
 | #76 | Packages as features, for projects organised by module (libraries, command-line tools) | `feature/backend-more-endpoints` | ✅ |
 
 ## Later
 
+- Release 2.0.0: version bump, changelog date, tag (`release/2.0.0`).
+- The app's interface in Spanish, like the documents.
+- Endpoints of Express and Django, which are declared by calls and URL tables rather than decorators.
+- Calls on local variables and on returned values, so fewer flows stop at the entry point.
+- Open the source file of a flow's step at its line, in the user's editor.
 - GitHub Action that regenerates the docs on every push.
 - macOS and Linux builds.
 - More languages (Kotlin, C#, Go).
