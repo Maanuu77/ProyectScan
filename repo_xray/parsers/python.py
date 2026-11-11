@@ -1,12 +1,22 @@
-"""Python parser: modules, classes, functions, imports and calls with `ast`.
+"""Python parser: modules, classes, functions, imports, calls and HTTP routes with `ast`.
 
 The analysed project is parsed, never imported or executed (see ADR-0002).
+
+Routes are read from the decorators of FastAPI (`@app.get("/items/{id}")`,
+`@router.post(...)`, `@app.api_route(...)`) and Flask (`@app.route("/items",
+methods=[...])`, `@bp.get(...)`), with the prefix of the `APIRouter` or
+`Blueprint` they are declared on when it is set in the same file.
 """
 
 import ast
+import re
 from pathlib import Path
 
-from repo_xray.model import Call, Import, SourceFile, Symbol
+from repo_xray.model import Call, Endpoint, Import, SourceFile, Symbol
+
+HTTP_VERBS = ("get", "post", "put", "patch", "delete", "head", "options")
+ROUTERS = {"APIRouter": "prefix", "Blueprint": "url_prefix"}  # what makes a router, and how it names its prefix
+_PARAMETER = re.compile(r"<(?:[^:<>]+:)?([^<>]+)>|\{([^}:]+)(?::[^}]*)?\}")  # Flask's <int:id>, FastAPI's {id:path}
 
 
 def module_name(relative_path: Path) -> str:
@@ -41,6 +51,18 @@ class _Collector(ast.NodeVisitor):
     def __init__(self, info: SourceFile):
         self.info = info
         self.scopes: list[tuple[str, str]] = [("module", info.name)]  # (kind, qualname)
+        self.prefixes: dict[str, str] = {}  # router variable -> the prefix of its routes
+
+    def visit_Assign(self, node: ast.Assign) -> None:
+        # `router = APIRouter(prefix="/items")`, `bp = Blueprint("items", __name__, url_prefix="/items")`
+        call = node.value
+        keyword = ROUTERS.get((_dotted_name(call.func) or "").rpartition(".")[2]) if isinstance(call, ast.Call) else None
+        if keyword:
+            prefix = _keyword_text(call, keyword)
+            for target in node.targets:
+                if prefix and isinstance(target, ast.Name):
+                    self.prefixes[target.id] = prefix
+        self.generic_visit(node)
 
     def visit_ClassDef(self, node: ast.ClassDef) -> None:
         symbol = self._add_symbol(node, "class")
@@ -57,10 +79,33 @@ class _Collector(ast.NodeVisitor):
         kind = "method" if self.scopes[-1][0] == "class" else "function"
         symbol = self._add_symbol(node, kind)
         symbol.is_async = is_async
+        self._add_endpoints(node, symbol)
         outer = [*node.decorator_list, node.args]
         if node.returns:
             outer.append(node.returns)
         self._visit_scope(node, symbol, outer)
+
+    def _add_endpoints(self, node: ast.FunctionDef | ast.AsyncFunctionDef, symbol: Symbol) -> None:
+        """One endpoint per route decorator and HTTP method of the function."""
+        for decorator in node.decorator_list:
+            if not isinstance(decorator, ast.Call) or not isinstance(decorator.func, ast.Attribute):
+                continue
+            verb = decorator.func.attr
+            path = _text(decorator.args[0]) if decorator.args else _keyword_text(decorator, "path", "rule")
+            if path is None or (path and not path.startswith("/")):
+                continue  # `@cache.get("key")` and the like: a route is empty or starts with a slash
+            if verb in HTTP_VERBS:
+                methods = [verb.upper()]
+            elif verb in ("route", "api_route"):
+                methods = _keyword_list(decorator, "methods") or (["GET"] if verb == "route" else ["ANY"])
+            else:
+                continue
+            owner = _dotted_name(decorator.func.value) or ""
+            route = _join_route(self.prefixes.get(owner, ""), _PARAMETER.sub(lambda m: "{" + (m.group(1) or m.group(2)) + "}", path))
+            summary = _keyword_text(decorator, "summary") or _first_line(symbol.docstring)
+            for method in methods:
+                self.info.endpoints.append(Endpoint(method=method.upper(), path=route, handler=symbol.qualname,
+                                                    lineno=node.lineno, summary=summary))
 
     def visit_Call(self, node: ast.Call) -> None:
         callee = _dotted_name(node.func)
@@ -128,6 +173,31 @@ class _Collector(ast.NodeVisitor):
         for statement in node.body:
             self.visit(statement)
         self.scopes.pop()
+
+
+def _text(node: ast.expr) -> str | None:
+    """The value of a string literal; None for anything computed."""
+    return node.value if isinstance(node, ast.Constant) and isinstance(node.value, str) else None
+
+
+def _keyword_text(call: ast.Call, *names: str) -> str | None:
+    return next((_text(k.value) for k in call.keywords if k.arg in names and _text(k.value) is not None), None)
+
+
+def _keyword_list(call: ast.Call, name: str) -> list[str]:
+    value = next((k.value for k in call.keywords if k.arg == name), None)
+    if not isinstance(value, ast.List | ast.Tuple | ast.Set):
+        return []
+    return [text for text in (_text(element) for element in value.elts) if text]
+
+
+def _join_route(prefix: str, path: str) -> str:
+    return "/" + "/".join(part for part in (prefix.strip("/"), path.strip("/")) if part)
+
+
+def _first_line(docstring: str | None) -> str | None:
+    lines = (docstring or "").strip().splitlines()
+    return lines[0].strip().rstrip(".") or None if lines else None
 
 
 def _dotted_name(node: ast.expr) -> str | None:

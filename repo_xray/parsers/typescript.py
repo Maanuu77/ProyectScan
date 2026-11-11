@@ -1,16 +1,18 @@
 """TypeScript and JavaScript parser: classes, functions, imports, calls and HTTP requests.
 
-Covers Angular (decorators, `inject()` and constructor injection) and
-React (components declared as arrow functions).
+Covers Angular (decorators, `inject()` and constructor injection), React
+(components declared as arrow functions) and the endpoints of NestJS
+controllers (`@Controller('orders')` with `@Get(':id')`, `@Post()`…).
 """
 
 import posixpath
+import re
 from pathlib import Path
 
 import tree_sitter_typescript
 from tree_sitter import Language, Node, Parser
 
-from repo_xray.model import Call, HttpCall, Import, Route, SourceFile, Symbol
+from repo_xray.model import Call, Endpoint, HttpCall, Import, Route, SourceFile, Symbol
 from repo_xray.parsers.treesitter import descendants, doc_comment, end_line, line, string_value, text
 
 _TYPESCRIPT = Parser(Language(tree_sitter_typescript.language_typescript()))
@@ -41,7 +43,35 @@ def parse(source: bytes, relative_path: Path) -> SourceFile:
         line_count=len(source.splitlines()),
     )
     _Collector(info).visit(root)
+    _add_nest_endpoints(info)
     return info
+
+
+_QUOTED = r"""['"`]([^'"`]*)['"`]"""
+_CONTROLLER = re.compile(rf"^Controller\(\s*(?:{_QUOTED}|\{{[^}}]*?path\s*:\s*{_QUOTED})?", re.S)
+_NEST_ROUTE = re.compile(rf"^(Get|Post|Put|Patch|Delete|Head|Options|All)\(\s*(?:{_QUOTED})?")
+_NEST_SUMMARY = re.compile(rf"^ApiOperation\(\s*\{{[^}}]*?summary\s*:\s*{_QUOTED}", re.S)
+_NEST_PARAMETER = re.compile(r":(\w+)")
+
+
+def _add_nest_endpoints(info: SourceFile) -> None:
+    """Endpoints of NestJS controllers, read from the decorators the collector already kept."""
+    prefixes = {}
+    for symbol in info.symbols:
+        match = next((m for m in map(_CONTROLLER.match, symbol.decorators) if m), None)
+        if symbol.kind == "class" and match:
+            prefixes[symbol.qualname] = match.group(1) or match.group(2) or ""
+    for symbol in info.symbols:
+        if symbol.kind != "method" or symbol.parent not in prefixes:
+            continue
+        summary = next((m.group(1) for m in map(_NEST_SUMMARY.match, symbol.decorators) if m), None)
+        for route in filter(None, map(_NEST_ROUTE.match, symbol.decorators)):
+            parts = (prefixes[symbol.parent].strip("/"), (route.group(2) or "").strip("/"))
+            path = "/" + "/".join(part for part in parts if part)
+            info.endpoints.append(Endpoint(
+                method="ANY" if route.group(1) == "All" else route.group(1).upper(),
+                path=_NEST_PARAMETER.sub(r"{\1}", path), handler=symbol.qualname, lineno=symbol.lineno,
+                summary=summary or ((symbol.docstring or "").strip().splitlines() or [None])[0]))
 
 
 class _Collector:
@@ -92,7 +122,10 @@ class _Collector:
     def visit_method(self, node: Node) -> None:
         name = text(node.child_by_field_name("name"))
         symbol = self._add_symbol(node, "method", name)
-        symbol.decorators = [text(d)[1:] for d in _decorators(node)]
+        decorators = _decorators(node)
+        symbol.decorators = [text(d)[1:] for d in decorators]
+        if symbol.docstring is None and decorators:
+            symbol.docstring = doc_comment(decorators[0])  # the comment sits above the decorators, not the name
         symbol.is_async = _is_async(node)
         if name == "constructor":
             self._add_constructor_fields(node)

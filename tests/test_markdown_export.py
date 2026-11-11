@@ -2,7 +2,8 @@ import json
 import posixpath
 import re
 
-from repo_xray.export.markdown import FOLDER, build_documents
+from repo_xray.export.archive import build_bundle
+from repo_xray.export.markdown import FOLDER, Bundle, build_documents
 from repo_xray.pipeline import analyse
 from tests.conftest import JAVA, hexagonal_backend, write
 
@@ -36,6 +37,34 @@ def test_bundle_has_index_feature_pages_diagrams_and_json(tmp_path):
     assert any(key.startswith(f"{FOLDER}/images/flow-post-api-orders") for key in bundle)
     data = json.loads(bundle[f"{FOLDER}/analysis.json"])
     assert {f["key"] for f in data["features"]} >= {"api/order", "web/checkout"}
+
+
+def test_a_document_given_as_a_function_is_written_when_first_read():
+    written = []
+    bundle = Bundle({"a.md": "# A"})
+    bundle.later("b.svg", lambda: written.append("b") or "<svg/>")
+
+    assert sorted(bundle) == ["a.md", "b.svg"] and len(bundle) == 2 and "b.svg" in bundle
+    assert written == [] and not bundle.is_written("b.svg") and bundle.is_written("a.md")
+    assert bundle["b.svg"] == "<svg/>" and bundle.get("b.svg") == "<svg/>"
+    assert written == ["b"] and bundle.is_written("b.svg")  # once: the second read found it written
+    assert dict(bundle.items()) == {"a.md": "# A", "b.svg": "<svg/>"}
+    del bundle["a.md"]
+    assert list(bundle) == ["b.svg"]
+
+
+def test_diagrams_wait_until_they_are_read_and_an_export_reads_them_all(tmp_path):
+    hexagonal_backend(tmp_path)
+    analysis = analyse(tmp_path)
+
+    bundle = build_documents(analysis)
+    diagrams = [path for path in bundle if path.endswith(".svg")]
+    assert diagrams and not any(bundle.is_written(path) for path in diagrams)
+    assert bundle.is_written("architecture/README.md")
+
+    exported = build_bundle(analysis)  # the PNG copies need every diagram
+    assert all(exported.is_written(path) for path in exported)
+    assert str(exported["architecture/images/overview-dark.svg"]).startswith("<svg")
 
 
 def test_every_link_and_image_points_into_the_bundle(tmp_path):

@@ -2,12 +2,14 @@
 
 Everything lives under `architecture/`, ready to be copied to `docs/` in
 the analysed repository. Images are embedded with `<picture>`, so GitHub
-shows the dark version to readers who use the dark theme.
+shows the dark version to readers who use the dark theme. Diagrams are
+drawn when they are first read, not when the set is built.
 """
 
 import json
 import re
 import unicodedata
+from collections.abc import Callable, Iterator, Mapping, MutableMapping
 from dataclasses import asdict
 
 from repo_xray import i18n
@@ -19,12 +21,54 @@ from repo_xray.pipeline import Analysis
 from repo_xray.render.features import render_features
 from repo_xray.render.flows import render_flow
 from repo_xray.render.overview import render_overview
+from repo_xray.render.requests import frontend_requests
 from repo_xray.render.theme import THEMES
 
 FOLDER = "architecture"
 FLOWS_PER_FEATURE = 3
 
-Bundle = dict[str, str | bytes]  # path inside the zip -> content
+Content = str | bytes
+
+
+class Bundle(MutableMapping[str, Content]):
+    """The documentation set: path inside the zip -> content.
+
+    It reads like a dict, but a document may be given as a function that
+    writes it, and is then written the first time it is asked for. The app
+    shows one diagram at a time, so a project with hundreds of flows opens
+    without drawing them all; an export asks for everything.
+    """
+
+    def __init__(self, entries: Mapping[str, Content] | None = None):
+        self._entries: dict[str, Content | Callable[[], Content]] = dict(entries or {})
+
+    def later(self, path: str, write: Callable[[], Content]) -> None:
+        """Add a document that is written only when it is first read."""
+        self._entries[path] = write
+
+    def is_written(self, path: str) -> bool:
+        return not callable(self._entries[path])
+
+    def __getitem__(self, path: str) -> Content:
+        entry = self._entries[path]
+        if callable(entry):
+            entry = self._entries[path] = entry()
+        return entry
+
+    def __setitem__(self, path: str, content: Content) -> None:
+        self._entries[path] = content
+
+    def __delitem__(self, path: str) -> None:
+        del self._entries[path]
+
+    def __iter__(self) -> Iterator[str]:
+        return iter(self._entries)
+
+    def __len__(self) -> int:
+        return len(self._entries)
+
+    def __contains__(self, path: object) -> bool:  # without writing the document
+        return path in self._entries
 
 
 def build_documents(analysis: Analysis) -> Bundle:
@@ -41,23 +85,39 @@ def feature_page(feature_key: str) -> str:
     return f"{FOLDER}/features/{_slug(feature_key)}.md"
 
 
+def diagram_path(name: str, theme: str) -> str:
+    """Path of a diagram inside the bundle: `diagram_path("overview", "dark")`."""
+    return f"{FOLDER}/images/{name}-{theme}.svg"
+
+
+def flow_diagram(flow: Flow) -> str:
+    """Name of the diagram drawn for a flow."""
+    return f"flow-{flow.key}"
+
+
+def flows_of(analysis: Analysis, feature: Feature) -> list[Flow]:
+    """The flows drawn on a feature's page, the most telling first."""
+    return _Writer(analysis)._flows_of(feature)
+
+
 class _Writer:
     def __init__(self, analysis: Analysis):
         self.a = analysis
         self.lang = analysis.language
-        self.bundle: Bundle = {}
+        self.bundle = Bundle()
         self.slugs = {f.key: _slug(f.key) for f in analysis.features.features}
 
     def write(self) -> Bundle:
         stack, lang = self.a.stack, self.lang
-        self._diagram("overview", lambda theme: render_overview(stack, self.a.files, theme, lang))
-        self._diagram("features", lambda theme: render_features(stack, self.a.features, theme, lang))
+        self._diagram("overview", lambda theme: render_overview(stack, self.a.files, theme, lang, self.a.links))
+        requests = sum(n or 0 for n in frontend_requests(stack, self.a.files, self.a.links).values())
+        self._diagram("features", lambda theme: render_features(stack, self.a.features, theme, lang, requests))
         for flow in self._flows_to_draw():
-            self._diagram(f"flow-{flow.key}", lambda theme, flow=flow: render_flow(flow, stack, theme, lang))
+            self._diagram(flow_diagram(flow), lambda theme, flow=flow: render_flow(flow, stack, theme, lang))
         self.bundle[f"{FOLDER}/README.md"] = self._index()
         for feature in self.a.features.features:
             self.bundle[feature_page(feature.key)] = self._feature_page(feature)
-        self.bundle[f"{FOLDER}/analysis.json"] = self._analysis_json()
+        self.bundle.later(f"{FOLDER}/analysis.json", self._analysis_json)
         return self.bundle
 
     # Pages
@@ -181,8 +241,9 @@ class _Writer:
     # Diagrams
 
     def _diagram(self, name: str, render) -> None:
+        """Add a diagram in both themes; each one is drawn when it is first read."""
         for theme_name, theme in THEMES.items():
-            self.bundle[f"{FOLDER}/images/{name}-{theme_name}.svg"] = render(theme)
+            self.bundle.later(diagram_path(name, theme_name), lambda theme=theme: render(theme))
 
     def _flows_to_draw(self) -> list[Flow]:
         drawn, seen = [], set()
@@ -209,6 +270,7 @@ class _Writer:
             "features": [asdict(f) for f in self.a.features.features],
             "shared": [asdict(s) for s in self.a.features.shared],
             "flows": [asdict(f) for f in self.a.flows],
+            "diagnostics": [asdict(d) for d in self.a.diagnostics],
         }
         return json.dumps(data, indent=2, ensure_ascii=False)
 

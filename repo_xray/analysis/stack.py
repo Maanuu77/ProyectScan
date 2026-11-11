@@ -12,7 +12,7 @@ import tomllib
 import xml.etree.ElementTree as ElementTree
 from collections import Counter
 from dataclasses import dataclass, field
-from pathlib import Path, PurePosixPath
+from pathlib import PurePosixPath
 
 import yaml
 
@@ -62,6 +62,7 @@ class Stack:
     apps: list[App] = field(default_factory=list)
     services: list[Service] = field(default_factory=list)
     ci: list[str] = field(default_factory=list)
+    inferred_app: bool = False  # no build file was found: the whole folder stands for one application
 
 
 def detect_stack(scan_result: ScanResult, files: list[SourceFile]) -> Stack:
@@ -122,6 +123,11 @@ class _Detector:
                 if tech.category not in ("framework", "language", "tool"):
                     self._add_service(tech, app.name, candidates[folder][0])
 
+        if not self.stack.apps and self.files:
+            # Code without any build file (scripts, a course exercise, a folder copied out of its
+            # project): the folder itself is the application, so its features can still be shown.
+            self.stack.apps.append(self._make_app(".", [], {}))
+            self.stack.inferred_app = True
         self._count_files()
 
     def _make_app(self, folder: str, techs: list[Tech], versions: dict[str, str]) -> App | None:
