@@ -431,13 +431,13 @@ class MainWindow(QMainWindow):
         geometry = self.settings.value("window/geometry")
         if geometry is not None:
             self.restoreGeometry(geometry)
-        splitter = self.settings.value("window/splitter")
-        if splitter is not None:
-            self.workspace.splitter.restoreState(splitter)
+        sidebar = self.settings.value("window/sidebar_width", 0, int)
+        if sidebar:
+            self.workspace.set_sidebar_width(sidebar)
 
     def closeEvent(self, event) -> None:  # noqa: N802
         self.cancel()
         if not self.isFullScreen():
             self.settings.setValue("window/geometry", self.saveGeometry())
-        self.settings.setValue("window/splitter", self.workspace.splitter.saveState())
+        self.settings.setValue("window/sidebar_width", self.workspace.sidebar_width())
         super().closeEvent(event)
