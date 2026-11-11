@@ -168,7 +168,7 @@ def test_the_app_opens_on_the_start_page(qtbot, window):
 
     window.show()
     qtbot.waitExposed(window)
-    assert window.start.choose.hasFocus()  # Enter chooses a folder
+    assert window.focusWidget() is window.start.choose  # Enter chooses a folder
 
 
 def test_analysis_opens_the_workspace_on_the_overview(qtbot, window, project):
@@ -189,7 +189,7 @@ def test_the_keyboard_goes_to_the_diagram_when_the_results_open(qtbot, window, p
     qtbot.waitExposed(window)
     analysed(qtbot, window, project)
 
-    assert window.workspace.canvas.hasFocus()  # + and - zoom at once, without a click
+    assert window.focusWidget() is window.workspace.canvas  # + and - zoom at once, without a click
 
 
 def test_the_sidebar_lists_every_document_by_level(qtbot, window, project):
