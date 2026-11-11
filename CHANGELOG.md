@@ -2,7 +2,7 @@
 
 All notable changes to repo-xray. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and versions follow [Semantic Versioning](https://semver.org/).
 
-## Unreleased
+## 2.0.0 - 2026-11-11
 
 The product redesign: a new app, a new visual language for the diagrams and an analysis that says where it is and what it could not do. Existing `xray.toml` files, the command line and the layout of the exported zip are unchanged.
 
