@@ -239,6 +239,10 @@ class StartPage(QWidget):
 
     # Choosing a folder
 
+    def showEvent(self, event) -> None:  # noqa: N802
+        super().showEvent(event)
+        self.choose.setFocus()  # Enter opens the folder dialog: the page's one main action
+
     def choose_folder(self) -> None:
         folder = QFileDialog.getExistingDirectory(self, "Choose the project folder")
         if folder:

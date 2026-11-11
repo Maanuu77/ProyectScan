@@ -161,10 +161,14 @@ def test_dropping_a_task_right_after_it_finishes_does_not_crash():
 # From the start page to the workspace
 
 
-def test_the_app_opens_on_the_start_page(window):
+def test_the_app_opens_on_the_start_page(qtbot, window):
     assert window.pages.currentWidget() is window.start
     assert window.windowTitle() == "repo-xray"
     assert window.start.recent_rows() == []
+
+    window.show()
+    qtbot.waitExposed(window)
+    assert window.focusWidget() is window.start.choose  # Enter chooses a folder
 
 
 def test_analysis_opens_the_workspace_on_the_overview(qtbot, window, project):
@@ -185,7 +189,7 @@ def test_the_keyboard_goes_to_the_diagram_when_the_results_open(qtbot, window, p
     qtbot.waitExposed(window)
     analysed(qtbot, window, project)
 
-    assert window.workspace.canvas.hasFocus()  # + and - zoom at once, without a click
+    assert window.focusWidget() is window.workspace.canvas  # + and - zoom at once, without a click
 
 
 def test_the_sidebar_lists_every_document_by_level(qtbot, window, project):
