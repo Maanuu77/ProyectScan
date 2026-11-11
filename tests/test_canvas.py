@@ -159,7 +159,17 @@ def test_the_current_match_is_scrolled_into_view(canvas):
     canvas.find("CatalogService")
 
     box = canvas._to_widget(canvas._matches[0])
-    assert 0 <= box.left() and box.right() <= canvas.width() and 0 <= box.top() and box.bottom() <= canvas.height()
+    assert 0 <= box.left() < canvas.width() and 0 <= box.top() and box.bottom() <= canvas.height()
+
+
+def test_a_match_longer_than_the_view_shows_where_it_starts(canvas):
+    canvas.zoom_to(8.0)  # every label is now wider than the 600 px canvas
+    canvas.pan(-10_000, -10_000)
+
+    canvas.find("CatalogService")
+
+    box = canvas._to_widget(canvas._matches[0])
+    assert box.width() > canvas.width() and box.left() == pytest.approx(48)
 
 
 def test_a_search_survives_a_new_drawing_of_the_diagram(canvas):

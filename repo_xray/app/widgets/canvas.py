@@ -212,15 +212,14 @@ class DiagramCanvas(QWidget):
             return
         box = self._to_widget(self._matches[self._current])
         margin = 48
-        dx = dy = 0.0
-        if box.left() < margin:
-            dx = margin - box.left()
-        elif box.right() > self.width() - margin:
-            dx = self.width() - margin - box.right()
-        if box.top() < margin:
-            dy = margin - box.top()
-        elif box.bottom() > self.height() - margin:
-            dy = self.height() - margin - box.bottom()
+
+        def shift(start: float, end: float, size: float) -> float:
+            """How far to move along one axis; a match longer than the view shows where it starts."""
+            if start < margin or end - start > size - margin * 2:
+                return margin - start
+            return size - margin - end if end > size - margin else 0.0
+
+        dx, dy = shift(box.left(), box.right(), self.width()), shift(box.top(), box.bottom(), self.height())
         if dx or dy:
             self._origin += QPointF(dx, dy)
             self._clamp()
